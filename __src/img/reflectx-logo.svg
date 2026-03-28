@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="104" height="44.57" viewBox="0 0 104 44.57">
+  <defs>
+    <style>
+      polygon{
+        fill: hsl(var(--accent-color-hsl, 130 100% 50%));
+      }
+    </style>
+  </defs>
+  <polygon points="44.57 29.71 14.86 29.71 0 44.57 29.71 44.57 44.57 29.71"/>
+  <polygon points="104 14.86 74.29 14.86 59.43 29.71 89.14 29.71 104 14.86"/>
+  <polygon points="59.43 29.71 89.14 29.71 104 44.57 74.29 44.57 59.43 29.71"/>
+  <polygon points="0 0 29.71 0 44.57 14.86 14.86 14.86 0 0"/>
+  <polygon points="29.71 0 59.43 0 74.29 14.86 44.57 14.86 29.71 0"/>
+</svg>

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator - nativelayer.dev</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --space-unit: 0.5rem;
+
+      --bg: #33333d;
+      --surface: #0f171b;
+      --surface-2: #1b445285;
+      --surface-hover: #24243a;
+
+      --accent: #00e5cc;
+      --accent-light: #33ffdd;
+      --accent-lighter: #77ffee;
+      --accent-dark: #00ccb3;
+      --accent-dim: #11b3a077;
+      --accent-dim-dark: #0f786c77;
+      --accent-dim-darker: #0a7e7022;
+      --accent-glow: #00e5ca55;
+      --accent-scanline: rgba(0, 229, 202, 0.104);
+
+      --text: #60ffe9;
+      --text-dim: #7f8ba0;
+      --white: #fff;
+
+      --danger: #bd1733;
+      --danger-text-hover: #ff5c77;
+      --danger-glow: rgba(255, 38, 74, 0.519);
+      --danger-bg: #320d1a;
+      --danger-bg-hover: #730b2f;
+      --danger-border: #0b0b0b;
+      --danger-border-hover: #5a2535;
+
+      --operator: #db7713;
+      --operator-hover: #ff6416;
+      --operator-text-hover: #ffc852;
+      --operator-dim: #ae370f;
+      --operator-border: #db7713;
+      --operator-bg-hover: #ff6600;
+
+      --border-dim: #2a2a3a;
+      --border-light: #3a3a50;
+
+      --calc-inner-glow: rgba(92, 188, 210, 0.5);
+
+      --cut: 12px;
+      --cut-sm: 8px;
+      --gap: 6px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .calc {
+      width: 100%;
+      max-width: 380px;
+      clip-path: polygon(
+        var(--cut) 0%, calc(100% - var(--cut)) 0%,
+        100% var(--cut), 100% calc(100% - var(--cut)),
+        calc(100% - var(--cut)) 100%, var(--cut) 100%,
+        0% calc(100% - var(--cut)), 0% var(--cut)
+      );
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      position: relative;
+    }
+
+    .calc::before {
+      content: '';
+      position: absolute;
+      background: var(--surface);
+      inset: 4px;
+      clip-path: inherit;
+      z-index: -1;
+    }
+
+    .calc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0.25rem;
+    }
+
+    .calc-header .brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.8;
+    }
+
+    .calc-header .model {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.15em;
+    }
+
+    /* Display */
+    .display {
+      background: var(--surface);
+      padding: 1rem 1.25rem;
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: flex-end;
+      gap: 0.25rem;
+      position: relative;
+      overflow: hidden;
+      border-top: 4px solid var(--accent-dim-darker);
+      border-bottom: 3px solid var(--accent-dim-dark);
+      border-left: 4px solid var(--accent-dim-darker);
+      border-right: 1px solid var(--accent-dim);
+    }
+
+    .display::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        var(--accent-scanline) 2px,
+        var(--accent-scanline) 4px
+      );
+      pointer-events: none;
+    }
+
+    .display-operation {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      min-height: 1.2em;
+      word-break: break-all;
+    }
+
+    .display-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-shadow: 0 0 20px var(--accent-glow);
+      word-break: break-all;
+      line-height: 1.1;
+    }
+
+    .display-value.--error {
+      color: var(--danger);
+      font-size: 1.2rem;
+      text-shadow: 0 0 20px var(--danger-glow);
+    }
+
+    /* Buttons grid */
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--gap);
+    }
+
+    .btn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.1rem;
+      border: none;
+      cursor: pointer;
+      padding: 1rem 0;
+      color: var(--text);
+      background: var(--surface-2);
+      clip-path: polygon(
+        var(--cut-sm) 0%, 100% 0%,
+        100% calc(100% - var(--cut-sm)), calc(100% - var(--cut-sm)) 100%,
+        0% 100%, 0% var(--cut-sm)
+      );
+      position: relative;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: all .4s ease;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      clip-path: inherit;
+      z-index: -1;
+      transition: all .4s ease;
+    }
+
+    .btn:hover::before{
+      background: linear-gradient(
+        0deg, transparent -10%, 
+        var(--accent-glow) 150%
+      );
+      transition: all .4s ease;
+    }
+    .btn.--op:hover{
+      color: var(--operator-text-hover);
+      &::before {
+        background: linear-gradient(
+        0deg, transparent -10%, 
+        var(--operator-hover) 150%
+        );
+      }
+    }
+    .btn.--clear:hover{
+      color: var(--danger-text-hover);
+      &::before {
+        background: linear-gradient(
+        0deg, transparent -10%, 
+        var(--danger-bg-hover) 150%
+        );
+      }
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.97);
+    }
+
+    /* Number buttons */
+    .btn.--num {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 400;
+    }
+
+    .btn.--num:hover {
+      color: var(--accent);
+    }
+
+    .btn.--fn.--sign {
+      font-size: 1.6rem;
+    }
+
+    /* Operator buttons */
+    .btn.--op {
+      background: var(--operator-dim);
+      color: var(--operator);
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .btn.--op.--active {
+      background: var(--operator-hover);
+      color: var(--operator-text-hover);
+    }
+
+    /* Function buttons (±, %) */
+    .btn.--fn {
+      color: var(--text-dim);
+      font-size: 1.2rem;
+    }
+
+    .btn.--fn:hover {
+      color: var(--accent);
+    }
+
+    /* Clear = danger */
+    .btn.--clear {
+      color: var(--danger);
+      background: var(--danger-bg);
+    }
+    .btn.--clear:hover {
+      color: var(--danger-text-hover);
+    }
+
+    /* Equals button */
+    .btn.--eq {
+      grid-column: span 2;
+      background: var(--accent);
+      color: var(--bg);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      padding: 1rem 0;
+    }
+
+    /* Zero = span 2 */
+    .btn.--zero {
+      grid-column: span 2;
+    }
+
+    /* Dot */
+    .btn.--dot {
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    /* Backspace */
+    .btn.--bksp {
+      font-size: 1.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* Footer */
+    .calc-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+      padding-top: 0.25rem;
+    }
+
+    .calc-footer p {
+      font-size: .8rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .calc-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      opacity: 0.5;
+    }
+
+    /* History strip */
+    .history-strip {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding: 0.25rem 0;
+      scrollbar-width: none;
+    }
+    .history-strip::-webkit-scrollbar { display: none; }
+
+    .history-item {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      white-space: nowrap;
+      padding: 0.2rem 0.5rem;
+      background: var(--surface-2);
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+  </style>
+
+  <script type="module">
+    import baseBackTo from '/__src/components/base-back-to.js';
+    customElements.define('base-back-to', baseBackTo);
+  </script>
+</head>
+<body style="position: relative;">
+
+  <base-back-to style="position: fixed; top: calc(var(--space-unit) * 4); left: calc(var(--space-unit) * 4); z-index: 100;"></base-back-to>
+
+  <div class="calc" id="app">
+
+    <div class="calc-header">
+      <span class="brand">nativelayer</span>
+      <span class="model">NX-CALC v1.0</span>
+    </div>
+
+    <div class="display">
+      <div class="display-operation" x-text="operationDisplay"></div>
+      <div class="display-value" x-class="(--error, hasError)" x-text="displayFormatted"></div>
+    </div>
+
+    <div class="history-strip" x-if="history.length > 0">
+      <template x-for="(item, idx) in history">
+        <div class="history-item" x-key="idx" x-text="item"></div>
+      </template>
+    </div>
+
+    <div class="buttons">
+      <!-- Row 1: C, ±, %, ÷ -->
+      <button class="btn --clear" @click="clear()">AC</button>
+      <button class="btn --fn --sign" @click="toggleSign()">±</button>
+      <button class="btn --fn" @click="percent()">%</button>
+      <button class="btn --op" x-class="(--active, operation === '÷')" @click="inputOperator('÷')">÷</button>
+
+      <!-- Row 2: 7, 8, 9, × -->
+      <button class="btn --num" @click="inputDigit('7')">7</button>
+      <button class="btn --num" @click="inputDigit('8')">8</button>
+      <button class="btn --num" @click="inputDigit('9')">9</button>
+      <button class="btn --op" x-class="(--active, operation === '×')" @click="inputOperator('×')">×</button>
+
+      <!-- Row 3: 4, 5, 6, - -->
+      <button class="btn --num" @click="inputDigit('4')">4</button>
+      <button class="btn --num" @click="inputDigit('5')">5</button>
+      <button class="btn --num" @click="inputDigit('6')">6</button>
+      <button class="btn --op" x-class="(--active, isOpSub)" @click="opSub()">−</button>
+
+      <!-- Row 4: 1, 2, 3, + -->
+      <button class="btn --num" @click="inputDigit('1')">1</button>
+      <button class="btn --num" @click="inputDigit('2')">2</button>
+      <button class="btn --num" @click="inputDigit('3')">3</button>
+      <button class="btn --op" x-class="(--active, isOpAdd)" @click="opAdd()">+</button>
+
+      <!-- Row 5: 0, ., ⌫, = -->
+      <button class="btn --num --zero" @click="inputDigit('0')">0</button>
+      <button class="btn --num --dot" @click="inputDot()">.</button>
+      <button class="btn --fn --bksp" @click="backspace()">⌫</button>
+
+      <!-- Row 6: = -->
+      <button class="btn --eq" @click="calculate()" style="grid-column: 1 / -1;">=</button>
+    </div>
+
+    <div class="calc-footer">
+      <p>Demo by <a href="/">nativelayer.dev</a></p>
+      <p>Powered by restate + reflectx</p>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { restate } from '/__src/libs/restate/restate.esm.min.js';
+    import { reflectx } from '/__src/libs/reflectx/reflectx.esm.min.js';
+
+    const state = restate({
+      currentOperand: '0',
+      previousOperand: '',
+      operation: null,
+      resetNext: false,
+      hasError: false,
+      history: []
+    });
+
+    state.$computed({
+      displayFormatted(s) {
+        if (s.hasError) return 'Error';
+        const val = s.currentOperand;
+        if (val.includes('.')) return val;
+        const num = parseFloat(val);
+        if (isNaN(num)) return val;
+        if (Math.abs(num) >= 1e15) return num.toExponential(6);
+        return num.toLocaleString('en-US');
+      },
+
+      operationDisplay(s) {
+        if (!s.operation || !s.previousOperand) return '';
+        const prev = parseFloat(s.previousOperand);
+        const formatted = isNaN(prev) ? s.previousOperand : prev.toLocaleString('en-US');
+        return formatted + ' ' + s.operation;
+      },
+
+      isOpAdd(s) { return s.operation === '+'; },
+      isOpSub(s) { return s.operation === '-'; }
+    });
+
+    state.$methods({
+      inputDigit(digit) {
+        if (this.hasError) this.clear();
+        if (this.currentOperand === '0' && digit === '0') return;
+
+        if (this.resetNext) {
+          this.currentOperand = digit;
+          this.resetNext = false;
+        } else {
+          this.currentOperand = this.currentOperand === '0'
+            ? digit
+            : this.currentOperand + digit;
+        }
+      },
+
+      inputDot() {
+        if (this.hasError) this.clear();
+        if (this.resetNext) {
+          this.currentOperand = '0.';
+          this.resetNext = false;
+          return;
+        }
+        if (this.currentOperand.includes('.')) return;
+        this.currentOperand += '.';
+      },
+
+      inputOperator(op) {
+        if (this.hasError) return;
+
+        if (this.operation && !this.resetNext) {
+          this.computeResult();
+        }
+
+        this.previousOperand = this.currentOperand;
+        this.operation = op;
+        this.resetNext = true;
+      },
+
+      calculate() {
+        if (this.hasError || !this.operation) return;
+        this.computeResult();
+        this.operation = null;
+        this.previousOperand = '';
+        this.resetNext = true;
+      },
+
+      computeResult() {
+        const prev = parseFloat(this.previousOperand);
+        const curr = parseFloat(this.currentOperand);
+        if (isNaN(prev) || isNaN(curr)) return;
+
+        let result;
+        const opSymbol = this.operation;
+
+        switch (opSymbol) {
+          case '+': result = prev + curr; break;
+          case '-': result = prev - curr; break;
+          case '×': result = prev * curr; break;
+          case '÷':
+            if (curr === 0) { this.hasError = true; return; }
+            result = prev / curr;
+            break;
+          default: return;
+        }
+
+        result = parseFloat(result.toPrecision(12));
+
+        const entry = `${prev} ${opSymbol} ${curr} = ${result}`;
+        const hist = [...this.history];
+        hist.unshift(entry);
+        if (hist.length > 8) hist.pop();
+
+        this.$set(s => {
+          s.currentOperand = String(result);
+          s.history = hist;
+        });
+      },
+
+      clear() {
+        this.$set(s => {
+          s.currentOperand = '0';
+          s.previousOperand = '';
+          s.operation = null;
+          s.resetNext = false;
+          s.hasError = false;
+        });
+      },
+
+      toggleSign() {
+        if (this.hasError || this.currentOperand === '0') return;
+        this.currentOperand = this.currentOperand.startsWith('-')
+          ? this.currentOperand.slice(1)
+          : '-' + this.currentOperand;
+      },
+
+      percent() {
+        if (this.hasError) return;
+        const val = parseFloat(this.currentOperand);
+        if (isNaN(val)) return;
+        this.currentOperand = String(parseFloat((val / 100).toPrecision(12)));
+      },
+
+      backspace() {
+        if (this.hasError) { this.clear(); return; }
+        if (this.resetNext) return;
+        this.currentOperand = this.currentOperand.length > 1
+          ? this.currentOperand.slice(0, -1)
+          : '0';
+      },
+
+      opAdd() { this.inputOperator('+'); },
+      opSub() { this.inputOperator('-'); }
+    });
+
+    const app = document.getElementById('app');
+
+    function render() {
+      reflectx(state, app);
+    }
+
+    state.$onChange(() => render());
+    render();
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key >= '0' && e.key <= '9') state.inputDigit(e.key);
+      else if (e.key === '.') state.inputDot();
+      else if (e.key === '+') state.inputOperator('+');
+      else if (e.key === '-') state.inputOperator('-');
+      else if (e.key === '*') state.inputOperator('×');
+      else if (e.key === '/') { e.preventDefault(); state.inputOperator('÷'); }
+      else if (e.key === 'Enter' || e.key === '=') state.calculate();
+      else if (e.key === 'Escape') state.clear();
+      else if (e.key === 'Backspace') state.backspace();
+      else if (e.key === '%') state.percent();
+    });
+  </script>
+</body>
+</html>

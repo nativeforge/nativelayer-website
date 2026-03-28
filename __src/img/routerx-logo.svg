@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="routerx-logo"  xmlns="http://www.w3.org/2000/svg" width="104" height="45" viewBox="0 0 104 45">
+  <defs>
+    <style>
+      .c {
+        fill: hsl(var(--accent-color-hsl, 348 100% 50%));
+      }
+    </style>
+  </defs>
+  <polygon class="c" points="59.429 29.714 89.143 29.714 104 44.571 74.286 44.571 59.429 29.714"/>
+  <polygon class="c" points="0 0 29.714 0 44.571 14.857 14.857 14.857 0 0"/>
+  <polygon class="c" points="0 29.714 29.714 29.714 44.571 44.571 14.857 44.571 0 29.714"/>
+  <polygon class="c" points="14.857 14.857 44.571 14.857 59.429 29.714 29.714 29.714 14.857 14.857"/>
+  <polygon class="c" points="104 14.857 74.286 14.857 59.429 29.714 89.143 29.714 104 14.857"/>
+  <polygon class="c" points="104 14.857 74.286 14.857 59.429 0 89.143 0 104 14.857"/>
+</svg>

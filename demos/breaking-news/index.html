@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breaking News - nativelayer.dev Demo</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --space-unit: 0.5rem;
+
+      --bg: #a6acc4;
+      --surface: #59627a;
+      --surface-2: #828ca8;
+      --surface-hover: #c4c1d6;
+
+      --accent: #00d4ff;
+      --accent-light: #53e1fe;
+      --accent-dark: #01a2c3;
+      --accent-darker: #006d8e;
+      --accent-dim: #00688e;
+      --accent-dim-dark: rgb(0, 83, 122);
+      --accent-glow: #00d5ff6f;
+
+      --screen-bg: #263548;
+      --screen-bg-darker: #1a2330;
+      --screen-text: #ffffff;
+      --screen-text-dim: #afbfc7;
+      --screen-scanline: #85aeff1c;
+      --screen-accent: #84ceff;
+
+      --text: #dbe5fd;
+      --text-dim: #a1a7b9;
+      --white: #fff;
+
+      --danger: #cc2244;
+      --danger-light: #ff3366;
+
+      --secondary: #ff8833;
+      --secondary-dim: #aa6622;
+
+      --border-dim: #ccc7bb;
+
+      --cut: 12px;
+      --cut-sm: 8px;
+      --gap: 6px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    /* Panel */
+    .panel {
+      width: 100%;
+      max-width: 480px;
+      clip-path: polygon(
+        var(--cut) 0%, calc(100% - var(--cut)) 0%,
+        100% var(--cut), 100% calc(100% - var(--cut) * 2),
+        calc(100% - var(--cut) * 2) 100%, var(--cut) 100%,
+        0% calc(100% - var(--cut)), 0% var(--cut)
+      );
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      position: relative;
+      background: var(--surface);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0.25rem;
+    }
+
+    .panel-header .brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 1;
+    }
+
+    .panel-header .model {
+      font-size: 0.7rem;
+      color: var(--text);
+      letter-spacing: 0.15em;
+    }
+
+    /* Topic filters */
+    .topics {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding: 0.15rem 0;
+      scrollbar-width: none;
+    }
+    .topics::-webkit-scrollbar { display: none; }
+
+    .topic-btn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      border: none;
+      cursor: pointer;
+      padding: 0.4rem 0.65rem;
+      color: var(--screen-bg-darker);
+      background: var(--surface-2);
+      clip-path: polygon(
+        4px 0%, 100% 0%,
+        100% calc(100% - 4px), calc(100% - 4px) 100%,
+        0% 100%, 0% 4px
+      );
+      transition: background 0.2s ease, color 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      flex-shrink: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .topic-btn:hover {
+      background: var(--surface-hover);
+    }
+
+    .topic-btn.--active {
+      background: var(--accent);
+      color: var(--screen-bg-darker);
+    }
+
+    .topic-btn.--active:hover {
+      background: var(--accent-light);
+    }
+
+    /* Screen */
+    .screen {
+      background: var(--screen-bg);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+      overflow: hidden;
+      border-top: 4px solid var(--accent-darker);
+      border-left: 4px solid var(--accent-dark);
+      border-bottom: 3px solid var(--accent-dim);
+      border-right: 2px solid var(--accent-dim);
+    }
+
+    .screen::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        var(--screen-scanline) 2px,
+        var(--screen-scanline) 4px
+      );
+      pointer-events: none;
+    }
+
+    .screen-header-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 0.75rem;
+      background: linear-gradient(
+        0deg, var(--screen-bg-darker), transparent);
+    }
+
+    .screen-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--danger-light);
+      letter-spacing: 0.2em;
+    }
+
+    .screen-count {
+      font-size: 0.6rem;
+      color: var(--screen-text-dim);
+      letter-spacing: 0.1em;
+      transition: opacity 0.3s ease;
+    }
+
+    .screen-count.--loading {
+      animation: count-pulse 1s ease-in-out infinite;
+    }
+
+    @keyframes count-pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    /* News list */
+    .news-item-list {
+      height: 360px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent-dim-dark) transparent;
+    }
+
+    .news-item-list::-webkit-scrollbar { width: 4px; }
+    .news-item-list::-webkit-scrollbar-track { background: transparent; }
+    .news-item-list::-webkit-scrollbar-thumb { background: var(--accent-dim-dark); }
+
+    /* News items */
+    .news-item {
+      cursor: pointer;
+      border-bottom: 1px solid var(--accent-dim-dark);
+      transition: background 1.6s ease;
+      &:hover{
+        background: var(--screen-bg-darker);
+        transition: background 0.4s ease;
+      }
+    }
+
+    .news-item:last-child {
+      border-bottom: none;
+    }
+
+    .news-item-container {
+      display: flex;
+      gap: 0.65rem;
+      padding: 0.55rem 0.75rem;
+    }
+
+    .news-idx {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.55rem;
+      font-weight: 700;
+      color: var(--screen-text-dim);
+      min-width: 1.4rem;
+      padding-top: 0.1rem;
+    }
+
+    .news-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .news-headline {
+      font-size: 0.78rem;
+      color: var(--screen-text);
+      line-height: 1.3;
+      letter-spacing: 0.03em;
+    }
+
+    .news-meta {
+      font-size: 0.6rem;
+      color: var(--screen-text-dim);
+      letter-spacing: 0.08em;
+    }
+
+    /* Footer */
+    .panel-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+      padding-top: 0.15rem;
+    }
+
+    .panel-footer p {
+      font-size: .8rem;
+      color: var(--text);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .panel-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      opacity: 1;
+    }
+  </style>
+
+  <script type="module">
+    import baseBackTo from '/__src/components/base-back-to.js';
+    customElements.define('base-back-to', baseBackTo);
+  </script>
+</head>
+<body style="position: relative;">
+
+  <base-back-to style="position: fixed; top: calc(var(--space-unit) * 4); left: calc(var(--space-unit) * 4); z-index: 100;"></base-back-to>
+
+  <div class="panel" id="app">
+
+    <div class="panel-header">
+      <span class="brand">nativelayer</span>
+      <span class="model">NX-NEWS v1.0</span>
+    </div>
+
+    <div class="topics">
+      <button class="topic-btn" data-topic="business" @click="setTopic('business')">Business</button>
+      <button class="topic-btn" data-topic="politics" @click="setTopic('politics')">Politics</button>
+      <button class="topic-btn" data-topic="AI" @click="setTopic('AI')">AI</button>
+      <button class="topic-btn" data-topic="technology" @click="setTopic('technology')">Technology</button>
+      <button class="topic-btn" data-topic="science" @click="setTopic('science')">Science</button>
+      <button class="topic-btn" data-topic="caribbean" @click="setTopic('caribbean')">Caribbean</button>
+      <button class="topic-btn" data-topic="martinique" @click="setTopic('martinique')">Martinique</button>
+      <button class="topic-btn" data-topic="guadeloupe" @click="setTopic('guadeloupe')">Guadeloupe</button>
+      <button class="topic-btn" data-topic="haiti" @click="setTopic('haiti')">Haiti</button>
+      <button class="topic-btn" data-topic="dominican" @click="setTopic('dominican')">Dominican</button>
+      <button class="topic-btn" data-topic="puerto" @click="setTopic('puerto')">Puerto Rico</button>
+      <button class="topic-btn" data-topic="jamaica" @click="setTopic('jamaica')">Jamaica</button>
+      <button class="topic-btn" data-topic="barbados" @click="setTopic('barbados')">Barbados</button>
+      <button class="topic-btn" data-topic="trinidad" @click="setTopic('trinidad')">Trinidad</button>
+      <button class="topic-btn" data-topic="curacao" @click="setTopic('curacao')">Curacao</button>
+      <button class="topic-btn" data-topic="aruba" @click="setTopic('aruba')">Aruba</button>
+      <button class="topic-btn" data-topic="security" @click="setTopic('security')">Security</button>
+      <button class="topic-btn" data-topic="finance" @click="setTopic('finance')">Finance</button>
+      <button class="topic-btn" data-topic="health" @click="setTopic('health')">Health</button>
+      <button class="topic-btn" data-topic="art" @click="setTopic('art')">Art</button>
+      <button class="topic-btn" data-topic="entertainment" @click="setTopic('entertainment')">Entertainment</button>
+      <button class="topic-btn" data-topic="travel" @click="setTopic('travel')">Travel</button>
+    </div>
+
+    <div class="screen">
+      <div class="screen-header">
+        <div class="screen-header-container">
+          <span class="screen-title">BREAKING NEWS</span>
+          <span class="screen-count" x-text="topicLabel"></span>
+        </div>
+      </div>
+
+      <div class="news-item-list">
+        <div class="news-item" @click="openNews(0)">
+          <div class="news-item-container">
+            <span class="news-idx">01</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline0)"></div>
+              <div class="news-meta" x-text="meta0"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(1)">
+          <div class="news-item-container">
+            <span class="news-idx">02</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline1)"></div>
+              <div class="news-meta" x-text="meta1"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(2)">
+          <div class="news-item-container">
+            <span class="news-idx">03</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline2)"></div>
+              <div class="news-meta" x-text="meta2"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(3)">
+          <div class="news-item-container">
+            <span class="news-idx">04</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline3)"></div>
+              <div class="news-meta" x-text="meta3"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(4)">
+          <div class="news-item-container">
+            <span class="news-idx">05</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline4)"></div>
+              <div class="news-meta" x-text="meta4"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(5)">
+          <div class="news-item-container">
+            <span class="news-idx">06</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline5)"></div>
+              <div class="news-meta" x-text="meta5"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(6)">
+          <div class="news-item-container">
+            <span class="news-idx">07</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline6)"></div>
+              <div class="news-meta" x-text="meta6"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(7)">
+          <div class="news-item-container">
+            <span class="news-idx">08</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline7)"></div>
+              <div class="news-meta" x-text="meta7"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(8)">
+          <div class="news-item-container">
+            <span class="news-idx">09</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline8)"></div>
+              <div class="news-meta" x-text="meta8"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(9)">
+          <div class="news-item-container">
+            <span class="news-idx">10</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline9)"></div>
+              <div class="news-meta" x-text="meta9"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(10)">
+          <div class="news-item-container">
+            <span class="news-idx">11</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline10)"></div>
+              <div class="news-meta" x-text="meta10"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(11)">
+          <div class="news-item-container">
+            <span class="news-idx">12</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline11)"></div>
+              <div class="news-meta" x-text="meta11"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(12)">
+          <div class="news-item-container">
+            <span class="news-idx">13</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline12)"></div>
+              <div class="news-meta" x-text="meta12"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(13)">
+          <div class="news-item-container">
+            <span class="news-idx">14</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline13)"></div>
+              <div class="news-meta" x-text="meta13"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(14)">
+          <div class="news-item-container">
+            <span class="news-idx">15</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline14)"></div>
+              <div class="news-meta" x-text="meta14"></div>
+            </div>
+          </div>
+        </div>
+        <div class="news-item" @click="openNews(15)">
+          <div class="news-item-container">
+            <span class="news-idx">16</span>
+            <div class="news-content">
+              <div class="news-headline" x-text.scramble="scramble(headline15)"></div>
+              <div class="news-meta" x-text="meta15"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-footer">
+      <p>Demo by <a href="/">nativelayer.dev</a></p>
+      <p>Powered by restate + reflectx</p>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { restate } from '/__src/libs/restate/restate.esm.min.js';
+    import { reflectx } from '/__src/libs/reflectx/reflectx.esm.min.js';
+    import { scramblePlugin } from '/__src/libs/reflectx/plugins/scramble/scramble.esm.min.js';
+
+    reflectx.use(scramblePlugin({
+      duration: 900,
+      chars: 'upperCase',
+      easing: 'easeOut'
+    }));
+
+    const newsCache = {};
+
+    function timeAgo(dateStr) {
+      const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000);
+      if (diff < 1) return 'just now';
+      if (diff < 60) return diff + 'm ago';
+      if (diff < 1440) return Math.floor(diff / 60) + 'h ago';
+      return Math.floor(diff / 1440) + 'd ago';
+    }
+
+    function parseTitle(raw) {
+      const lastDash = raw.lastIndexOf(' - ');
+      if (lastDash === -1) return { headline: raw, source: '' };
+      return {
+        headline: raw.substring(0, lastDash),
+        source: raw.substring(lastDash + 3)
+      };
+    }
+
+    async function fetchNews(topic) {
+      if (newsCache[topic]) return newsCache[topic];
+      const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(topic)}+when:1d&hl=en-US&gl=US&ceid=US:en`;
+      const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(rssUrl)}`;
+      const res = await fetch(proxyUrl);
+      if (!res.ok) throw new Error('Proxy error');
+      const text = await res.text();
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(text, 'text/xml');
+      const entries = [...xml.querySelectorAll('item')].slice(0, 16);
+      if (entries.length === 0) throw new Error('No results');
+      const items = entries.map(el => {
+        const raw = el.querySelector('title')?.textContent || '';
+        const pubDate = el.querySelector('pubDate')?.textContent || '';
+        const link = el.querySelector('link')?.textContent || '';
+        const parsed = parseTitle(raw);
+        return {
+          headline: parsed.headline.toUpperCase(),
+          source: parsed.source,
+          time: timeAgo(pubDate),
+          link
+        };
+      });
+      newsCache[topic] = items;
+      return items;
+    }
+
+    // --- State ---
+    const stateInit = {
+      activeTopic: '',
+      loading: false,
+      error: false,
+      errorMsg: ''
+    };
+    for (let i = 0; i < 16; i++) {
+      stateInit[`headline${i}`] = '';
+      stateInit[`meta${i}`] = '';
+    }
+
+    const state = restate(stateInit);
+
+    state.$computed({
+      topicLabel(s) {
+        if (s.loading) return 'RECEIVING...';
+        if (s.error) return 'ERROR';
+        return s.activeTopic ? s.activeTopic.toUpperCase() : '';
+      }
+    });
+
+    const newsLinks = [];
+
+    function applyNews(items) {
+      newsLinks.length = 0;
+      for (let i = 0; i < 16; i++) {
+        newsLinks[i] = items[i]?.link || '';
+      }
+      state.$set(s => {
+        for (let i = 0; i < 16; i++) {
+          const n = items[i];
+          s[`headline${i}`] = n ? n.headline : '';
+          s[`meta${i}`] = n ? n.source + '  ·  ' + n.time : '';
+        }
+        s.loading = false;
+        s.error = false;
+      });
+    }
+
+    state.$methods({
+      openNews(idx) {
+        const url = newsLinks[idx];
+        if (url) window.open(url, '_blank');
+      },
+      setTopic(topic) {
+        if (state.activeTopic === topic && !state.error) return;
+        state.$set(s => {
+          s.activeTopic = topic;
+          s.loading = true;
+          s.error = false;
+        });
+        fetchNews(topic)
+          .then(items => applyNews(items))
+          .catch(() => {
+            state.$set(s => {
+              s.loading = false;
+              s.error = true;
+              s.errorMsg = 'FEED UNAVAILABLE';
+              for (let i = 0; i < 16; i++) {
+                s[`headline${i}`] = '';
+                s[`meta${i}`] = '';
+              }
+            });
+          });
+      }
+    });
+
+    // --- Render ---
+    const app = document.getElementById('app');
+
+    function render() {
+      reflectx(state, app);
+      document.querySelectorAll('.topic-btn').forEach(btn => {
+        btn.classList.toggle('--active', btn.dataset.topic === state.activeTopic);
+      });
+      document.querySelector('.screen-count')?.classList.toggle('--loading', state.loading);
+    }
+
+    state.$onChange(() => render());
+    render();
+
+    setTimeout(() => { state.setTopic('business'); }, 200);
+  </script>
+</body>
+</html>

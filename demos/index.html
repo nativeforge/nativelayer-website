@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nativelayer.dev: demos</title>
+
+  <link rel="stylesheet" href="/__src/css/reset.css">
+  <link rel="stylesheet" href="/__src/css/fonts.css">
+  <link rel="stylesheet" href="/__src/css/global-styles.css">
+
+  <script type="module">
+    import {router} from "/__src/js/router.js";
+    router.start();
+  </script>
+
+  <script type="module">
+    import topBar from "/__src/components/top-bar.js"
+    import pageContainer from "/__src/components/page-container.js"
+    import flexContainer from "/__src/components/flex-container.js"
+    import baseHero from "/__src/components/base-hero.js"
+    import baseCard from "/__src/components/base-card.js"
+    import titleSection from "/__src/components/title-section.js"
+    import baseFooter from "/__src/components/base-footer.js"
+
+    customElements.define('top-bar', topBar)
+    customElements.define('page-container', pageContainer)
+    customElements.define('flex-container', flexContainer)
+    customElements.define('base-hero', baseHero)
+    customElements.define('base-card', baseCard)
+    customElements.define('title-section', titleSection)
+    customElements.define('base-footer', baseFooter)
+  </script>
+
+  <script type="module" scramble>
+    import { scrambleTo } from "/__src/libs/reflectx/plugins/scramble/scramble.esm.min.js";
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          scrambleTo(el, el.textContent.trim(), {
+            duration: 1600,
+            chars: 'upperCase',
+            easing: 'easeOut'
+          });
+          // observer.unobserve(el);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.grid-item-title').forEach(el => observer.observe(el));
+    });
+  </script>
+
+  <script type="module" attach-inline-styles>
+    import { processAccentColors } from "/__src/js/luminance.js";
+    processAccentColors();
+  </script>
+
+</head>
+
+
+<body>
+  <top-bar></top-bar>
+
+  <page-container style="gap: calc(var(--space-unit) * 16); padding-block-start: 0; padding-block-end: calc(var(--space-unit) * 24);">
+
+    <base-hero id="hero" style="align-items: flex-start; border-bottom: 1px dotted hsla(var(--fcolor-hsl) / 0.6); padding-block: calc(var(--space-unit) * 8);">
+      <h1 slot="title" style="font-size: var(--f-size-2xl)">
+        Demos
+      </h1>
+    </base-hero>
+
+    
+    <style>
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+        width: 100%;
+        gap: var(--page-padding-x);
+        margin: 0 auto;
+      }
+      .grid-item {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: hsl(var(--fcolor-hsl));
+      }
+      .--sticky {
+        position: sticky;
+        top: calc(var(--space-unit) * 4);
+      }
+      .--align-left {
+        align-items: flex-start;
+        text-align: left;
+      }
+      .grid-2-columns {
+        display: grid;
+        grid-template-columns: 16rem 1fr;
+        gap: calc(var(--space-unit) * 0);
+        width: 100%;
+        align-items: flex-start;
+        padding-block: calc(var(--space-unit) * 8);
+      }
+      .grid-item-logo {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        width: 100%;
+        min-width: 4rem;
+        max-width: 8rem;
+        height: 40%;
+        max-height: 8rem;
+        fill: hsl(var(--accent-color-hsl));
+      }
+      .--dimmed {
+        color: hsla(var(--fcolor-hsl) / 0.6);
+        font-weight: 300;
+        font-family: var(--ff-2);
+        line-height: 1.4;
+      }
+    </style>
+
+      <div class="grid-container --demos" style="grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));">
+
+        <base-card img-src="/__src/img/demos-thumbs/calculator.png" class="grid-item --sans-serif-title --top-center" link="/demos/calculator" accent-color-hsl="172 100% 45%">
+          <span slot="title">Calculator</span>
+          <span slot="description">Calculator for current basic arithmetic operations.</span>
+          <span slot="caption">restate + reflectx</span>
+        </base-card>
+
+        <base-card img-src="/__src/img/demos-thumbs/password-generator.png" class="grid-item --sans-serif-title --top-center" link="/demos/password-generator" accent-color-hsl="172 100% 45%">
+          <span slot="title">Password Generator</span>
+          <span slot="description">Password generator with strength meter and 5 parameters.</span>
+          <span slot="caption">restate + reflectx</span>
+        </base-card>
+
+        <base-card img-src="/__src/img/demos-thumbs/weather-report.png" class="grid-item --sans-serif-title --top-center" link="/demos/weather-report" accent-color-hsl="172 100% 45%">
+          <span slot="title">Weather Report</span>
+          <span slot="description">Weather station with live data, local time, and city selector.</span>
+          <span slot="caption">restate + reflectx</span>
+        </base-card>
+
+        <base-card img-src="/__src/img/demos-thumbs/radio-tuner.png" class="grid-item --sans-serif-title --top-center" link="/demos/radio-tuner" accent-color-hsl="350 100% 63%">
+          <span slot="title">Radio Tuner</span>
+          <span slot="description">Internet radio tuner with 30,000+ stations, genre presets, and live streaming.</span>
+          <span slot="caption">restate + reflectx</span>
+        </base-card>
+
+        <base-card img-src="/__src/img/demos-thumbs/breaking-news.png" class="grid-item --sans-serif-title --top-center" link="/demos/breaking-news" accent-color-hsl="220 100% 50%">
+          <span slot="title">Breaking News</span>
+          <span slot="description">News fetching terminal with topic filters.</span>
+          <span slot="caption">restate + reflectx + scramblePlugin</span>
+        </base-card>
+
+        <base-card img-src="/__src/img/demos-thumbs/stock-market.png"
+        class="grid-item --sans-serif-title --top-center" link="/demos/stock-market" accent-color-hsl="240 100% 50%">
+          <span slot="title">Stock Market</span>
+          <span slot="description">Live stock & crypto tracker with charts, favorites, and persistent watchlist.</span>
+          <span slot="caption">restate + reflectx + async + persistence</span>
+        </base-card>
+
+      </div>
+
+  </page-container>
+  
+  <base-footer>
+    <style>
+      base-footer {
+        font-size: var(--f-size-s);
+      }
+      base-footer .footer-column-title {
+        font-size: var(--f-size-s);
+        font-family: var(--ff-2, sans-serif);
+        color: hsla(var(--bcolor-hsl) / 0.9);
+        padding-bottom: calc(var(-space-unit)* 2);
+      }
+      base-footer .footer-column-link {
+        display: flex;
+        align-items: center;
+        font-size: var(--f-size-s);
+        column-gap: var(--space-unit);
+      }
+    </style>
+    <flex-container slot="column-1" style="gap: calc(var(--space-unit) *1.5);">
+      <style>
+        * { box-sizing: border-box; }
+        .footer-logo {
+          max-width: calc(var(--space-unit) * 7);
+          height: calc(var(--space-unit) * 4);
+          --current-stroke-width: 2px;
+        }
+        base-footer a{ 
+          text-decoration: none;
+          color: inherit;
+          font-size: var(--f-size-p);
+          font-weight: 400;
+          color: hsla(var(--bcolor-hsl) / 0.8);
+          transition: color 0.32s ease;
+          &:hover {
+            color: hsla(var(--bcolor-hsl) / 1);
+          }
+        }
+      </style>
+      <svg class="footer-logo">
+        <use href="/__src/img/sprite.svg#native-logo"></use>
+      </svg>
+      <p style="font-weight: 400; font-size: var(--f-size-s); color: hsla(var(--bcolor-hsl) / 0.8);">nativelayer is a project that aims to extend the web platform with carefully designed abstractions.</p>
+    </flex-container>
+    <flex-container slot="column-2" style="gap: calc(var(--space-unit) *2);">
+      <h3 class="footer-column-title">Pages</h3>
+      <a class="footer-column-link" href="/packages">Packages</a>
+      <a class="footer-column-link" href="/docs">Documentation</a>
+      <a class="footer-column-link" href="/demos">Demos</a>
+      <a class="footer-column-link" href="/about">About</a>
+    </flex-container>
+    <flex-container slot="column-3" style="gap: calc(var(--space-unit) *2);">
+      <h3 class="footer-column-title">Follow us</h3>
+      <!-- <a href="https://github.com/" target="_blank">GitHub</a> -->
+      <a class="footer-column-link" href="https://github.com/" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        GitHub
+      </a>
+    </flex-container>
+  </base-footer>
+
+</body>
+</html>

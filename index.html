@@ -3,141 +3,482 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>re-md test</title>
-  <script type="module">
-    import remd from "./js/re-md.js"
-    import card from "./js/card.js"
-    import docAside from "./js/doc-aside.js"
-    import docBody from "./js/doc-body.js"
+  <title>nativelayer.dev - system for the web platform</title>
   
-    customElements.define('re-md', remd)
-    customElements.define('card-el', card)
-    customElements.define('doc-aside', docAside)
-    customElements.define('doc-body', docBody)
+  <link rel="stylesheet" href="/__src/css/reset.css">
+  <link rel="stylesheet" href="/__src/css/fonts.css">
+  <link rel="stylesheet" href="/__src/css/global-styles.css">
+
+  <script type="module">
+    import topBar from "/__src/components/top-bar.js"
+    import pageContainer from "/__src/components/page-container.js"
+    import flexContainer from "/__src/components/flex-container.js"
+    import baseHero from "/__src/components/base-hero.js"
+    import baseQuote from "/__src/components/base-quote.js"
+    import baseButton from "/__src/components/base-button.js"
+    import baseFooter from "/__src/components/base-footer.js"
+
+    customElements.define('top-bar', topBar)
+    customElements.define('page-container', pageContainer)
+    customElements.define('flex-container', flexContainer)
+    customElements.define('base-hero', baseHero)
+    customElements.define('base-quote', baseQuote)
+    customElements.define('base-button', baseButton)
+    customElements.define('base-footer', baseFooter)
   </script>
-  <style>
-    body{
-      overflow-x: hidden;
-    }
-    re-md {
-      font-size: 1rem;
-      font-family: var(--ff-2, sans-serif);
-      max-width: var(--max-width, 920px);
-      margin: 0 auto;
-    }
-  </style>
+
+  <script type="module">
+    import {router} from "/__src/js/router.js";
+    router.start();
+  </script>
+
+  <script type="module" scramble>
+    import { scrambleTo } from "/__src/libs/reflectx/plugins/scramble/scramble.esm.min.js";
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          scrambleTo(el, el.textContent.trim(), {
+            duration: 1600,
+            chars: 'upperCase',
+            easing: 'easeInOut'
+          });
+          // observer.unobserve(el);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.grid-item-title').forEach(el => observer.observe(el));
+    });
+
+    
+  </script>
+
+  <script type="module">
+    import { waitElementsReady } from "/__src/libs/elements-ready/wait-elements-ready.js";
+
+    waitElementsReady(document.body, {
+      revealClass: "--ready",
+    });
+  </script>
+
 </head>
 
 
-<body>
-  <doc-aside triangle-color="red"></doc-aside>
-  <doc-body>
-    <re-md src="./how-to-use-restate.md">
-    </re-md>
-  </doc-body>
-  <!-- <re-md style="opacity: 0;">
-    # Markdown inline test
-    ## H2 level heading
-    ### h3 level heading
+  <body>
+    <top-bar></top-bar>
+    <page-container style="padding-block: 0;">
+      <style>
+        * { box-sizing: border-box; }
+      </style>
+      
+      <base-hero id="hero" style="align-items: flex-start;">
+        <h1 slot="title" style="font-size: var(--f-size-2xl)">
+          Web native
+          <br>
+          modular system.
+        </h1>
+        <p slot="description" style="font-size: var(--f-size-1);">
+          A composable layer for
+          <br>
+          modern web applications.
+        </p>
+      </base-hero>
 
-    This is a long paragraph because Serguei wants to see the thing working. It's a long paragraph to test the wrapping of the text.
+      <base-quote>
+        <h2 slot="quote">nativelayer extends the web with carefully designed abstractions.</h2>
+      </base-quote>
 
-    ::card-el
-    @default(Contenu par défault)
-    @title(This should go into title slot)
-    @body( this should go into body part slot man this is awesome)
-    ::
+      <flex-container id="section-core-principles" style="padding-block: calc(var(--space-unit) * 8); gap: calc(var(--space-unit) * 8);">
+        <style>
+          .grid-container {
+            display: grid;
+            width: 100%;
+            grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+            gap: calc(var(--space-unit) * 4);
+            counter-reset: item;
+          }
+          .grid-item {
+            display: flex;
+            flex: 1;
+            height: 100%;
+            & .--outline {
+              border-radius: calc(var(--space-unit) * 1/2);
+              padding: calc(var(--space-unit) * 4);
+              box-shadow: 0 0 0 1px hsla(var(--fcolor-hsl) / 0.4) inset;
+            }
+            &.--numbered {
+              position: relative;
+              &::before {
+                position: absolute;
+                left: calc(var(--space-unit) * 4);
+                top: calc(var(--space-unit) * -5);
+                content: counter(item) " ";
+                counter-increment: item;
+                font-family: var(--ff-3);
+                font-size: var(--f-size-4xl);
+                color: hsla(var(--fcolor-hsl) / 0.12);
+              }
+            }
+          }
+          .grid-item-content {
+            display: flex;
+            flex-direction: column;
+            gap: calc(var(--space-unit) * 3);
+          }
+          .grid-item-title {
+            font-family: var(--ff-3);
+            font-weight: 400;
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-decoration-color: hsla(var(--accent-color-hsl) / 0.6);
+            text-underline-offset: 6px;
+            text-decoration-style: dotted;
+            text-decoration-skip-ink: none;
+          }
+          .grid-item-description {
+            color: hsla(var(--fcolor-hsl) / 0.6);
+            font-family: var(--ff-2);
+            font-weight: 300;
+          }
+          .grid-item-description {
+            font-family: var(--ff-2);
+            font-weight: 300;
+          }
+          .grid-item-logo-home {
+            display: flex; justify-content: center; align-items: center;
+            width: 100%;
+            height: 100%;
+            max-width: 6rem;
+            max-height: 6rem;
+          }
+        </style>
 
-    Paragraph normal
+        <flex-container id="core-principles" style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 1); justify-content: center; align-items: center; text-align: center;">
+          <h2 style="font-size: var(--f-size-xl); font-weight: 600;">
+            Core principles
+          </h2>
+          <p style="font-weight: 300;">
+            Our philosophy: Primitives first.
+          </p>
+        </flex-container>
 
-    ## Undordered list
+        <div id="section-core-principles-items" class="grid-container" style="grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); row-gap: calc(var(--space-unit) * 8);">
+          
+          <div class="grid-item --numbered">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Platform-based</h3>
+              <p class="grid-item-description">
+                Web native APIs like DOM, URL, History, Fetch, and Events remain first-class.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item --numbered">
+            <flex-container>
+              <flex-container class="grid-item-content">
+                <h3 class="grid-item-title" style="font-family: var(--ff-3);">
+                  Optional tooling
+                </h3>
+                <p class="grid-item-description">
+                  Zero build by default. Tooling is optional, never mandatory.
+                </p>
+              </flex-container>
+            </flex-container>
+          </div>
+          <div class="grid-item --numbered">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Composable</h3>
+              <p class="grid-item-description">
+                  Each package stands alone. Together, they form a coherent layer.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item --numbered">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Extensible</h3>
+              <p class="grid-item-description">
+                Built to be extended without rewriting foundations.
+              </p>
+            </flex-container>
+          </div>
 
-    - liste element 1
-    - liste element 2
-    - liste element 3
+        </div>
 
-    ## Ordered list
 
-    1. liste element 1
-    2. liste element 2
-    3. liste element 3
+        <flex-container style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 2); justify-content: center; align-items: center; text-align: center;">
+          <h2 style="font-size: var(--f-size-xl); font-weight: 600;">
+            Features being
+            <br>
+            developed
+          </h2>
+          <p style="font-weight: 300;">
+            A quick list of some of the features<br>
+            being implemented.
+          </p>
+        </flex-container>
 
-    ## Inline code
-    This is `inline code`
+        <div class="grid-container">
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Routing</h3>
+              <p class="grid-item-description">
+                History API exists, but structured route matching, nested routing, guards, routing hooks are not standardized.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">State management</h3>
+              <p class="grid-item-description">
+                There is no standardized global or scoped state container model with predictable mutation semantics.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Templating</h3>
+              <p class="grid-item-description">
+                HTML lacks native declarative data binding. It requires imperative DOM manipulation or custom abstractions.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title" style="font-family: var(--ff-3);">Reactivity</h3>
+              <p class="grid-item-description">
+                No built-in dependency tracking system automatically propagates state changes to the DOM.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Declarative conditional rendering</h3>
+              <p class="grid-item-description">
+                Conditionals require imperative DOM mutation; there is no native structural directive system.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">List diffing and reconciliation</h3>
+              <p class="grid-item-description">
+                The DOM provides mutation primitives but no diffing engine for minimal update reconciliation.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Derived/Computed state</h3>
+              <p class="grid-item-description">
+                No standardized way to declare computed state that automatically recalculates based on dependencies.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Persistence strategy</h3>
+              <p class="grid-item-description">
+                No integrated persistence abstraction (localStorage sync, IndexedDB orchestration, versioning).
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Undo/redo state history</h3>
+              <p class="grid-item-description">
+                No built-in mutation history tracking or reversible state model.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Immutable state enforcement</h3>
+              <p class="grid-item-description">
+                JavaScript allows mutation by default. But no native immutable state discipline layer.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Loading strategies</h3>
+              <p class="grid-item-description">
+                There is no standardized loading strategies for managing the loading state of your components and pages.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Desgin System</h3>
+              <p class="grid-item-description">
+                CSS variables exist, but no structured design token governance and propagation system.
+              </p>
+            </flex-container>
+          </div>
 
-    ## Code block
+        </div>
 
-    ```javascript
-      class Component extends HTMLElement {
-        constructor() {
-          super();
+        <base-quote>
+          <h2 slot="quote">Cross browser, modular and scalable.</h2>
+        </base-quote>
+
+        <flex-container style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 2); justify-content: center; align-items: center; text-align: center;">
+          <h2 style="font-size: var(--f-size-xl); font-weight: 600;">
+            Our packages
+          </h2>
+          <p style="font-weight: 300;">
+            Framework-agnostic and fully compatible<br>
+            with the web platform
+          </p>
+          <base-button class="--light">
+            <a href="/packages">See demos</a>
+          </base-button>
+        </flex-container>
+
+        <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); grid-gap: calc(var(--space-unit) * 3); align-items: stretch; grid-auto-rows: 1fr;">
+          <div class="grid-item">
+            <flex-container class="grid-item-content --outline">
+              <svg id="routerx-logo" class="grid-item-logo-home" xmlns="http://www.w3.org/2000/svg" width="104" height="45" viewBox="0 0 104 45">
+                <defs>
+                  <style>
+                    #routerx-logo polygon{
+                      fill: hsl(var(--accent-color-hsl, 348 100% 50%));
+                    }
+                  </style>
+                </defs>
+                <polygon class="c" points="59.429 29.714 89.143 29.714 104 44.571 74.286 44.571 59.429 29.714"/>
+                <polygon class="c" points="0 0 29.714 0 44.571 14.857 14.857 14.857 0 0"/>
+                <polygon class="c" points="0 29.714 29.714 29.714 44.571 44.571 14.857 44.571 0 29.714"/>
+                <polygon class="c" points="14.857 14.857 44.571 14.857 59.429 29.714 29.714 29.714 14.857 14.857"/>
+                <polygon class="c" points="104 14.857 74.286 14.857 59.429 29.714 89.143 29.714 104 14.857"/>
+                <polygon class="c" points="104 14.857 74.286 14.857 59.429 0 89.143 0 104 14.857"/>
+              </svg>
+
+              <h3 class="grid-item-title" style="font-family: var(--ff-3);">routerx</h3>
+              <p class="grid-item-description">
+                Router library for traditional multi-page websites (MPA), simple SPAs, or static hosting environments.
+              </p>
+              <base-button class="--light">View package</base-button>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content --outline">
+              <svg id="restate-logo" class="grid-item-logo-home" xmlns="http://www.w3.org/2000/svg" width="64" height="44" viewBox="0 0 64 44">
+                <defs>
+                  <style>
+                    #restate-logo polygon{
+                      fill: hsl(var(--accent-color-hsl, 220 100% 50%));
+                    }
+                  </style>
+                </defs>
+                <polygon class="c" points="32 11 10.667 11 0 22 21.333 22 32 11"/>
+                <polygon class="c" points="64 22 42.667 22 32 33 53.333 33 64 22"/>
+                <polygon class="c" points="21.333 0 42.667 0 53.333 11 32 11 21.333 0"/>
+                <polygon class="c" points="42.667 44 21.333 44 10.667 33 32 33 42.667 44"/>
+              </svg>
+              
+              <h3 class="grid-item-title" style="font-family: var(--ff-3);">restate</h3>
+              <p class="grid-item-description">
+                A minimal but extensible reactive state management library built on ES6 proxies.
+              </p>
+              <base-button class="--light">View package</base-button>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content --outline">
+              <svg id="reflectx-logo" class="grid-item-logo-home" xmlns="http://www.w3.org/2000/svg" width="104" height="44.57" viewBox="0 0 104 44.57">
+                <defs>
+                  <style>
+                    #reflectx-logo polygon{
+                      fill: hsl(var(--accent-color-hsl, 130 100% 50%));
+                    }
+                  </style>
+                </defs>
+                <polygon points="44.57 29.71 14.86 29.71 0 44.57 29.71 44.57 44.57 29.71"/>
+                <polygon points="104 14.86 74.29 14.86 59.43 29.71 89.14 29.71 104 14.86"/>
+                <polygon points="59.43 29.71 89.14 29.71 104 44.57 74.29 44.57 59.43 29.71"/>
+                <polygon points="0 0 29.71 0 44.57 14.86 14.86 14.86 0 0"/>
+                <polygon points="29.71 0 59.43 0 74.29 14.86 44.57 14.86 29.71 0"/>
+              </svg>
+              
+              <h3 class="grid-item-title" style="font-family: var(--ff-3);">reflectx</h3>
+              <p class="grid-item-description">
+                Templating and DOM binding JS library for Custom Elements (Web components) and plain HTML.
+              </p>
+              <base-button class="--light">View package</base-button>
+            </flex-container>
+          </div>
+        </div>
+        
+        <flex-container style="padding-block: calc(var(--space-unit) * 2); gap: calc(var(--space-unit) * 2); justify-content: center; align-items: center; text-align: center;">
+        </flex-container>
+        
+      </flex-container>
+
+    </page-container>
+
+    <base-footer>
+      <style>
+        base-footer {
+          font-size: var(--f-size-s);
         }
-
-        connectedCallback() {
-          this.innerHTML = 'Hello World';
+        base-footer .footer-column-title {
+          font-size: var(--f-size-s);
+          font-family: var(--ff-2, sans-serif);
+          color: hsla(var(--bcolor-hsl) / 0.9);
+          padding-bottom: calc(var(-space-unit)* 2);
         }
-      }
+        base-footer .footer-column-link {
+          display: flex;
+          align-items: center;
+          font-size: var(--f-size-s);
+          column-gap: var(--space-unit);
+        }
+      </style>
+      <flex-container slot="column-1" style="gap: calc(var(--space-unit) *1.5);">
+        <style>
+          * { box-sizing: border-box; }
+          .footer-logo {
+            max-width: calc(var(--space-unit) * 7);
+            height: calc(var(--space-unit) * 4);
+            --current-stroke-width: 2px;
+          }
+          base-footer a{ 
+            text-decoration: none;
+            color: inherit;
+            font-size: var(--f-size-p);
+            font-weight: 400;
+            color: hsla(var(--bcolor-hsl) / 0.8);
+            transition: color 0.32s ease;
+            &:hover {
+              color: hsla(var(--bcolor-hsl) / 1);
+            }
+          }
+        </style>
+        <svg class="footer-logo">
+          <use href="/__src/img/sprite.svg#native-logo"></use>
+        </svg>
+        <p style="font-weight: 400; font-size: var(--f-size-s); color: hsla(var(--bcolor-hsl) / 0.8);"> is a project that aims to improve native web development, building on top of the web plateform primitives.</p>
+      </flex-container>
+      <flex-container slot="column-2" style="gap: calc(var(--space-unit) *2);">
+        <h3 class="footer-column-title">Pages</h3>
+        <a class="footer-column-link" href="/packages">Packages</a>
+        <a class="footer-column-link" href="/docs">Documentation</a>
+        <a class="footer-column-link" href="/demos">Demos</a>
+        <a class="footer-column-link" href="/about">About</a>
+      </flex-container>
+      <flex-container slot="column-3" style="gap: calc(var(--space-unit) *2);">
+        <h3 class="footer-column-title">Find us</h3>
+          <!-- <a href="https://github.com/" target="_blank">GitHub</a> -->
+        <a class="footer-column-link" href="https://github.com/" target="_blank">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+      </flex-container>
+    </base-footer>
 
-      customElements.define('my-component', Component);
-
-      <my-component></my-component>
-    ```
-
-    ## Table
-
-    | Header 1 | Header 2 | Header 3 | Header 3 | Header 3 | Header 3 | Header 3 |
-    |----------|----------|----------|----------|----------|----------|----------|
-    | Row 1    | Data 1   | Data 2   | Data 3   | Data 4   | Data 5   | Data 6   |
-    | Row 2    | Data 3   | Data 4   | Data 5   | Data 6   | Data 7   | Data 8   |
-
-    ## Blockquote
-
-    > This is a blockquote
-
-    ## Link
-
-    [This is a link](https://www.google.com)
-
-    ## Image
-
-    ![This is an image](https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png)
-
-    ## Strong
-
-    **This is a strong text**
-
-    ## Emphasis
-
-    *This is an emphasis text*
-
-    ## Strike
-
-    ~~This is a strike text~~
-
-    ## Superscript
-
-    2^10^
-
-    ## Subscript
-
-    2~10~
-
-    ## Horizontal Rule
-
-    ---
-
-    ## Line Break
-
-    This is a line break<br>This is a line break
-
-    ## Custom Video Element
-
-    ::video-el{style="width: 100%; height: 100%;"}
-    <video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" controls></video>
-    ::
-  </re-md> -->
-
-  
-
-</body>
+  </body>
 </html>

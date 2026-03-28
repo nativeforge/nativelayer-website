@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="b" data-name="v" xmlns="http://www.w3.org/2000/svg" width="64" height="44" viewBox="0 0 64 44">
+  <defs>
+    <style>
+      .c {
+        fill: #05f;
+      }
+    </style>
+  </defs>
+  <polygon class="c" points="32 11 10.667 11 0 22 21.333 22 32 11"/>
+  <polygon class="c" points="64 22 42.667 22 32 33 53.333 33 64 22"/>
+  <polygon class="c" points="21.333 0 42.667 0 53.333 11 32 11 21.333 0"/>
+  <polygon class="c" points="42.667 44 21.333 44 10.667 33 32 33 42.667 44"/>
+</svg>

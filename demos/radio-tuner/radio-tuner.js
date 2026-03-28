@@ -1,0 +1,807 @@
+import { restate } from '/__src/libs/restate/restate.esm.min.js';
+import { reflectx } from '/__src/libs/reflectx/reflectx.esm.min.js';
+
+const API = 'https://de1.api.radio-browser.info/json';
+
+function debounce(fn, ms) {
+  let timer;
+  return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
+}
+
+async function fetchStations(params) {
+  const url = new URL(`${API}/stations/search`);
+  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+  url.searchParams.set('limit', '30');
+  url.searchParams.set('order', 'votes');
+  url.searchParams.set('reverse', 'true');
+  url.searchParams.set('hidebroken', 'true');
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('API error');
+  return res.json();
+}
+
+const TEMPLATE = document.createElement('template');
+TEMPLATE.innerHTML = `
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :host {
+    --bg: #1a1826;
+    --bg-dark: #0d0c12;
+    --surface: #262335;
+    --surface-2: #2e2b4285;
+    --surface-hover: #3a3650;
+
+    --accent: #ff4466;
+    --accent-light: #ff6688;
+    --accent-dark: #cc3355;
+    --accent-dim: #ff446644;
+    --accent-dim-dark: #cc335544;
+    --accent-dim-darker: #99224422;
+    --accent-glow: #ff446655;
+    --accent-scanline: rgba(255, 68, 102, 0.06);
+
+    --text: #e8d0e0;
+    --text-dim: #8a7f95;
+    --white: #fff;
+
+    --secondary: #ffc852;
+    --secondary-dim: #aa8533;
+
+    --danger: #ff2244;
+    --danger-glow: rgba(255, 34, 68, 0.4);
+
+    --border-dim: #352f48;
+
+    --cut: 12px;
+    --cut-sm: 8px;
+    --gap: 6px;
+
+    display: block;
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--text);
+  }
+
+  .panel {
+    width: 100%;
+    max-width: 420px;
+    clip-path: polygon(
+      var(--cut) 0%, calc(100% - var(--cut)) 0%,
+      100% var(--cut), 100% calc(100% - var(--cut)),
+      calc(100% - var(--cut)) 100%, var(--cut) 100%,
+      0% calc(100% - var(--cut)), 0% var(--cut)
+    );
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    position: relative;
+    background: var(--surface);
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.25rem;
+  }
+
+  .panel-header .brand {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.8;
+  }
+
+  .panel-header .model {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+  }
+
+  .search-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    position: relative;
+  }
+
+  .search-input {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--accent-dim-darker);
+    padding: 0.6rem 0.75rem;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .search-input::placeholder {
+    color: var(--text-dim);
+    opacity: 0.5;
+  }
+
+  .search-input:focus {
+    border-color: var(--accent);
+  }
+
+  .genres {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 0.15rem 0;
+    scrollbar-width: none;
+  }
+  .genres::-webkit-scrollbar { display: none; }
+
+  .genre-btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    border: none;
+    cursor: pointer;
+    padding: 0.35rem 0.6rem;
+    color: var(--text-dim);
+    background: var(--surface-2);
+    clip-path: polygon(
+      4px 0%, 100% 0%,
+      100% calc(100% - 4px), calc(100% - 4px) 100%,
+      0% 100%, 0% 4px
+    );
+    transition: background 0.2s ease, color 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    flex-shrink: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .genre-btn:hover {
+    color: var(--accent);
+    background: var(--surface-hover);
+  }
+
+  .display {
+    background: var(--bg);
+    padding: 1.25rem;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    border-top: 4px solid var(--accent-dim-darker);
+    border-bottom: 3px solid var(--accent-dim-dark);
+    border-left: 4px solid var(--accent-dim-darker);
+    border-right: 1px solid var(--accent-dim);
+  }
+
+  .display::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      var(--accent-scanline) 2px,
+      var(--accent-scanline) 4px
+    );
+    pointer-events: none;
+  }
+
+  .display-state {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+  }
+
+  .display-state.--visible {
+    display: flex;
+  }
+
+  .display-prompt {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .display-prompt.--danger { color: var(--danger); }
+
+  .display-sub {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .display-prompt.--blink {
+    animation: blink 1.2s ease-in-out infinite;
+  }
+
+  .now-playing-label {
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.15rem;
+  }
+
+  .station-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-shadow: 0 0 15px var(--accent-glow);
+    text-align: center;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .station-info {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .station-bitrate {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    color: var(--secondary);
+    letter-spacing: 0.12em;
+  }
+
+  .eq-bars {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    height: 18px;
+    margin-top: 0.3rem;
+  }
+
+  .eq-bars span {
+    display: block;
+    width: 3px;
+    height: 3px;
+    background: var(--accent-dim);
+    transition: height 0.15s ease;
+  }
+
+  .eq-bars.--active span {
+    background: var(--accent);
+    animation: eq-pulse 0.5s ease-in-out infinite alternate;
+  }
+
+  .eq-bars.--active span:nth-child(1) { animation-delay: 0s; }
+  .eq-bars.--active span:nth-child(2) { animation-delay: 0.12s; }
+  .eq-bars.--active span:nth-child(3) { animation-delay: 0.24s; }
+  .eq-bars.--active span:nth-child(4) { animation-delay: 0.18s; }
+  .eq-bars.--active span:nth-child(5) { animation-delay: 0.06s; }
+
+  @keyframes eq-pulse {
+    0% { height: 3px; }
+    100% { height: 18px; }
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: var(--gap);
+  }
+
+  .btn-ctrl {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    border: none;
+    cursor: pointer;
+    padding: 0.6rem 1rem;
+    color: var(--text);
+    background: var(--surface-2);
+    clip-path: polygon(
+      var(--cut-sm) 0%, 100% 0%,
+      100% calc(100% - var(--cut-sm)), calc(100% - var(--cut-sm)) 100%,
+      0% 100%, 0% var(--cut-sm)
+    );
+    transition: background 0.2s ease, color 0.2s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-ctrl:active {
+    transform: translateY(1px) scale(0.97);
+  }
+
+  .btn-ctrl.--play {
+    background: var(--accent);
+    color: var(--bg);
+    padding: 0.6rem 1.2rem;
+  }
+
+  .btn-ctrl.--play:hover {
+    background: var(--accent-light);
+  }
+
+  .btn-ctrl.--stop:hover {
+    color: var(--accent);
+    background: var(--surface-hover);
+  }
+
+  .btn-ctrl.--fav {
+    font-size: 1rem;
+    padding: 0.5rem 0.8rem;
+  }
+
+  .btn-ctrl.--fav.--active {
+    color: var(--accent);
+  }
+
+  .btn-ctrl.--fav:hover {
+    color: var(--accent-light);
+  }
+
+  .volume-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .volume-label {
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    flex-shrink: 0;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--border-dim);
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--accent);
+    cursor: pointer;
+    clip-path: polygon(3px 0%, 100% 0%, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0% 100%, 0% 3px);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+  }
+
+  .station-list {
+    display: none;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--bg-dark);
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-dim) var(--bg);
+  }
+
+  .station-list.--visible {
+    display: flex;
+  }
+
+  .station-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    padding: 0.8rem 0.7rem;
+    background: var(--surface-2);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    user-select: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .station-item:hover {
+    background: var(--surface-hover);
+    color: var(--accent);
+  }
+
+  .station-item.--playing {
+    background: var(--accent);
+    color: var(--white);
+  }
+
+  .station-item.--playing:hover {
+    color: var(--white);
+  }
+
+  .favorites-strip {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.25rem 0;
+    scrollbar-width: none;
+  }
+  .favorites-strip::-webkit-scrollbar { display: none; }
+
+  .fav-item {
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+    padding: 0.2rem 0.5rem;
+    background: var(--surface-2);
+    border-radius: 4px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+
+  .fav-item:hover {
+    color: var(--accent);
+  }
+
+  .panel-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    padding-top: 0.15rem;
+  }
+
+  .panel-footer p {
+    font-size: .8rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .panel-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    opacity: 0.5;
+  }
+</style>
+
+<div class="panel">
+
+  <div class="panel-header">
+    <span class="brand">nativelayer</span>
+    <span class="model">NX-RADIO v1.0</span>
+  </div>
+
+  <div class="search-section">
+    <input type="text" class="search-input" placeholder="Search stations..." autocomplete="off">
+  </div>
+
+  <div class="genres">
+    <button class="genre-btn" @click="searchTag('pop')">Pop</button>
+    <button class="genre-btn" @click="searchTag('rock')">Rock</button>
+    <button class="genre-btn" @click="searchTag('jazz')">Jazz</button>
+    <button class="genre-btn" @click="searchTag('electronic')">Electronic</button>
+    <button class="genre-btn" @click="searchTag('classical')">Classical</button>
+    <button class="genre-btn" @click="searchTag('news')">News</button>
+    <button class="genre-btn" @click="searchTag('hiphop')">Hip-Hop</button>
+    <button class="genre-btn" @click="searchTag('latin')">Latin</button>
+    <button class="genre-btn" @click="searchTag('ambient')">Ambient</button>
+    <button class="genre-btn" @click="searchTag('metal')">Metal</button>
+  </div>
+
+  <div class="display">
+    <div class="display-state" x-class="(--visible, isIdle)">
+      <div class="display-prompt">NO SIGNAL</div>
+      <div class="display-sub">Search or pick a genre to tune in</div>
+    </div>
+
+    <div class="display-state" x-class="(--visible, isBuffering)">
+      <div class="display-prompt --blink">TUNING IN</div>
+      <div class="display-sub" x-text="stationName"></div>
+    </div>
+
+    <div class="display-state" x-class="(--visible, hasStation)">
+      <div class="now-playing-label">NOW PLAYING</div>
+      <div class="station-name" x-text="stationName"></div>
+      <div class="station-info" x-text="stationInfo"></div>
+      <div class="station-bitrate" x-text="bitrateLabel"></div>
+      <div class="eq-bars" x-class="(--active, playing)">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <div class="display-state" x-class="(--visible, showError)">
+      <div class="display-prompt --danger">SIGNAL LOST</div>
+      <div class="display-sub" x-text="errorMsg"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn-ctrl --play" @click="togglePlay()" x-text="playLabel">PLAY</button>
+    <button class="btn-ctrl --stop" @click="stop()">STOP</button>
+    <button class="btn-ctrl --fav" x-class="(--active, isFavorited)" @click="toggleFav()">&#9829;</button>
+    <div class="volume-wrap">
+      <span class="volume-label">VOL</span>
+      <input type="range" min="0" max="100" class="volume-range" value="80">
+    </div>
+  </div>
+
+  <div class="station-list" x-class="(--visible, hasStationList)">
+    <template x-for="(label, idx) in stationLabels">
+      <div class="station-item" x-key="idx" x-text="label" @click="pickStation(idx)"></div>
+    </template>
+  </div>
+
+  <div class="favorites-strip" x-if="favorites.length > 0">
+    <template x-for="(name, idx) in favorites">
+      <div class="fav-item" x-key="idx" x-text="name" @click="playFavorite(idx)"></div>
+    </template>
+  </div>
+
+  <div class="panel-footer">
+    <p>Demo by <a href="/">nativelayer.dev</a></p>
+    <p>Powered by restate + reflectx</p>
+  </div>
+
+</div>
+`;
+
+export default class RadioTuner extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this._audio = new Audio();
+    this._audio.crossOrigin = 'anonymous';
+    this._audio.volume = 0.8;
+    this._stationData = [];
+    this._favLookup = {};
+  }
+
+  connectedCallback() {
+    this.shadowRoot.appendChild(TEMPLATE.content.cloneNode(true));
+    this._setup();
+  }
+
+  disconnectedCallback() {
+    this._audio.pause();
+    this._audio.src = '';
+    this._audio.removeEventListener('playing', this._onPlaying);
+    this._audio.removeEventListener('pause', this._onPause);
+    this._audio.removeEventListener('error', this._onError);
+  }
+
+  _setup() {
+    const root = this.shadowRoot;
+    const panel = root.querySelector('.panel');
+    const searchInput = root.querySelector('.search-input');
+    const volumeRange = root.querySelector('.volume-range');
+    const audio = this._audio;
+    const self = this;
+
+    const state = restate({
+      stationLabels: [],
+      searchLoading: false,
+      stationName: '',
+      stationCountry: '',
+      stationTags: '',
+      stationBitrate: 0,
+      stationCodec: '',
+      stationUrl: '',
+      playing: false,
+      buffering: false,
+      error: false,
+      errorMsg: '',
+      favorites: [],
+      playingIdx: -1
+    });
+
+    this._state = state;
+
+    // --- Audio events ---
+    this._onPlaying = () => {
+      state.$set(s => { s.playing = true; s.buffering = false; s.error = false; });
+    };
+    this._onPause = () => { state.playing = false; };
+    this._onError = () => {
+      state.$set(s => { s.playing = false; s.buffering = false; s.error = true; s.errorMsg = 'STREAM UNAVAILABLE'; });
+    };
+
+    audio.addEventListener('playing', this._onPlaying);
+    audio.addEventListener('pause', this._onPause);
+    audio.addEventListener('error', this._onError);
+
+    // --- Helpers ---
+    function applyResults(results) {
+      state.playingIdx = -1;
+      self._stationData = results.filter(r => r.url_resolved).map(r => ({
+        name: (r.name || '').trim(),
+        url: r.url_resolved,
+        country: r.country || '',
+        tags: r.tags || '',
+        bitrate: r.bitrate || 0,
+        codec: r.codec || ''
+      }));
+      state.stationLabels = self._stationData.map(s => {
+        let label = s.name;
+        if (s.country) label += '  ·  ' + s.country;
+        return label;
+      });
+    }
+
+    async function searchByName(query) {
+      if (query.length < 2) { self._stationData = []; state.stationLabels = []; return; }
+      state.searchLoading = true;
+      try {
+        applyResults(await fetchStations({ name: query }));
+      } catch {
+        self._stationData = [];
+        state.stationLabels = [];
+      }
+      state.searchLoading = false;
+    }
+
+    async function searchByTag(tag) {
+      state.searchLoading = true;
+      searchInput.value = '';
+      try {
+        applyResults(await fetchStations({ tag }));
+      } catch {
+        self._stationData = [];
+        state.stationLabels = [];
+      }
+      state.searchLoading = false;
+    }
+
+    function tuneStation(station) {
+      audio.src = station.url;
+      audio.play().catch(() => {});
+      state.$set(s => {
+        s.stationName = station.name;
+        s.stationCountry = station.country;
+        s.stationTags = station.tags;
+        s.stationBitrate = station.bitrate;
+        s.stationCodec = station.codec;
+        s.stationUrl = station.url;
+        s.buffering = true;
+        s.error = false;
+        s.playing = false;
+      });
+    }
+
+    // --- Input listeners ---
+    const debouncedSearch = debounce(searchByName, 500);
+    searchInput.addEventListener('input', (e) => debouncedSearch(e.target.value.trim()));
+    volumeRange.addEventListener('input', () => { audio.volume = volumeRange.value / 100; });
+
+    // --- Computed ---
+    state.$computed({
+      isIdle(s) { return !s.stationName && !s.buffering && !s.error; },
+      isBuffering(s) { return s.buffering && !s.error; },
+      hasStation(s) { return !!s.stationName && !s.buffering && !s.error; },
+      showError(s) { return s.error; },
+      hasStationList(s) { return s.stationLabels.length > 0; },
+      stationInfo(s) {
+        const parts = [];
+        if (s.stationCountry) parts.push(s.stationCountry);
+        if (s.stationTags) {
+          const tags = s.stationTags.split(',').slice(0, 3).map(t => t.trim()).filter(Boolean).join(', ');
+          if (tags) parts.push(tags);
+        }
+        return parts.join('  ·  ') || '';
+      },
+      bitrateLabel(s) {
+        const parts = [];
+        if (s.stationBitrate > 0) parts.push(s.stationBitrate + ' kbps');
+        if (s.stationCodec) parts.push(s.stationCodec);
+        return parts.join('  ·  ') || '';
+      },
+      playLabel(s) { return s.playing ? 'PAUSE' : 'PLAY'; },
+      isFavorited(s) { return s.favorites.includes(s.stationName); }
+    });
+
+    // --- Methods ---
+    state.$methods({
+      pickStation(idx) {
+        const station = self._stationData[idx];
+        if (!station) return;
+        state.playingIdx = idx;
+        tuneStation(station);
+      },
+      searchTag(tag) { searchByTag(tag); },
+      togglePlay() {
+        if (!state.stationUrl) return;
+        if (state.playing) audio.pause();
+        else audio.play().catch(() => {});
+      },
+      stop() {
+        audio.pause();
+        audio.src = '';
+        state.$set(s => {
+          s.playing = false;
+          s.buffering = false;
+          s.stationName = '';
+          s.stationCountry = '';
+          s.stationTags = '';
+          s.stationBitrate = 0;
+          s.stationCodec = '';
+          s.stationUrl = '';
+          s.error = false;
+          s.playingIdx = -1;
+        });
+      },
+      toggleFav() {
+        const name = state.stationName;
+        if (!name) return;
+        const favs = [...state.favorites];
+        const idx = favs.indexOf(name);
+        if (idx > -1) {
+          favs.splice(idx, 1);
+          delete self._favLookup[name];
+        } else {
+          self._favLookup[name] = {
+            name,
+            url: state.stationUrl,
+            country: state.stationCountry,
+            tags: state.stationTags,
+            bitrate: state.stationBitrate,
+            codec: state.stationCodec
+          };
+          favs.unshift(name);
+          if (favs.length > 12) {
+            const removed = favs.pop();
+            delete self._favLookup[removed];
+          }
+        }
+        state.favorites = favs;
+      },
+      playFavorite(idx) {
+        const name = state.favorites[idx];
+        const data = self._favLookup[name];
+        if (!data) return;
+        tuneStation(data);
+      }
+    });
+
+    // --- Render ---
+    function render() {
+      reflectx(state, panel);
+      const items = panel.querySelectorAll('.station-item');
+      items.forEach((el, i) => el.classList.toggle('--playing', i === state.playingIdx));
+    }
+
+    state.$onChange(() => render());
+    render();
+  }
+}

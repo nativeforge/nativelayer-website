@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>re-md</title>
+
+  <link rel="stylesheet" href="/__src/css/reset.css">
+  <link rel="stylesheet" href="/__src/css/fonts.css">
+  <link rel="stylesheet" href="/__src/css/global-styles.css">
+
+  <script type="module">
+    import {router} from "/__src/js/router.js";
+    router.start();
+  </script>
+
+  <script type="module">
+    import topBar from "/__src/components/top-bar.js"
+    import baseHero from "/__src/components/base-hero.js"
+    import pageContainer from "/__src/components/page-container.js"
+    import flexContainer from "/__src/components/flex-container.js"
+    import baseFooter from "/__src/components/base-footer.js"
+    import baseCard from "/__src/components/base-card.js"
+    import titleSection from "/__src/components/title-section.js"
+
+    customElements.define('top-bar', topBar)
+    customElements.define('base-hero', baseHero)
+    customElements.define('page-container', pageContainer)
+    customElements.define('flex-container', flexContainer)
+    customElements.define('base-footer', baseFooter)
+    customElements.define('base-card', baseCard)
+    customElements.define('title-section', titleSection)
+  </script>
+
+  <script type="module" attach-inline-styles>
+    import { processAccentColors } from "/__src/js/luminance.js";
+    processAccentColors();
+  </script>
+
+</head>
+
+
+<body >
+  <top-bar></top-bar>
+
+  <page-container style="gap: calc(var(--space-unit) * 16); padding-block-start: 0; padding-block-end: calc(var(--space-unit) * 24);">
+    
+    <style>
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+        width: 100%;
+        gap: var(--page-padding-x);
+        margin: 0 auto;
+      }
+      .grid-item {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: hsl(var(--fcolor-hsl));
+      }
+      .--sticky {
+        position: sticky;
+        top: calc(var(--space-unit) * 4);
+      }
+      .--align-left {
+        align-items: flex-start;
+        text-align: left;
+      }
+      .grid-2-columns {
+        display: grid;
+        grid-template-columns: 14rem 1fr;
+        gap: calc(var(--space-unit) * 8);
+        width: 100%;
+        align-items: flex-start;
+        padding-block: calc(var(--space-unit) * 8);
+      }
+      .grid-item-logo {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        width: 100%;
+        min-width: 4rem;
+        max-width: 6rem;
+        height: 40%;
+        max-height: 6rem;
+        fill: hsl(var(--accent-color-hsl));
+      }
+      .--dimmed {
+        color: hsla(var(--fcolor-hsl) / 0.6);
+        font-weight: 300;
+        font-family: var(--ff-2);
+        line-height: 1.4;
+      }
+    </style>
+
+
+    <base-hero id="hero" style="align-items: flex-start; border-bottom: 1px dotted hsla(var(--fcolor-hsl) / 0.6); padding-block: calc(var(--space-unit) * 8);">
+      <h1 slot="title" style="font-size: var(--f-size-2xl)">
+        Docs
+      </h1>
+      <!-- <p slot="description" style="font-size: var(--f-size-1); font-family: var(--ff-2);">
+        Everything you need to know about the nativelayer.
+      </p> -->
+    </base-hero>
+
+    <div class="grid-container" style="grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr));">
+
+      <base-card class="grid-item" flex-direction="row" link="/docs/routerx" img-src="" accent-color-hsl="348 100% 50%">
+        <span slot="title">routerx</span>
+        <span slot="description">Router for traditional multi-page websites (MPA), simple SPAs, or static hosting environments.</span>
+        <span slot="caption">~ 3,4 Kb</span>
+
+        <svg id="svg-logo-routerx" class="grid-item-logo" slot="logo" xmlns="http://www.w3.org/2000/svg" width="104" height="45" viewBox="0 0 104 45">
+          <defs>
+            <style>
+              .svg-logo-routerx {
+                fill: hsl(var(--accent-color-hsl, 348 100% 50%));
+              }
+            </style>
+          </defs>
+          <polygon class="svg-logo-routerx" points="59.429 29.714 89.143 29.714 104 44.571 74.286 44.571 59.429 29.714"/>
+          <polygon class="svg-logo-routerx" points="0 0 29.714 0 44.571 14.857 14.857 14.857 0 0"/>
+          <polygon class="svg-logo-routerx" points="0 29.714 29.714 29.714 44.571 44.571 14.857 44.571 0 29.714"/>
+          <polygon class="svg-logo-routerx" points="14.857 14.857 44.571 14.857 59.429 29.714 29.714 29.714 14.857 14.857"/>
+          <polygon class="svg-logo-routerx" points="104 14.857 74.286 14.857 59.429 29.714 89.143 29.714 104 14.857"/>
+          <polygon class="svg-logo-routerx" points="104 14.857 74.286 14.857 59.429 0 89.143 0 104 14.857"/>
+        </svg>
+      </base-card>
+      <base-card class="grid-item" flex-direction="row" link="/docs/restate" img-src="" accent-color-hsl="220 100% 50%">
+
+        <span slot="title">restate</span>
+        <span slot="description">Reactive state management library built on ES6 Proxies with a clear and simple API.</span>
+        <span slot="caption">~ 2,8 Kb</span>
+
+        <svg id="svg-logo-restate" class="grid-item-logo" slot="logo" xmlns="http://www.w3.org/2000/svg" width="64" height="44" viewBox="0 0 64 44">
+          <defs>
+            <style>
+              .svg-logo-restate {
+                fill: hsl(var(--accent-color-hsl, 220 100% 50%));
+              }
+            </style>
+          </defs>
+          <polygon class="svg-logo-restate" points="32 11 10.667 11 0 22 21.333 22 32 11"/>
+          <polygon class="svg-logo-restate" points="64 22 42.667 22 32 33 53.333 33 64 22"/>
+          <polygon class="svg-logo-restate" points="21.333 0 42.667 0 53.333 11 32 11 21.333 0"/>
+          <polygon class="svg-logo-restate" points="42.667 44 21.333 44 10.667 33 32 33 42.667 44"/>
+        </svg>
+      </base-card>
+      <base-card class="grid-item" flex-direction="row" link="/docs/reflectx" img-src="" accent-color-hsl="130 100% 50%">
+        <span slot="title">reflectx</span>
+        <span slot="description">Templating and DOM binding JS library for Custom Elements (Web components) and plain HTML.</span>
+        <span slot="caption">~ 5,4 Kb</span>
+
+        <svg slot="logo" id="svg-logo-reflectx" class="grid-item-logo"  xmlns="http://www.w3.org/2000/svg" width="104" height="44.57" viewBox="0 0 104 44.57">
+          <defs>
+            <style>
+              .svg-logo-reflectx {
+                fill: hsl(var(--accent-color-hsl, 130 100% 50%));
+              }
+            </style>
+          </defs>
+          <polygon class="svg-logo-reflectx" points="44.57 29.71 14.86 29.71 0 44.57 29.71 44.57 44.57 29.71"/>
+          <polygon class="svg-logo-reflectx" points="104 14.86 74.29 14.86 59.43 29.71 89.14 29.71 104 14.86"/>
+          <polygon class="svg-logo-reflectx" points="59.43 29.71 89.14 29.71 104 44.57 74.29 44.57 59.43 29.71"/>
+          <polygon class="svg-logo-reflectx" points="0 0 29.71 0 44.57 14.86 14.86 14.86 0 0"/>
+          <polygon class="svg-logo-reflectx" points="29.71 0 59.43 0 74.29 14.86 44.57 14.86 29.71 0"/>
+        </svg>
+      </base-card>
+      <base-card class="grid-item" flex-direction="row" link="/docs/re-md" img-src="" accent-color-hsl="255 75% 50%">
+        <span slot="title">< re-md ></span>
+        <span slot="description">Markdown transformation component with lots of options and features.</span>
+        <span slot="caption">~ 5,4 Kb</span>
+        <svg id="re-md-logo" class="grid-item-logo" slot="logo" xmlns="http://www.w3.org/2000/svg" width="96" height="36" viewBox="0 0 96 36">
+          <defs>
+            <style>
+              .svg-logo-re-md {
+                fill: hsl(var(--accent-color-hsl, 255 75% 50%));
+              }
+            </style>
+          </defs>
+          <polygon class="svg-logo-re-md" points="12 24 0 36 12 36 24 24 12 24"/>
+          <polygon class="svg-logo-re-md" points="24 24 12 36 24 36 36 24 24 24"/>
+          <polygon class="svg-logo-re-md" points="84 24 72 24 84 36 96 36 84 24"/>
+          <polygon class="svg-logo-re-md" points="60 24 72 36 84 36 72 24 60 24"/>
+          <polygon class="svg-logo-re-md" points="0 0 12 12 24 12 12 0 0 0"/>
+          <polygon class="svg-logo-re-md" points="24 0 36 12 48 12 36 0 24 0"/>
+          <polygon class="svg-logo-re-md" points="12 0 24 12 36 12 24 0 12 0"/>
+          <polygon class="svg-logo-re-md" points="84 0 72 12 84 12 96 0 84 0"/>
+          <polygon class="svg-logo-re-md" points="60 0 48 12 60 12 72 0 60 0"/>
+          <polygon class="svg-logo-re-md" points="72 0 60 12 72 12 84 0 72 0"/>
+        </svg>
+      </base-card>
+
+    </div>
+
+
+  </page-container>
+
+  <base-footer>
+    <style>
+      base-footer {
+        font-size: var(--f-size-s);
+      }
+      base-footer .footer-column-title {
+        font-size: var(--f-size-s);
+        font-family: var(--ff-2, sans-serif);
+        color: hsla(var(--bcolor-hsl) / 0.9);
+        padding-bottom: calc(var(-space-unit)* 2);
+      }
+      base-footer .footer-column-link {
+        display: flex;
+        align-items: center;
+        font-size: var(--f-size-s);
+        column-gap: var(--space-unit);
+      }
+    </style>
+    <flex-container slot="column-1" style="gap: calc(var(--space-unit) *1.5);">
+      <style>
+        * { box-sizing: border-box; }
+        .footer-logo {
+          max-width: calc(var(--space-unit) * 7);
+          height: calc(var(--space-unit) * 4);
+          --current-stroke-width: 2px;
+        }
+        base-footer a{ 
+          text-decoration: none;
+          color: inherit;
+          font-size: var(--f-size-p);
+          font-weight: 400;
+          color: hsla(var(--bcolor-hsl) / 0.8);
+          transition: color 0.32s ease;
+          &:hover {
+            color: hsla(var(--bcolor-hsl) / 1);
+          }
+        }
+      </style>
+      <svg class="footer-logo">
+        <use href="/__src/img/sprite.svg#native-logo"></use>
+      </svg>
+      <p style="font-weight: 400; font-size: var(--f-size-s); color: hsla(var(--bcolor-hsl) / 0.8);">nativelayer is a project that aims to extend the web platform with carefully designed abstractions.</p>
+    </flex-container>
+    <flex-container slot="column-2" style="gap: calc(var(--space-unit) *2);">
+      <h3 class="footer-column-title">Pages</h3>
+      <a class="footer-column-link" href="/packages">Packages</a>
+      <a class="footer-column-link" href="/docs">Documentation</a>
+      <a class="footer-column-link" href="/demos">Demos</a>
+      <a class="footer-column-link" href="/about">About</a>
+    </flex-container>
+    <flex-container slot="column-3" style="gap: calc(var(--space-unit) *2);">
+      <h3 class="footer-column-title">Follow us</h3>
+      <a class="footer-column-link" href="https://github.com/" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        GitHub
+      </a>
+    </flex-container>
+  </base-footer>
+
+</body>
+</html>

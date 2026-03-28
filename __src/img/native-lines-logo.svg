@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="native-logo" xmlns="http://www.w3.org/2000/svg" width="80" height="28" viewBox="0 0 80 28">
+  <defs>
+    <style>
+      .native-logo {
+        fill: none;
+        stroke: hsl(var(--fcolor-hsl, 0 0 100%));
+        stroke-width: 1.5;
+      }
+    </style>
+  </defs>
+  <polygon points="26.67 9.56 8.89 9.56 0 18.44 17.78 18.44 26.67 9.56" class="native-logo"/>
+  <polygon points="80 9.56 62.22 9.56 53.33 18.44 71.11 18.44 80 9.56" class="native-logo"/>
+  <polygon points="35.56 18.44 53.33 18.44 62.22 27.33 44.44 27.33 35.56 18.44" class="native-logo"/>
+  <polygon points="26.67 9.56 44.44 9.56 53.33 18.44 35.56 18.44 26.67 9.56" class="native-logo"/>
+  <polygon points="17.78 .67 35.56 .67 44.44 9.56 26.67 9.56 17.78 .67" class="native-logo"/>
+  <polygon points="53.33 .67 71.11 .67 80 9.56 62.22 9.56 53.33 .67" class="native-logo"/>
+  <polygon points="0 18.44 17.78 18.44 26.67 27.33 8.89 27.33 0 18.44" class="native-logo"/>
+</svg>

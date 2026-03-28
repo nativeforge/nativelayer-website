@@ -1,0 +1,32 @@
+
+/* media queries */
+@media screen and (max-width: 1400px), (min-width: 1401px){
+  :root{
+
+    --page-padding-x: calc(var(--size-unit)* 3);
+    --page-max-width: 1200px;
+    --doc-aside-width: 280px;
+  }
+}
+@media screen and (max-width: 1280px){
+}
+
+@media screen and (max-width: 960px){
+  :root{
+    --size-unit: calc(var(--core-unit) * var(--ratio-size));
+  }
+}
+
+@media screen and (max-width: 680px){
+  :root{
+  }
+}
+
+@media screen and (max-width: 480px){
+  :root{
+  }
+}
+@media screen and (max-width: 320px){
+  :root{
+  }
+}

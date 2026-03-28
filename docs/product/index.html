@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>native web dev</title>
+  
+  <link rel="stylesheet" href="/__src/css/reset.css">
+  <link rel="stylesheet" href="/__src/css/fonts.css">
+  <link rel="stylesheet" href="/__src/css/global-styles.css">
+  
+  <script type="module">
+    import {router} from "/__src/js/router.js";
+    router.start();
+  </script>
+
+  <script type="module">
+    import remd from "/__src/components/re-md.js"
+    import docBody from "/__src/components/doc-body.js"
+    import docCard from "/__src/components/doc-card.js"
+    import docAside from "/__src/components/doc-aside.js"
+    import topBar from "/__src/components/top-bar.js"
+    import flexContainer from "/__src/components/flex-container.js"
+      
+    customElements.define('re-md', remd)
+    customElements.define('doc-body', docBody) 
+    customElements.define('doc-card', docCard)
+    customElements.define('doc-aside', docAside)
+    customElements.define('top-bar', topBar)
+    customElements.define('flex-container', flexContainer)
+  </script>
+</head>
+
+
+<body>
+  <top-bar></top-bar>
+  <doc-aside expander-color="hsl(var(--accent-color-hsl))" section-numbers></doc-aside>
+  <doc-body>
+    <re-md src="" theme-css="/__src/css/code-syntax.css" chapter-mode></re-md>
+
+    <flex-container direction="row" style="position: absolute; gap: calc(var(--space-unit) * 4); bottom: calc(var(--space-unit) * 4);">
+      <doc-card data-label="previous"></doc-card>
+      <doc-card data-label="next"></doc-card>
+    </flex-container>
+  </doc-body>
+</body>
+</html>

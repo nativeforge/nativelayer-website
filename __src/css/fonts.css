@@ -1,0 +1,66 @@
+/* imports */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap');
+
+/* ------------- core definitions --------- */
+:root {
+
+  /* HEADINGS & TITLE */
+  --font-1: 'Arimo';
+  /* PARAGRAPHS & TEXTS */
+  --font-2: 'Inter';
+  /* PARAGRAPHS & TEXTS */
+  --font-3: 'JetBrains Mono';
+  /* ADDITIONAL FONTS */
+  --font-4: '';
+
+  /* HEADINGS & TITLE */
+  --ff-1: var(--font-1), sans-serif;
+
+  /* PARAGRAPHS & TEXTS */
+  --ff-2: var(--font-2), sans-serif;
+
+  /* ADDITIONAL FONTS */
+  --ff-3: var(--font-3), monospace;
+  --ff-4: var(--font-4), serif;
+}
+
+
+:root {
+  --core-unit: 1rem;
+  
+  --ratio-size: 1/2;
+  --size-unit: calc(var(--core-unit) * var(--ratio-size));
+
+  --ratio-space: 1/2;
+  --space-unit: calc(var(--core-unit) * var(--ratio-space));
+  
+  --ratio-font-size: 1;
+  --ratio-font-grow: 1.2;
+  /* base on 16px standard body text size */
+
+  --f-size-t: calc(var(--f-size-s)* calc(1/var(--ratio-font-grow)));
+  --f-size-s: calc(var(--f-size-p)* calc(1/var(--ratio-font-grow)));
+
+  /* fonts sizes built from paragraph font size */
+  --f-size-p: calc(var(--core-unit) * var(--ratio-font-size));
+
+  /* h5 & h6 left on side if needed
+  --f-size-6: calc(var(--f-size-5)* var(--ratio-font-grow));
+  --f-size-5: calc(var(--f-size-p)* calc( 1 / var(--ratio-font-grow)) );
+  */
+
+  --f-size-4: calc(var(--f-size-p)* var(--ratio-font-grow));
+  --f-size-3: calc(var(--f-size-4)* var(--ratio-font-grow));
+  --f-size-2: calc(var(--f-size-3)* var(--ratio-font-grow));
+  --f-size-1: calc(var(--f-size-2)* var(--ratio-font-grow));
+  --f-size-l: calc(var(--f-size-1)* var(--ratio-font-grow));
+  --f-size-xl: calc(var(--f-size-l)* var(--ratio-font-grow));
+  --f-size-2xl: calc(var(--f-size-xl)* var(--ratio-font-grow));
+  --f-size-3xl: calc(var(--f-size-2xl)* var(--ratio-font-grow));
+  --f-size-4xl: calc(var(--f-size-3xl)* var(--ratio-font-grow));
+  --f-size-5xl: calc(var(--f-size-4xl)* var(--ratio-font-grow));
+  --f-size-6xl: calc(var(--f-size-5xl)* var(--ratio-font-grow));
+  --f-size-7xl: calc(var(--f-size-6xl)* var(--ratio-font-grow));
+}
