@@ -49,14 +49,13 @@ class topBar extends readyElement {
         right: 0;
         z-index: 1000;
         height: var(--top-bar-height);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         color: hsl(var(--fcolor-hsl));
         background-color: hsla(var(--bcolor-hsl) / 0.25);
         backdrop-filter: blur(12px);
         border-bottom: 1px solid hsla(var(--fcolor-hsl) / 0.2);
         font-family: var(--ff-2, sans-serif);
+        container-type: inline-size;
+        container-name: top-bar;
 
         :where(a, a:visited) {
           color: inherit;
@@ -68,7 +67,7 @@ class topBar extends readyElement {
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        height: 100%;
+        height: var(--top-bar-height);
         padding-inline: var(--page-padding-x);
         padding-block: 0;
       }
@@ -99,8 +98,16 @@ class topBar extends readyElement {
         column-gap: var(--space-unit, 0.5rem);
       }
       .top-bar-logo {
-        max-width: calc(var(--space-unit, 0.5rem) * 5);
-        height: calc( var(--top-bar-height) - var(--space-unit) * 1);
+        width: calc(var(--space-unit, 0.5rem) * 5);
+        height: calc(var(--top-bar-height) - var(--space-unit) * 4);
+      }
+      .top-bar-logo-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        column-gap: var(--space-unit, 0.5rem);
+        color: inherit;
+        text-decoration: none;
       }
       .top-bar-action-button {
         display: flex;
@@ -113,7 +120,8 @@ class topBar extends readyElement {
         width: calc(var(--space-unit, 0.5rem) * 4);
         height: calc(var(--space-unit, 0.5rem) * 4);
       }
-      /* Theme Toggle Slider */
+
+      /* Theme Toggle */
       .theme-mode {
         display: flex;
         align-items: center;
@@ -153,11 +161,10 @@ class topBar extends readyElement {
         transition: opacity 0.2s ease;
       }
       .theme-icon.sun { opacity: 1; }
-      .theme-icon.moon { 
+      .theme-icon.moon {
         position: absolute;
-        opacity: 0; 
+        opacity: 0;
       }
-      /* Checked state (dark mode) */
       .theme-mode-input:checked + .theme-mode-track {
         background-color: hsla(var(--fcolor-hsl) / 0.15);
       }
@@ -167,6 +174,7 @@ class topBar extends readyElement {
       .theme-mode-input:checked + .theme-mode-track .sun { opacity: 0; }
       .theme-mode-input:checked + .theme-mode-track .moon { opacity: 1; }
 
+      /* Desktop nav */
       .top-bar-container-center {
         display: flex;
         align-items: center;
@@ -206,9 +214,7 @@ class topBar extends readyElement {
         text-decoration: none;
         cursor: pointer;
         transition: color 0.3s ease;
-        &:hover {
-          color: hsla(var(--fcolor-hsl) / 1);
-        }
+        &:hover { color: hsla(var(--fcolor-hsl) / 1); }
       }
       .top-bar-nav-item-link::after {
         content: '';
@@ -224,17 +230,75 @@ class topBar extends readyElement {
       .top-bar-nav-item-link:not(.--link-active):hover::after {
         background-color: hsla(var(--fcolor-hsl) / 0.2);
       }
-      .top-bar-logo {
-        width: calc(var(--space-unit, 0.5rem) * 5);
-        height: calc( var(--top-bar-height) - var(--space-unit) * 4);
-      }
-      .top-bar-logo-link {
-        display: flex;
+
+      /* Burger button */
+      .top-bar-burger {
+        display: none;
         align-items: center;
         justify-content: center;
-        column-gap: var(--space-unit, 0.5rem);
-        color: inherit;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: calc(var(--space-unit, 0.5rem) * 1);
+        color: hsl(var(--fcolor-hsl));
+      }
+      .top-bar-burger svg {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+
+      /* Mobile drawer */
+      .top-bar-drawer {
+        display: none;
+        flex-direction: column;
+        background-color: hsla(var(--bcolor-hsl) / 0.97);
+        backdrop-filter: blur(12px);
+        border-top: 1px solid hsla(var(--fcolor-hsl) / 0.1);
+        padding-block: calc(var(--space-unit, 0.5rem) * 2);
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.3s ease, padding-block 0.3s ease;
+      }
+      .top-bar-drawer-nav-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .top-bar-drawer-nav-item-link {
+        display: block;
+        padding-block: calc(var(--space-unit, 0.5rem) * 2);
+        padding-inline: var(--page-padding-x);
+        font-size: var(--f-size-p, 0.9rem);
+        font-weight: 300;
+        color: hsla(var(--fcolor-hsl) / 0.8);
         text-decoration: none;
+        transition: color 0.2s ease, background-color 0.2s ease;
+        border-left: 3px solid transparent;
+        &:hover {
+          color: hsla(var(--fcolor-hsl) / 1);
+          background-color: hsla(var(--fcolor-hsl) / 0.04);
+        }
+      }
+      .top-bar-drawer-nav-item-link.--link-active {
+        border-left-color: hsl(var(--accent-color-hsl));
+        color: hsla(var(--fcolor-hsl) / 1);
+      }
+
+      /* Open state */
+      .top-bar.--open .top-bar-drawer {
+        display: flex;
+        max-height: 20rem;
+      }
+
+      /* Container queries */
+      @container top-bar (max-width: 43.5rem) {
+        .top-bar-container-center { display: none; }
+        .top-bar-burger { display: flex; }
+      }
+      @container top-bar (min-width: 43.5rem) {
+        .top-bar-drawer { display: none !important; }
       }
     </style>
 
@@ -246,10 +310,11 @@ class topBar extends readyElement {
             <a href="/" class="top-bar-logo-link">
               <svg-ninja svg-class="top-bar-logo" svg-src="/__src/img/native-lines-logo.svg">
               </svg-ninja>
-              <h1 class="top-bar-title">native<span style=" color: hsla(var(--fcolor-hsl) / 0.6);">layer.dev</span></h1>
-            </a> 
+              <h1 class="top-bar-title">native<span style="color: hsla(var(--fcolor-hsl) / 0.6);">layer.dev</span></h1>
+            </a>
           </div>
         </div>
+
         <div class="top-bar-container-center">
           <nav class="top-bar-nav">
             <ul class="top-bar-nav-list">
@@ -260,6 +325,7 @@ class topBar extends readyElement {
             </ul>
           </nav>
         </div>
+
         <div class="top-bar-container-right">
           <label class="theme-mode">
             <input type="checkbox" class="theme-mode-input" id="theme-mode">
@@ -274,8 +340,25 @@ class topBar extends readyElement {
               </span>
             </span>
           </label>
+          <button class="top-bar-burger" aria-label="Toggle menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+              <line x1="3" y1="8" x2="21" y2="8"/>
+              <line x1="3" y1="16" x2="21" y2="16"/>
+            </svg>
+          </button>
         </div>
 
+      </div>
+
+      <div class="top-bar-drawer">
+        <nav>
+          <ul class="top-bar-drawer-nav-list">
+            <li><a class="top-bar-drawer-nav-item-link" href="/packages">Packages</a></li>
+            <li><a class="top-bar-drawer-nav-item-link" href="/docs">Docs</a></li>
+            <li><a class="top-bar-drawer-nav-item-link" href="/demos">Demos</a></li>
+            <li><a class="top-bar-drawer-nav-item-link" href="/about">About</a></li>
+          </ul>
+        </nav>
       </div>
     </header>
     `;
@@ -285,22 +368,44 @@ class topBar extends readyElement {
     this.innerHTML = this.HTML;
     this.initThemeToggle();
     this.setActiveNavItem();
+    this.initBurger();
 
     this._resolveReady();
   }
 
-  // Set active state on navigation item based on current path
   setActiveNavItem() {
     const currentPath = window.location.pathname;
-    const links = this.querySelectorAll('.top-bar-nav-item-link');
-    
+    const links = this.querySelectorAll('.top-bar-nav-item-link, .top-bar-drawer-nav-item-link');
+
     links.forEach(link => {
       link.classList.remove('--link-active');
       const href = link.getAttribute('href');
-      
-      // Match exact path or path prefix (for /docs/*)
       if (currentPath === href || (href !== '/' && currentPath.startsWith(href))) {
         link.classList.add('--link-active');
+      }
+    });
+  }
+
+  initBurger() {
+    const header = this.querySelector('.top-bar');
+    const burger = this.querySelector('.top-bar-burger');
+
+    burger.addEventListener('click', () => {
+      const open = header.classList.toggle('--open');
+      burger.setAttribute('aria-expanded', String(open));
+    });
+
+    this.querySelector('.top-bar-drawer').addEventListener('click', (e) => {
+      if (e.target.closest('a')) {
+        header.classList.remove('--open');
+        burger.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!this.contains(e.target)) {
+        header.classList.remove('--open');
+        burger.setAttribute('aria-expanded', 'false');
       }
     });
   }
