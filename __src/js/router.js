@@ -3,7 +3,7 @@ import { state } from '/__src/js/state.js';
 import { scrollToHeadingById } from '/__src/js/utils.js';
 import {luminanceHSL, adjustedHSL} from '/__src/js/luminance.js';
 
-const router = new RouterX({ mode: 'history' });
+const router = new RouterX({ mode: 'history', ignoreSameNavigation: true });
 
 // Cache DOM elements
 let htmlElement = null;
@@ -174,8 +174,18 @@ const setupChapterActivation = (hash) => {
 
 //--------------------------------------------------------
 
-// Global beforeEach: Cache DOM elements and cleanup previous route
-router.beforeEach((to, from) => {
+// Global beforeEach: block same-page navigation, then cache DOM and cleanup
+router.beforeEach((to, query, hash) => {
+  const current = router.getCurrentRoute();
+  if (current) {
+    const sameHash = (hash || '') === (current.hash || '');
+    const currentQuery = current.query || {};
+    const incomingQuery = query || {};
+    const sameQuery =
+      Object.keys(incomingQuery).length === Object.keys(currentQuery).length &&
+      Object.entries(incomingQuery).every(([k, v]) => currentQuery[k] === v);
+    if (to === current.path && sameQuery && sameHash) return false;
+  }
   cacheDOMElements();
   cleanup();
 });
@@ -286,6 +296,29 @@ router.onHashChange((newHash, oldHash) => {
     requestAnimationFrame(() => {
       scrollToHeadingById(newHash);
     });
+  }
+});
+
+// Global same-page link interceptor
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a');
+  if (!link) return;
+  if (link.target === '_blank' || link.hasAttribute('download')) return;
+
+  const href = link.getAttribute('href');
+  if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+
+  const target = new URL(href, window.location.origin);
+  if (target.origin !== window.location.origin) return;
+
+  const normalize = p => p.replace(/\/$/, '') || '/';
+  if (normalize(target.pathname) === normalize(window.location.pathname) && target.search === window.location.search) {
+    e.preventDefault();
+  }
+  else {
+    // if link is not the same page, then navigate to it
+    // window.location.href = target.href;
+    return;
   }
 });
 

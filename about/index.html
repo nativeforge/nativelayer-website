@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>nativelayer.dev: about</title>
 
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+
   <link rel="stylesheet" href="/__src/css/reset.css">
   <link rel="stylesheet" href="/__src/css/fonts.css">
   <link rel="stylesheet" href="/__src/css/global-styles.css">
@@ -85,12 +92,12 @@
 
       <div class="about-text">
         <h2>The project</h2>
-        <p>nativelayer was built out of frustration with the complexity of modern front-end toolchains. The goal is simple: give developers powerful, composable primitives that feel native to the browser — no build step, no virtual DOM, no magic.</p>
+        <p>nativelayer was built with one simple goal in mind: give web developers <b>powerful, composable and extensible primitives</b> that feel native to the browser while allowing to introduce modern web development patterns and tooling when needed — no build step, no compilation, no virtual DOM, no magic.</p>
         <p>The stack is intentionally minimal:</p>
         <ul>
-          <li><strong>restate</strong> — reactive state with a proxy-based API, plugins, and zero dependencies</li>
+          <li><strong>restate</strong> — reactive state with a proxy-based API</li>
           <li><strong>reflectx</strong> — declarative DOM bindings via custom HTML attributes, wired to any state object</li>
-          <li><strong>routerx</strong> — a lightweight client-side router built on the History API</li>
+          <li><strong>routerx</strong> — a client-side router built on the History API</li>
           <li><strong>Web Components</strong> — custom elements for every UI building block, no framework required</li>
         </ul>
         <p>Everything runs directly in the browser as ES modules. No bundler, no transpiler, no lock-in.</p>
