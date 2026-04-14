@@ -5,7 +5,7 @@ class BaseButton extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['type', 'name', 'form', 'formaction', 'formmethod', 'formtarget', 'formenctype', 'disabled', 'value'];
+    return ['type', 'name', 'form', 'formaction', 'formmethod', 'formtarget', 'formenctype', 'disabled', 'value', 'href', 'target', 'rel'];
   }
 
   connectedCallback() {
@@ -19,20 +19,45 @@ class BaseButton extends HTMLElement {
   }
 
   render() {
-    const attrs = [
-      ['type', this.getAttribute('type') || 'button'],
-      ['name', this.getAttribute('name')],
-      ['form', this.getAttribute('form')],
-      ['formaction', this.getAttribute('formaction')],
-      ['formmethod', this.getAttribute('formmethod')],
-      ['formtarget', this.getAttribute('formtarget')],
-      ['formenctype', this.getAttribute('formenctype')],
-      ['disabled', this.hasAttribute('disabled') ? '' : null],
-      ['value', this.getAttribute('value')],
-    ]
-      .filter(([, v]) => v != null)
-      .map(([k, v]) => (v === '' ? k : `${k}="${v}"`))
-      .join(' ');
+    const href = this.getAttribute('href');
+    const isLink = href != null && href !== '';
+
+    let inner;
+    if (isLink) {
+      const target = this.getAttribute('target');
+      const relAttr = this.getAttribute('rel') ||
+        (target && target.toLowerCase() === '_blank' ? 'noopener noreferrer' : null);
+
+      const linkAttrs = [
+        ['href', href],
+        ['target', target],
+        ['rel', relAttr],
+      ]
+        .filter(([, v]) => v != null)
+        .map(([k, v]) => `${k}="${v}"`)
+        .join(' ');
+
+      inner = `<a class="btn" part="button" ${linkAttrs}>`;
+    } else {
+      const btnAttrs = [
+        ['type', this.getAttribute('type') || 'button'],
+        ['name', this.getAttribute('name')],
+        ['form', this.getAttribute('form')],
+        ['formaction', this.getAttribute('formaction')],
+        ['formmethod', this.getAttribute('formmethod')],
+        ['formtarget', this.getAttribute('formtarget')],
+        ['formenctype', this.getAttribute('formenctype')],
+        ['disabled', this.hasAttribute('disabled') ? '' : null],
+        ['value', this.getAttribute('value')],
+      ]
+        .filter(([, v]) => v != null)
+        .map(([k, v]) => (v === '' ? k : `${k}="${v}"`))
+        .join(' ');
+
+      inner = `<button class="btn" part="button" ${btnAttrs}>`;
+    }
+
+    const tag = isLink ? 'a' : 'button';
 
     this.shadowRoot.innerHTML = `
     <style>
@@ -51,6 +76,8 @@ class BaseButton extends HTMLElement {
         border-radius: var(--base-button-radius, calc(var(--space-unit, 0.5rem) * 0.5));
         cursor: pointer;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        text-decoration: none;
+        color: inherit;
       }
       :host(.--light) .btn {
         color: hsl(var(--fcolor-hsl));
@@ -94,24 +121,13 @@ class BaseButton extends HTMLElement {
         width: 1em;
         height: 1em;
       }
-      .btn ::slotted(a) {
-        color: inherit;
-        text-decoration: none;
-        display: inline-flex;
-        width: 100%;
-        height: 100%;
-        align-items: center;
-        justify-content: center;
-        font: inherit;
-        cursor: pointer;
-      }
     </style>
-    <button class="btn" part="button" ${attrs}>
+    ${inner}
       <span class="btn-icon" part="icon">
         <slot name="icon"></slot>
       </span>
       <slot></slot>
-    </button>`;
+    </${tag}>`;
   }
 }
 
