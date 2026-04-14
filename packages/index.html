@@ -99,6 +99,10 @@
       .--sticky {
         position: sticky;
         top: calc(var(--space-unit) * 4);
+        @media (max-width: 48rem) {
+          position: relative;
+          top: 0;
+        }
       }
       .--align-left {
         align-items: flex-start;
@@ -111,6 +115,9 @@
         width: 100%;
         align-items: flex-start;
         padding-block: calc(var(--space-unit) * 8);
+        @media (max-width: 48rem) {
+          grid-template-columns: 1fr;
+        }
       }
       .grid-item-logo {
         position: absolute;
