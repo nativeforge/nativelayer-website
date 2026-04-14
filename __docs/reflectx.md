@@ -15,19 +15,6 @@
 
 > `reflectx` is pre-1.0; minor breaking changes may occur before 1.0. Pin your version for production use.
 
-## Table of Contents
-
-- [Quick Start](#quick-start)
-- [Why reflectx?](#why-reflectx)
-- [Installation](#installation)
-- [Core Concepts](#core-concepts)
-- [Directives](#directives)
-- [Plugin System](#plugin-system)
-- [Browser Support](#browser-support)
-- [Known Limitations](#known-limitations)
-- [Contributing](#contributing)
-- [License](#license)
-
 ## Quick Start
 
 ```html
