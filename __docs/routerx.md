@@ -2,32 +2,38 @@
 ![routerx logo](/__src/img/routerx-logo.svg)
 ::
 
+[![npm version](https://img.shields.io/npm/v/@nativelayer.dev/routerx.svg)](https://www.npmjs.com/package/@nativelayer.dev/routerx)
+[![License](https://img.shields.io/badge/license-PolyForm%20NC%201.0.0-blue.svg)](./LICENSE)
+[![Bundle size](https://img.shields.io/badge/gzipped-~3.4KB-green.svg)]()
+
 # routerx
 
-RouterX is a feature-rich yet lightweight vanilla JavaScript router with support for both history and hash-based routing modes. It provides comprehensive routing capabilities including dynamic path parameters, query parsing, hash fragment support, route guards, lazy loading, event hooks, and navigation management—all without hijacking link clicks or requiring complex framework setup. Works great for traditional multi-page websites (MPA), simple SPAs, or static hosting environments.
+version `0.2.3`
 
-## Key Features
+RouterX is a feature-rich yet lightweight vanilla JavaScript router with support for both history and hash-based routing modes. It provides comprehensive routing capabilities including dynamic path parameters, query parsing, hash fragment support, route guards, lazy loading, event hooks, and navigation management—all without requiring complex framework setup. Works great for traditional multi-page websites (MPA), SPAs, or static hosting environments.
 
-- ✅ **Lightweight & Zero Dependencies** - ~3.4KB gzipped, no external dependencies
-- ✅ **Lightweight & Versatile** - Works for both traditional MPAs and simple SPAs 
-- ✅ **Dynamic Path Parameters** - Support for `:id` style parameters with automatic parsing
-- ✅ **Query String Parsing** - Automatic URLSearchParams parsing into objects
-- ✅ **Hash Fragment Support** - Full hash/anchor support with automatic parsing and navigation
-- ✅ **History Management** - Full browser history API integration with back/forward support
-- ✅ **Route Guards** - Built-in authentication/authorization with async support
-- ✅ **Lazy Loading** - Code splitting support with dynamic imports
-- ✅ **Event Hooks** - Before/after middleware system for cross-cutting concerns
-- ✅ **Redirects** - Automatic route redirections
-- ✅ **Route Management** - Add/remove routes dynamically at runtime
-- ✅ **URL Building** - Programmatic URL generation from patterns
-- ✅ **404 Handling** - Customizable fallback for unmatched routes
-- ✅ **Server-Side Friendly** - Works with static hosting and server-side routing
-- ✅ **Dual Routing Modes** - Support for both history API and hash-based routing
-- ✅ **Built-in Sanitization** - URL and parameter sanitization to prevent XSS and path traversal
-- ✅ **Route Lifecycle Hooks** - beforeEnter/afterEnter/beforeLeave/afterLeave for route-specific logic
-- ✅ **Route Metadata** - Attach custom data (title, auth, layout) to routes
-- ✅ **Scroll Behavior Control** - Configure scroll position on navigation with back/forward support
-- ✅ **Cleanup Functions** - Handlers can return cleanup functions (React useEffect pattern)
+- **Lightweight & Zero Dependencies** - ~3.4KB gzipped, no external dependencies
+- **Lightweight & Versatile** - Works for both traditional MPAs and simple SPAs 
+- **Dynamic Path Parameters** - Support for `:id` style parameters with automatic parsing
+- **Query String Parsing** - Automatic URLSearchParams parsing into objects
+- **Hash Fragment Support** - Full hash/anchor support with automatic parsing and navigation
+- **History Management** - Full browser history API integration with back/forward support
+- **Route Guards** - Built-in authentication/authorization with async support
+- **Lazy Loading** - Code splitting support with dynamic imports
+- **Event Hooks** - Before/after middleware system for cross-cutting concerns
+- **Redirects** - Automatic route redirections
+- **Route Management** - Add/remove routes dynamically at runtime
+- **URL Building** - Programmatic URL generation from patterns
+- **404 Handling** - Customizable fallback for unmatched routes
+- **Server-Side Friendly** - Works with static hosting and server-side routing
+- **Dual Routing Modes** - Support for both history API and hash-based routing
+- **Built-in Sanitization** - URL and parameter sanitization to prevent XSS and path traversal
+- **Route Lifecycle Hooks** - beforeEnter/afterEnter/beforeLeave/afterLeave for route-specific logic
+- **Route Metadata** - Attach custom data (title, auth, layout) to routes
+- **Scroll Behavior Control** - Configure scroll position on navigation with back/forward support
+- **Cleanup Functions** - Handlers can return cleanup functions (React useEffect pattern)
+- **In-Route Hash Change Detection** - React to hash changes within the same route
+- **Same-Navigation Prevention** - Optionally skip duplicate navigations to the current URL
 
 ## Installation
 
@@ -40,9 +46,6 @@ All builds are optimized for production use:
 | `dist/routerx.esm.min.js` | **11.6 KB** | **3.4 KB** | ES Module | Minified (recommended for modern browsers) |
 | `dist/routerx.cjs.min.js` | **11.6 KB** | **3.4 KB** | CommonJS | Minified (for Node.js/bundlers) |
 | `dist/routerx.min.js` | **11.8 KB** | **3.5 KB** | UMD | Minified (for legacy browsers) |
-| `dist/routerx.esm.js` | 37.8 KB | 8.7 KB | ES Module | Development version |
-| `dist/routerx.cjs.js` | 37.9 KB | 8.7 KB | CommonJS | Development version |
-| `dist/routerx.js` | 40.5 KB | 8.9 KB | UMD | Development version |
 
 **Recommended:** Use `routerx.esm.min.js` for production (11.6 KB / 3.4 KB gzipped) — zero dependencies, maximum performance.
 
@@ -77,7 +80,7 @@ const router = new RouterX();
 </script>
 
 <!-- For older browsers (UMD) -->
-<script src="./dist/routerx.js"></script>
+<script src="./dist/routerx.min.js"></script>
 <script>
 const router = new window.routerx.RouterX();
 </script>
@@ -86,16 +89,18 @@ const router = new window.routerx.RouterX();
 ### Via npm
 
 ```bash
-npm install routerx
+npm install @nativelayer.dev/routerx
 ```
 
 ```js
 // ES Module import
-import { RouterX } from 'routerx';
+import { RouterX } from '@nativelayer.dev/routerx';
 
 // CommonJS require
-const { RouterX } = require('routerx');
+const { RouterX } = require('@nativelayer.dev/routerx');
 ```
+
+
 
 ## API Reference
 
@@ -103,7 +108,7 @@ const { RouterX } = require('routerx');
 
 | Method / Property             | Description                                                                                         |
 | ---                           | ---                                                                                                 |
-| `constructor(options?)`       | Creates a new router instance. Options: `{ mode: 'history' \| 'hash', scrollBehavior: Function \| Object }`. Defaults to history mode.   |
+| `constructor(options?)`       | Creates a new router instance. Options: `{ mode: 'history' \| 'hash', scrollBehavior: Function \| Object, ignoreSameNavigation: boolean }`. Defaults to history mode.   |
 | `start()`                     | Parses the current URL and dispatches the matching route handler immediately on page load.          |
 | `on(pattern, handler, options?)` | Register a route with optional lifecycle hooks and metadata. Options: `{ beforeEnter, afterEnter, beforeLeave, afterLeave, meta }`. |
 | `notFound(handler: (path, query, hash) => void)` | Register a fallback handler for unmatched routes (404).                                    |
@@ -145,6 +150,7 @@ const { RouterX } = require('routerx');
 | `beforeEach(callback: Function)` | Alias for `before()`. Vue Router-style naming for familiarity.                                  |
 | `after(callback: Function)`   | Add a hook that runs after route changes. Callback receives `(currentRoute, previousRoute)`.      |
 | `afterEach(callback: Function)` | Alias for `after()`. Vue Router-style naming for familiarity.                                    |
+| `onHashChange(callback: Function)` | Register callback for in-route hash changes. Callback receives `(newHash, oldHash, currentRoute)`. Returns unregister function. |
 
 ### Route Lifecycle Hooks
 
@@ -154,6 +160,7 @@ const { RouterX } = require('routerx');
 | `afterEnter` | After route handler runs | No | Analytics, scroll position |
 | `beforeLeave` | Before leaving a route | Yes (return `false`) | Unsaved changes prompt |
 | `afterLeave` | After leaving a route | No | Cleanup timers, subscriptions |
+| `onHashChange` | When hash changes within same route | No | Scroll to section, update UI |
 
 ### Advanced Features
 
@@ -307,6 +314,39 @@ router.notFound((path, query, hash) => {
 // Initialize router
 router.start();
 ```
+
+### Controlling Navigation
+
+Any `before()` / `beforeEach()` hook, `beforeEnter`, `beforeLeave`, or route guard can **cancel navigation** by returning `false`. Every other return value (including `undefined`, i.e., no explicit return) allows navigation to proceed:
+
+```js
+// Global hook — runs before every route change
+router.before((path, query, hash, previousRoute) => {
+  if (path === '/maintenance') {
+    return false; // blocks navigation — route handler never runs
+  }
+  // no return needed to allow navigation
+});
+
+// Route-level hook — only applies to this route
+router.on('/dashboard', dashboardHandler, {
+  beforeEnter: async (params, query, hash) => {
+    const isLoggedIn = await checkAuth();
+    if (!isLoggedIn) {
+      router.navigate('/login');
+      return false; // cancel entering /dashboard
+    }
+  },
+  beforeLeave: (params, query, hash) => {
+    if (hasUnsavedChanges()) {
+      return confirm('You have unsaved changes. Leave anyway?');
+      // confirm() returns true/false — false cancels navigation
+    }
+  }
+});
+```
+
+> **Rule of thumb:** `return false` = block, anything else = allow. You'll see this pattern in hooks, guards, and plugins throughout RouterX.
 
 ### Navigation Methods
 ```js
@@ -789,6 +829,95 @@ const router = new RouterX({
 | `{ behavior: 'smooth' }` | Enable smooth scrolling |
 | `savedPosition` | Automatically saved scroll position for back/forward |
 
+### In-Route Hash Change Detection
+
+When a user clicks an anchor link (e.g., `<a href="#api">`) while staying on the same route, RouterX can detect this and trigger callbacks. This is useful for documentation sites, single-page sections, or any UI that uses hash fragments for navigation within a page.
+
+**Route-level callback:**
+
+```js
+router.on('/docs', docsHandler, {
+  onHashChange: (newHash, oldHash, params, query) => {
+    console.log(`Navigated from #${oldHash} to #${newHash}`);
+    
+    // Scroll to the new section
+    const element = document.getElementById(newHash);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Update active navigation
+    updateActiveNavItem(newHash);
+  }
+});
+```
+
+**Global callback:**
+
+```js
+// Register a global hash change listener
+const unregister = router.onHashChange((newHash, oldHash, currentRoute) => {
+  console.log(`Hash changed on ${currentRoute.path}: #${oldHash} → #${newHash}`);
+  
+  // Track hash navigation in analytics
+  analytics.track('hash_navigation', {
+    page: currentRoute.path,
+    from: oldHash,
+    to: newHash
+  });
+});
+
+// Later, to remove the listener:
+unregister();
+```
+
+**Plugin hook:**
+
+```js
+const hashTrackingPlugin = {
+  name: 'hash-tracker',
+  onHashChange: (newHash, oldHash, currentRoute, router) => {
+    // Plugin-level hash change handling
+    console.log(`[Plugin] Hash: ${oldHash} → ${newHash}`);
+  }
+};
+
+router.use(hashTrackingPlugin);
+```
+
+> **Note:** In-route hash change detection only applies to **history mode**. In hash mode, the hash IS the route, so hash changes trigger full route matching instead.
+
+### Same-Navigation Prevention
+
+By default, calling `navigate()` with the same URL as the current route will re-run the entire route lifecycle (handlers, hooks, plugins). Enable `ignoreSameNavigation` to silently skip these duplicate navigations:
+
+```js
+const router = new RouterX({ ignoreSameNavigation: true });
+
+router.on('/about', () => {
+  console.log('About page loaded');
+});
+
+router.start();
+
+router.navigate('/about'); // handler runs
+router.navigate('/about'); // silently ignored — same path, query, and hash
+```
+
+The comparison covers the full URL: path, query string, and hash fragment. Navigating to the same path with different query or hash parameters will still go through:
+
+```js
+router.navigate('/search?q=hello');  // navigates
+router.navigate('/search?q=hello');  // ignored (same URL)
+router.navigate('/search?q=world');  // navigates (different query)
+
+router.navigateWithHash('/docs', 'api');  // navigates
+router.navigateWithHash('/docs', 'api');  // ignored (same URL + hash)
+router.navigateWithHash('/docs', 'faq');  // navigates (different hash)
+```
+
+This also applies to `replace()` — replacing with the identical URL is treated as a no-op. Back/forward browser navigation (`popstate`) is never blocked, since the user explicitly requested it.
+
 ### Route Guards (Authentication/Authorization)
 
 ```js
@@ -1044,6 +1173,7 @@ function redirectToLogin() {
 ```
 
 ### Access Previous Route
+
 ```js
 // Navigate programmatically and track history
 router.navigate('/about');
@@ -1414,8 +1544,7 @@ Query strings and hash fragments are automatically preserved through rewrites.
 
 ---
 
-## When to Use Path Params vs Query Parameters vs Hash Fragments
-
+## Params vs Query vs Hash Fragments
  
 > In routing, "path parameters", "query parameters", and "hash fragments" all convey data in the URL, but they serve different semantic roles. Here's when to prefer one over the others:
 
@@ -2102,42 +2231,38 @@ RouterX is production-ready with comprehensive security protections built-in.
 
 ## License
 
-RouterX is **dual-licensed** to support both open-source and commercial use.
+RouterX is licensed under the **PolyForm Noncommercial License 1.0.0** for non-commercial use, with a commercial license option available.
 
-### Open-Source / Non-Commercial Use
+### Non-Commercial Use
 
-RouterX is available under the **MIT License** for:
+RouterX is free under the **PolyForm Noncommercial License** for:
 
-- ✅ Open-source projects (OSI-approved licenses)
-- ✅ Personal projects and non-revenue generating applications
-- ✅ Educational purposes and academic research
-- ✅ Non-profit organizations
-- ✅ Internal company tools (non-revenue generating)
-- ✅ Prototypes and MVPs
+- ✓ Open-source projects (OSI-approved licenses)
+- ✓ Personal projects and non-revenue generating applications
+- ✓ Educational purposes and academic research
+- ✓ Non-profit organizations
+- ✓ Internal company tools (non-revenue generating)
+- ✓ Prototypes and MVPs
 
-See [LICENSE](./LICENSE) and [LICENSE-NONCOMMERCIAL.md](./LICENSE-NONCOMMERCIAL.md) for full details.
+See [LICENSE](./LICENSE) for full details.
 
 ### Commercial Use
 
 A **commercial license** is required for:
 
-- ❌ Proprietary software and closed-source commercial applications
-- ❌ SaaS products and revenue-generating applications
-- ❌ Enterprise deployments and large-scale corporate use
-- ❌ White-label products sold or licensed to third parties
+- Proprietary software and closed-source commercial applications
+- SaaS products and revenue-generating applications
+- Enterprise deployments and large-scale corporate use
+- White-label products sold or licensed to third parties
 
 **Commercial licenses include:**
 
 - Legal protection and indemnification
-- Priority support and SLA
+- Priority support
 - Updates and bug fixes during license term
 - Custom licensing terms for enterprise needs
-
-See [EULA-COMMERCIAL.md](./EULA-COMMERCIAL.md) for commercial licensing terms.
 
 ### Licensing Inquiries
 
 **For commercial licensing, pricing, or questions:**
-- **Email:** ynck.chrl@protonmail.com
-
-We're happy to discuss licensing options that fit your needs.
+- **Email:** info@nativelayer.dev
