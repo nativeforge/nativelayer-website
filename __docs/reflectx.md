@@ -2,10 +2,6 @@
 ![reflectx logo](../__src/img/reflectx-logo.svg)
 ::
 
-[![npm version](https://img.shields.io/npm/v/@nativelayer.dev/reflectx.svg)](https://www.npmjs.com/package/@nativelayer.dev/reflectx)
-[![License](https://img.shields.io/badge/license-PolyForm%20NC%201.0.0-blue.svg)](./LICENSE)
-[![Bundle size](https://img.shields.io/badge/minified-~17KB-green.svg)]()
-
 # reflectx
 
 `reflectx` is a lightweight dependency-free templating and DOM binding engine designed for use within Custom Elements (Web Components) and plain HTML. It provides declarative reactive templating features through directives, making it easy to create dynamic, state-driven components without a full framework.

@@ -2,10 +2,6 @@
 ![routerx logo](/__src/img/routerx-logo.svg)
 ::
 
-[![npm version](https://img.shields.io/npm/v/@nativelayer.dev/routerx.svg)](https://www.npmjs.com/package/@nativelayer.dev/routerx)
-[![License](https://img.shields.io/badge/license-PolyForm%20NC%201.0.0-blue.svg)](./LICENSE)
-[![Bundle size](https://img.shields.io/badge/gzipped-~3.4KB-green.svg)]()
-
 # routerx
 
 version `0.2.3`
