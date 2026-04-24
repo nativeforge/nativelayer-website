@@ -4,7 +4,7 @@
 
 # restate
 
-version `0.2.0`
+version `0.2.1`
 
 A minimal, framework-agnostic reactive state management library built on ES6 proxies. `restate` provides:
 
@@ -16,30 +16,74 @@ A minimal, framework-agnostic reactive state management library built on ES6 pro
 
 **Bundle size (minified + gzipped): ~2.8 KB** — includes built-in `$computed()` and `$methods()`.
 
-
 ## Installation
 
-Import directly in a browser or module bundler:
+Published on npm as [**`@nativelayer.dev/restate`**](https://www.npmjs.com/package/@nativelayer.dev/restate).
+
+### Package managers
+
+```bash
+npm install @nativelayer.dev/restate
+yarn add @nativelayer.dev/restate
+bun add @nativelayer.dev/restate
+```
+
+After installing, import from the package name:
 
 ```js
 // ESM (recommended)
-import { restate } from './dist/esm/restate.min.js';
+import { restate } from '@nativelayer.dev/restate';
 
 // CommonJS (Node.js)
-const { restate } = require('./dist/cjs/restate.min.js');
+const { restate } = require('@nativelayer.dev/restate');
+```
+
+### CDN (browser, Deno, or plain ESM without a bundler)
+
+Prefer a **pinned** version in production (replace `0.2.1` with the release you ship).
+To always follow **latest**, use the “latest” URL for each CDN (builds can change without warning):
+
+```js
+// esm.sh — pinned
+import { restate } from 'https://esm.sh/@nativelayer.dev/restate@0.2.1';
+// esm.sh — latest (no version suffix)
+import { restate } from 'https://esm.sh/@nativelayer.dev/restate';
+
+// unpkg — pinned
+import { restate } from 'https://unpkg.com/@nativelayer.dev/restate@0.2.1/dist/restate.esm.min.js';
+// unpkg — latest
+import { restate } from 'https://unpkg.com/@nativelayer.dev/restate@latest/dist/restate.esm.min.js';
+
+// Skypack — pinned
+import { restate } from 'https://cdn.skypack.dev/@nativelayer.dev/restate@0.2.1';
+// Skypack — latest (omit the version)
+import { restate } from 'https://cdn.skypack.dev/@nativelayer.dev/restate';
+```
+
+### Vendored `dist` files (clone / download)
+
+If you ship the library files next to your app:
+
+```js
+// ESM (recommended)
+import { restate } from './dist/restate.esm.min.js';
+
+// CommonJS (Node.js)
+const { restate } = require('./dist/restate.cjs.min.js');
 ```
 
 ### Which format should I use?
 
 | Your setup | Use this |
 |------------|----------|
-| Vite, esbuild, modern bundler | `dist/esm/` (recommended) |
-| Node.js with `require()` | `dist/cjs/` |
-| Node.js with `"type": "module"` | `dist/esm/` |
+| npm, Yarn, or Bun project | `@nativelayer.dev/restate` after install |
+| Vite, esbuild, modern bundler | Package import or `dist/restate.esm.min.js` (vendored) |
+| Node.js with `require()` | Package `require` or `dist/restate.cjs.min.js` |
+| Node.js with `"type": "module"` | Package import or `dist/restate.esm.min.js` |
+| No install (CDN) | esm.sh, unpkg, or Skypack URLs above |
 
 ## Basic Usage
 
-`restate` was designed to have a fast learning curve and to provide pleasant developer experience.
 Basic operations can be done with a straight-forward syntax:
 
 ### Create a Reactive State
@@ -107,7 +151,7 @@ unwatch();
 
 ### $set(updatesOrFn)
 
-Batch multiple updates into one notification:
+Batch multiple updates into one operation :
 
 ```js
 // Object form
@@ -200,7 +244,7 @@ state.count = 7; // Throws or no-op
 Define reactive computed properties with automatic dependency tracking:
 
 ```js
-import { restate } from './dist/esm/restate.min.js';
+import { restate } from './dist/restate.esm.min.js';
 
 // Initialize state - $computed is built-in, no plugin needed
 const state = restate({ a: 1, b: 2 });
@@ -230,7 +274,7 @@ console.log(state.double); // logs no 'computing sum' but recomputes double: out
 Chaining computed values:
 
 ```js
-import { restate } from './dist/esm/restate.min.js';
+import { restate } from './dist/restate.esm.min.js';
 
 // No plugin needed - $computed is built-in
 const state = restate({ a: 2, b: 3 });
@@ -374,9 +418,9 @@ Plugins hook into `restate`'s lifecycle events (like `beforeSet`, `afterSet`, `b
 Chain optional plugins for additional features:
 
 ```js
-import { restate }           from './dist/esm/restate.min.js';
-import { PersistencePlugin } from './dist/esm/plugins/persistence.min.js';
-import { ImmutablePlugin }   from './dist/esm/plugins/immutable.min.js';
+import { restate }           from './dist/restate.esm.min.js';
+import { PersistencePlugin } from './dist/plugin/persistence.esm.min.js';
+import { ImmutablePlugin }   from './dist/plugin/immutable.esm.min.js';
 
 // Chainable registration:
 const state = restate({ count: 0, items: [] })
@@ -531,7 +575,7 @@ state.use(ImmutablePlugin, {
 By setting `strict: false`, direct property mutations are allowed without throwing:
 
 ```js
-import { ImmutablePlugin } from './dist/esm/plugins/immutable.min.js';
+import { ImmutablePlugin } from './dist/plugin/immutable.esm.min.js';
 const state = restate({ count: 0, user: { name: 'Alice' } })
   .use(ImmutablePlugin, { strict: false });
 
@@ -559,7 +603,7 @@ state.count = 3;            // works without error
 With `strict: true`, direct property mutations throw errors, but you can still apply updates using `$set`:
 
 ```js
-import { ImmutablePlugin } from './dist/esm/plugins/immutable.min.js';
+import { ImmutablePlugin } from './dist/plugin/immutable.esm.min.js';
 const state = restate({ count: 0 })
   .use(ImmutablePlugin, { strict: true });
 
@@ -576,8 +620,8 @@ console.log(state.count); // 1
 You can register custom mutation methods under strict immutability by using `$set` within your methods:
 
 ```js
-import { restate } from './dist/esm/restate.min.js';
-import { ImmutablePlugin } from './dist/esm/plugins/immutable.min.js';
+import { restate } from './dist/restate.esm.min.js';
+import { ImmutablePlugin } from './dist/plugin/immutable.esm.min.js';
 
 const state = restate({ count: 0 })
   .use(ImmutablePlugin, { strict: true });
@@ -633,8 +677,8 @@ Hooks:
 - `onDestroy` → clear history
 
 ```js
-import { restate } from './dist/esm/restate.min.js';
-import { HistoryPlugin } from './dist/esm/plugins/history.min.js';
+import { restate } from './dist/restate.esm.min.js';
+import { HistoryPlugin } from './dist/plugin/history.esm.min.js';
 
 // Initialize state with history tracking
 const state = restate({ count: 0 })
@@ -810,8 +854,8 @@ Validate types or values on state updates using custom validator functions.
 Usage:
 
 ```js
-import { restate } from './dist/esm/restate.min.js';
-import { ValidatePlugin } from './dist/esm/plugins/validate.min.js';
+import { restate } from './dist/restate.esm.min.js';
+import { ValidatePlugin } from './dist/plugin/validate.esm.min.js';
 
 const state = restate({ age: 0, name: '' })
   .use(ValidatePlugin({
@@ -903,8 +947,8 @@ listState.items = ['a','b','c']; // throws TypeError
 ### Simple Persistence + Methods
 
 ```js
-import { restate } from './dist/esm/restate.min.js';
-import { PersistencePlugin } from './dist/esm/plugins/persistence.min.js';
+import { restate } from './dist/restate.esm.min.js';
+import { PersistencePlugin } from './dist/plugin/persistence.esm.min.js';
 
 // Initialize with persistence ($methods is built-in, no plugin needed)
 const state = restate({ count: 0, items: [] })
@@ -1301,47 +1345,12 @@ All libraries have different trade-offs: `restate` provides fine-grained change 
 
 ## License
 
-`restate` is **dual-licensed** to support both open-source and commercial use.
+`restate` is licensed under the **[PolyForm Noncommercial License 1.0.0](./LICENSE)**.
 
-### Open-Source / Non-Commercial Use
+- ✅ Free for personal, educational, research, and non-commercial use
+- ✅ Non-profit organizations and public institutions
+- ❌ Commercial use requires a separate license
 
-`restate` is available under the **MIT License** for:
+See [LICENSE](./LICENSE) for full terms: https://polyformproject.org/licenses/noncommercial/1.0.0
 
-- ✅ Open-source projects (OSI-approved licenses)
-- ✅ Personal projects and non-revenue generating applications
-- ✅ Educational purposes and academic research
-- ✅ Non-profit organizations
-- ✅ Internal company tools (non-revenue generating)
-- ✅ Prototypes and MVPs
-
-See [LICENSE](./LICENSE) and [LICENSE-NONCOMMERCIAL.md](./LICENSE-NONCOMMERCIAL.md) for full details.
-
----
-
-### Commercial Use
-
-A **commercial license** is required for:
-
-- ❌ Proprietary software and closed-source commercial applications
-- ❌ SaaS products and revenue-generating applications
-- ❌ Enterprise deployments and large-scale corporate use
-- ❌ White-label products sold or licensed to third parties
-
-**Commercial licenses include:**
-
-- Legal protection and indemnification
-- Priority support and SLA
-- Updates and bug fixes during license term
-- Custom licensing terms for enterprise needs
-
-See [EULA-COMMERCIAL.md](./EULA-COMMERCIAL.md) for commercial licensing terms.
-
----
-
-### Licensing Inquiries
-
-**For commercial licensing, pricing, or questions:**
-
-> ynck.chrl@protonmail.com
-
-I'll be happy to discuss licensing options that fit your needs.
+**For commercial licensing:** info@nativelayer.dev
