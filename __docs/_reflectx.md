@@ -1,32 +1,56 @@
 :: { style="width: 96px; height: auto;" }
-![reflectx logo](/__src/img/reflectx-logo.svg)
+![reflectx logo](../__src/img/reflectx-logo.svg)
 ::
 
 # reflectx
 
-`reflectx` is a lightweight dependency-free templating and DOM biding engine designed for use within Custom Elements (Web Components) and plain HTML. It provides declarative reactive templating features through directives, making it easy to create dynamic, state-driven components without a full framework.
+`reflectx` is a lightweight dependency-free templating and DOM binding engine designed for use within Custom Elements (Web Components) and plain HTML. It provides declarative reactive templating features through directives, making it easy to create dynamic, state-driven components without a full framework.
 
-- Minified: 16.4 KB (ESM), 16.5 KB (CJS)
-- Gzipped: ~5.4 KB
+- Minified: ~17 KB (ESM), ~17.1 KB (CJS)
+- Gzipped: ~5.5 KB
 
-> `reflectx` is still in early development, before using it in production, consider that some breaking changes might occur during this development phase.
+> `reflectx` is pre-1.0; minor breaking changes may occur before 1.0. Pin your version for production use.
+
+## Quick Start
+
+```html
+<div id="app">
+  <h2 x-text="title"></h2>
+  <template x-for="item of items">
+    <span x-text="item.name"></span>
+  </template>
+</div>
+<script type="module">
+  import { reflectx } from 'https://unpkg.com/@nativelayer.dev/reflectx@latest/dist/reflectx.esm.min.js';
+  const state = { title: 'Hello', items: [{ name: 'World' }] };
+  reflectx(state, document.querySelector('#app'));
+</script>
+```
+
+## Why reflectx?
+
+- **Custom Elements first** — Works with Web Components and plain HTML, no framework overhead
+- **No build step** — Use via CDN or npm, no build required
+- **Explicit control** — Call `reflectx(state, element)` when you want to re-render
+- **Alpine-like syntax** — Familiar directives (`x-if`, `x-for`, `@click`, etc.) with `x-` prefix
+- **Plugin system** — Extend with custom plugins
 
 ## Installation
 
 ### Via NPM
 
 ```bash
-npm install @ynck/reflectx
+npm install @nativelayer.dev/reflectx
 ```
 
 Then import in your project:
 
 ```js
 // ES Module (recommended)
-import { reflectx } from '@ynck/reflectx';
+import { reflectx } from '@nativelayer.dev/reflectx';
 
 // CommonJS
-const { reflectx } = require('@ynck/reflectx');
+const { reflectx } = require('@nativelayer.dev/reflectx');
 ```
 
 ### Via CDN (No Build Step)
@@ -36,12 +60,12 @@ const { reflectx } = require('@ynck/reflectx');
 ```html
 <!-- ES Module -->
 <script type="module">
-  import { reflectx } from 'https://unpkg.com/@ynck/reflectx@latest/dist/reflectx.min.js';
+  import { reflectx } from 'https://unpkg.com/@nativelayer.dev/reflectx@latest/dist/reflectx.esm.min.js';
 </script>
 
 <!-- Or use specific version -->
 <script type="module">
-  import { reflectx } from 'https://unpkg.com/@ynck/reflectx@0.2.3/dist/reflectx.min.js';
+  import { reflectx } from 'https://unpkg.com/@nativelayer.dev/reflectx@0.3.2/dist/reflectx.esm.min.js';
 </script>
 ```
 
@@ -50,12 +74,12 @@ const { reflectx } = require('@ynck/reflectx');
 ```html
 <!-- Latest version -->
 <script type="module">
-  import { reflectx } from 'https://esm.sh/@ynck/reflectx@latest'
+  import { reflectx } from 'https://esm.sh/@nativelayer.dev/reflectx@latest'
 </script>
 
 <!-- Or with specific version -->
 <script type="module">
-  import { reflectx } from 'https://esm.sh/@ynck/reflectx@0.93.3'
+  import { reflectx } from 'https://esm.sh/@nativelayer.dev/reflectx@0.3.2'
 </script>
 ```
 
@@ -63,12 +87,12 @@ const { reflectx } = require('@ynck/reflectx');
 
 ```html
 <script type="module">
-  import { reflectx } from 'https://cdn.skypack.dev/@ynck/reflectx'
+  import { reflectx } from 'https://cdn.skypack.dev/@nativelayer.dev/reflectx'
 </script>
 
 <!-- Or with specific version -->
 <script type="module">
-  import { reflectx } from 'https://cdn.skypack.dev/@ynck/reflectx@0.93.3';
+  import { reflectx } from 'https://cdn.skypack.dev/@nativelayer.dev/reflectx@0.3.2';
 </script>
 ```
 
@@ -99,7 +123,7 @@ import { reflectx } from './path/to/reflectx/src/reflectx.js';
 
 When installed via NPM, `reflectx` provides multiple build outputs:
 
-- **ESM (ES Modules)**: `dist/reflectx.min.js` - For modern browsers and bundlers
+- **ESM (ES Modules)**: `dist/reflectx.esm.min.js` - For modern browsers and bundlers
 - **CommonJS**: `dist/reflectx.cjs.min.js` - For Node.js and legacy tools
 - **Source Maps**: Available for all builds (`.map` files)
 
@@ -109,7 +133,7 @@ The `package.json` exports field automatically selects the correct build:
 {
   "exports": {
     ".": {
-      "import": "./dist/reflectx.min.js",
+      "import": "./dist/reflectx.esm.min.js",
       "require": "./dist/reflectx.cjs.min.js"
     }
   }
@@ -194,7 +218,7 @@ Each log category supports multiple aliases for convenience. You can use either 
 reflectx exports an `html` template tag function that enables HTML syntax highlighting in your IDE when writing templates as template literals:
 
 ```js
-import { reflectx, html } from '@ynck/reflectx';
+import { reflectx, html } from '@nativelayer.dev/reflectx';
 
 class MyComponent extends HTMLElement {
   connectedCallback() {
@@ -399,7 +423,7 @@ You can also use `reflectx` with plain HTML:
 
 ```js
 // Import using CommonJS
-const { reflectx } = require('@ynck/reflectx');
+const { reflectx } = require('@nativelayer.dev/reflectx');
 
 // Create a state object with your data
 const state = {
@@ -446,7 +470,7 @@ Use the CommonJS build (`dist/reflectx.cjs`) in these scenarios:
 
 **Note**: `reflectx` requires a DOM environment. For Node.js/server usage, you must provide a DOM implementation (jsdom, happy-dom, linkedom) since `reflectx` uses `document`, `Element`, `querySelectorAll`, etc.
 
-For modern projects with native ESM support, prefer the ESM build (`dist/reflectx.js`) instead.
+For modern projects with native ESM support, prefer the ESM build (`dist/reflectx.esm.min.js`) instead.
 
 ### With Reactive State Libraries
 
@@ -506,7 +530,7 @@ class TodoComponent extends HTMLElement {
 reflectx exports an `html` template tag function that enables HTML syntax highlighting in your IDE when writing templates as template literals:
 
 ```js
-import { reflectx, html } from '@ynck/reflectx';
+import { reflectx, html } from '@nativelayer.dev/reflectx';
 
 class MyComponent extends HTMLElement {
   connectedCallback() {
@@ -1042,9 +1066,34 @@ When creating plugins, ensure you:
 
 `reflectx` provides a **secure foundation** for web applications. The core engine is hardened against XSS and code injection attacks. Plugin developers must follow security best practices and validate all inputs to maintain the security guarantee.
 
+## Browser Support
+
+reflectx works in all modern browsers that support:
+
+- **ES6+** (Proxy, template literals, modules)
+- **Custom Elements** (for Web Components usage)
+- **`<template>`** element
+
+Tested on: Chrome, Firefox, Safari, Edge (evergreen).
+
+## Known Limitations
+
+- **Manual re-renders** — Call `reflectx(state, element)` after state changes unless using a reactive state library
+- **Event handlers** — Both `@click="openRoot"` and `@click="openRoot()"` work; the function is auto-invoked when the expression evaluates to a function
+- **Private fields** — Event handlers receive the real component as `this`, so private fields (`#path`) work in methods
+- **DOM replacement** — `x-for` without `x-key` replaces nodes on each render; use `x-key` for optimal performance and to preserve DOM state
+
+## Contributing
+
+Contributions are welcome. Please open an issue or submit a pull request on [GitHub](https://github.com/ynck-chrl/reflectx).
+
 ## License
 
-This project is available under two licenses:
+`reflectx` is licensed under the [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0/).
 
-- Non-commercial use: See LICENSE-NONCOMMERCIAL.md
-- Commercial use: See EULA-COMMERCIAL.md
+- ✅ Personal projects, hobby use, education, research, non-profits
+- ❌ Commercial / revenue-generating use requires a separate license
+
+See [LICENSE](./LICENSE) for full terms.
+
+**For commercial licensing inquiries:** info@nativelayer.dev

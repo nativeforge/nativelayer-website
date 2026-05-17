@@ -175,11 +175,9 @@ class docAside extends readyElement {
         gap: calc(var(--space-unit, 0.5rem) * 1);
         background-color: var(--doc-aisde-list-item-bg-color);
         border-radius: calc(var(--space-unit, 0.5rem) * 1/2);
-        width: 100%;
+        width: -webkit-fill-content;
+        width: fill-content;
         padding: calc(var(--space-unit, 0.5rem) * 0.5) calc(var(--space-unit, 0.5rem) * 1);
-      }
-      doc-aside .doc-aside-list ol li {
-        background-color: var(--doc-aisde-list-item-bg-color);
       }
       doc-aside .doc-aside-list ol li::before {
         margin-right: calc(var(--space-unit, 0.5rem) * var(--doc-aside-indent-width, 2));
@@ -428,7 +426,7 @@ class docAside extends readyElement {
       }
 
       doc-aside aside .doc-aside-list::-webkit-scrollbar-thumb:hover {
-        background: hsla(var(--accent-color-hsl, 348 100% 50%) / .5);
+        background: hsla(var(--accent-color-hsl, 348 100% 50%) / .2);
       }
 
       doc-aside aside ol {
@@ -478,7 +476,9 @@ class docAside extends readyElement {
         width: 100%;
       }
 
-      doc-aside aside a:hover {
+      /* Hover feedback only outside the nav list (.doc-aside-list has none) */
+      doc-aside aside .doc-aside-header a:hover,
+      doc-aside aside .doc-aside-footer a:hover {
         opacity: 0.7;
         color: var(--color-sec);
       }
@@ -537,8 +537,13 @@ class docAside extends readyElement {
 
       doc-aside aside :where([class^="doc-aside-icon-container-"], .doc-aside-icon-container).--active {
         box-shadow: 0 0 0 0 transparent inset;
-        color: hsl(var(--over-accent-color-hsl, 0 100% 100%));
         background-color: hsla(var(--accent-color-hsl, 340 100% 50%) / .8);
+        color: hsl(var(--over-accent-color-hsl));
+      }
+
+      /* Beat doc-aside aside * { color: ... } so icons (svg/use) pick up over-accent in all browsers */
+      doc-aside aside :where([class^="doc-aside-icon-container-"], .doc-aside-icon-container).--active * {
+        color: hsl(var(--over-accent-color-hsl));
       }
 
       doc-aside aside .doc-aside-footer-row {
