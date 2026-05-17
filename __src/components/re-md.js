@@ -284,67 +284,70 @@ class remd extends HTMLElement {
       re-md {
         box-sizing: border-box;
         font-family: var(--ff-2, sans-serif);
+      }
 
-        * {
-          box-sizing: border-box;
-          --fcolor: var(--o-bg, 0 0% 0%);
-          --bcolor: var(--bg, 0 0% 100%);
-        }
-      
-        :where( h1, h2, h3, h4, h5, h6 ) {
-          margin-top: calc(var(--space-unit, 0.5rem) * 3);
-          margin-bottom: calc(var(--space-unit, 0.5rem) * 1.5);
-        }
+      re-md * {
+        box-sizing: border-box;
+        --fcolor: var(--o-bg, 0 0% 0%);
+        --bcolor: var(--bg, 0 0% 100%);
+      }
 
-        p { 
-          padding: calc(var(--space-unit, 0.5rem) * 1) 0;
-          line-height: var(--remmd-line-height, 1.6);
-        }
+      re-md :where(h1, h2, h3, h4, h5, h6) {
+        margin-top: calc(var(--space-unit, 0.5rem) * 3);
+        margin-bottom: calc(var(--space-unit, 0.5rem) * 1.5);
+      }
 
-        :where(ul li, ol li), :where(ol li, ul li) {
-          list-style-type: disc;
-          padding-bottom: calc(var(--space-unit, 0.5rem) * 1);
-        }
+      re-md p {
+        padding: calc(var(--space-unit, 0.5rem) * 1) 0;
+        line-height: var(--remmd-line-height, 1.6);
+      }
 
-        :where( ul, ol ), :where(ul ol) {
-          padding: calc(var(--space-unit) * 1) 0 calc(var(--space-unit) * 1) calc(var(--space-unit) * 2);
-        }
+      re-md :where(ul li, ol li),
+      re-md :where(ol li, ul li) {
+        list-style-type: disc;
+        padding-bottom: calc(var(--space-unit, 0.5rem) * 1);
+      }
 
-        hr {
-          width: 100%;
-          padding: calc(var(--space-unit, 0.5rem) * 2) 0;
-          border: none;
-          border-top: 1px dotted hsla(var(--fcolor-hsl, 0 0% 0%) / var(--hr-border-opacity, 0.5));
-        }
+      re-md :where(ul, ol),
+      re-md :where(ul ol) {
+        padding: calc(var(--space-unit) * 1) 0 calc(var(--space-unit) * 1) calc(var(--space-unit) * 2);
+      }
 
-        blockquote {
-          font-size: var(--blockquote-font-size);
-          margin: 0;
-          padding: calc(var(--space-unit, 0.5rem) * 2) calc(var(--space-unit, 0.5rem) * 2);
-          margin-block-end: calc(var(--space-unit, 0.5rem) * 6);
-          background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / var(--blockquote-bg-opacity, 0.04));
-          border-radius: calc(var(--size-unit, 0.5rem) * 0.25);
-          border-left: 4px solid hsla( var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / var(--blockquote-border-opacity, 0.4));
-        }
+      re-md hr {
+        width: 100%;
+        padding: calc(var(--space-unit, 0.5rem) * 2) 0;
+        border: none;
+        border-top: 1px dotted hsla(var(--fcolor-hsl, 0 0% 0%) / var(--hr-border-opacity, 0.5));
+      }
 
-        code {
-          font-size: var(--codeblock-font-size);
-          padding: calc(var(--space-unit, 0.5rem) * 1/3) var(--space-unit, 0.5rem);
-          margin-inline: calc(var(--space-unit, 0.5rem) * 1/2);
-          background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl)) / var(--inline-code-bg-opacity, 0.06));
-          box-shadow: 0 0 0 1px hsla(var(--accent-color-hsl, var(--fcolor-hsl)) / var(--inline-code-border-opacity, 0.2));
-          border-radius: calc(var(--size-unit, 0.5rem) * 1/2);
-        }
-        code-block {
-          font-size: var(--codeblock-font-size);
-          padding: calc(var(--space-unit, 0.5rem) * 2) calc(var(--space-unit, 0.5rem) * 4);
-          border-radius: calc(var(--size-unit, 0.5rem) * 0.25);
+      re-md blockquote {
+        font-size: var(--blockquote-font-size);
+        margin: 0;
+        padding: calc(var(--space-unit, 0.5rem) * 2) calc(var(--space-unit, 0.5rem) * 2);
+        margin-block-end: calc(var(--space-unit, 0.5rem) * 6);
+        background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / var(--blockquote-bg-opacity, 0.04));
+        border-radius: calc(var(--size-unit, 0.5rem) * 0.25);
+        border-left: 4px solid hsla( var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / var(--blockquote-border-opacity, 0.4));
+      }
 
-          .copy-btn {
-            font-size: var(--codeblock-font-size);
-            box-shadow: 0 0 0 1px hsla(var(--accent-color-hsl, var(--fcolor-hsl)) / var(--inline-code-border-opacity, 0.2)) inset;
-          }
-        }
+      re-md code {
+        font-size: var(--codeblock-font-size);
+        padding: calc(var(--space-unit, 0.5rem) * 1/3) var(--space-unit, 0.5rem);
+        margin-inline: calc(var(--space-unit, 0.5rem) * 1/2);
+        background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl)) / var(--inline-code-bg-opacity, 0.06));
+        box-shadow: 0 0 0 1px hsla(var(--accent-color-hsl, var(--fcolor-hsl)) / var(--inline-code-border-opacity, 0.2));
+        border-radius: calc(var(--size-unit, 0.5rem) * 1/2);
+      }
+
+      re-md code-block {
+        font-size: var(--codeblock-font-size);
+        padding: calc(var(--space-unit, 0.5rem) * 2) calc(var(--space-unit, 0.5rem) * 4);
+        border-radius: calc(var(--size-unit, 0.5rem) * 0.25);
+      }
+
+      re-md code-block .copy-btn {
+        font-size: var(--codeblock-font-size);
+        box-shadow: 0 0 0 1px hsla(var(--accent-color-hsl, var(--fcolor-hsl)) / var(--inline-code-border-opacity, 0.2)) inset;
       }
     `;
   }
@@ -355,56 +358,56 @@ class remd extends HTMLElement {
       /* Table styles */
 
       re-md {
-
         --re-md-font-size: var(--f-size-p, 0.9rem);
-        .table-wrapper {
-          width: 100%;
-          overflow-x: auto;
-          margin-top: calc(var(--space-unit, 0.5rem) * 4);
-          margin-bottom: calc(var(--space-unit, 0.5rem) * 6);
-        }
-        
-        .re-md-table {
-          white-space: nowrap;
-          border-collapse: collapse;
-          overflow-x: hidden;
-          font-family: var(--ff-3, monospace);
-          font-size: var(--re-md-font-size);
-          border-radius: calc(var(--size-unit, 0.5rem) * 1) calc(var(--size-unit, 0.5rem) * 1) 0 0;
-          overflow: hidden;
-        }
-        
-        .re-md-table thead {
-          background-color: hsla(var(--accent-color-hsl, var(--bcolor-hsl, 0 0% 100%)) / var(--table-thead-bg-opacity, 0.8));
-        }
-        
-        .re-md-table th {
-          padding: calc(var(--space-unit, 0.5rem) * 2) calc(var(--space-unit, 0.5rem) * 3);
-          font-weight: 300;
-          text-align: left;
-          color: hsla(var(--over-accent-color-hsl) / var(--table-thead-color-opacity, 0.8));
-        }
+      }
 
-        .re-md-table th:not(:first-child) {
-          border-left: 1px solid hsla(var(--bcolor-hsl, 0 0% 100%) / var(--table-th-border-opacity, 0.5));
-        }
+      re-md .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        margin-top: calc(var(--space-unit, 0.5rem) * 4);
+        margin-bottom: calc(var(--space-unit, 0.5rem) * 6);
+      }
 
-        .re-md-table tbody tr:last-child {
-          border-bottom: none;
-        }
+      re-md .re-md-table {
+        white-space: nowrap;
+        border-collapse: collapse;
+        overflow-x: hidden;
+        font-family: var(--ff-3, monospace);
+        font-size: var(--re-md-font-size);
+        border-radius: calc(var(--size-unit, 0.5rem) * 1) calc(var(--size-unit, 0.5rem) * 1) 0 0;
+        overflow: hidden;
+      }
 
-        .re-md-table tbody tr:nth-child(even) {
-          background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / var(--table-tr-even-bg-opacity, 0.08));
-        }
+      re-md .re-md-table thead {
+        background-color: hsla(var(--accent-color-hsl, var(--bcolor-hsl, 0 0% 100%)) / var(--table-thead-bg-opacity, 0.8));
+      }
 
-        .re-md-table td {
-          padding: calc(var(--space-unit, 0.5rem) * 2) calc(var(--space-unit, 0.5rem) * 3);
-          color: hsla(var(--fcolor-hsl, 0 0% 0%) / var(--table-td-color-opacity, 0.85));
-        }
-        
-        .re-md-table td:not(:first-child) {
-          border-left: 1px dotted hsla(var(--fcolor-hsl, 0 0% 0%) / var(--table-td-border-opacity, 0.5));
-        }
+      re-md .re-md-table th {
+        padding: calc(var(--space-unit, 0.5rem) * 2) calc(var(--space-unit, 0.5rem) * 3);
+        font-weight: 300;
+        text-align: left;
+        color: hsla(var(--over-accent-color-hsl) / var(--table-thead-color-opacity, 0.8));
+      }
+
+      re-md .re-md-table th:not(:first-child) {
+        border-left: 1px solid hsla(var(--bcolor-hsl, 0 0% 100%) / var(--table-th-border-opacity, 0.5));
+      }
+
+      re-md .re-md-table tbody tr:last-child {
+        border-bottom: none;
+      }
+
+      re-md .re-md-table tbody tr:nth-child(even) {
+        background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / var(--table-tr-even-bg-opacity, 0.08));
+      }
+
+      re-md .re-md-table td {
+        padding: calc(var(--space-unit, 0.5rem) * 2) calc(var(--space-unit, 0.5rem) * 3);
+        color: hsla(var(--fcolor-hsl, 0 0% 0%) / var(--table-td-color-opacity, 0.85));
+      }
+
+      re-md .re-md-table td:not(:first-child) {
+        border-left: 1px dotted hsla(var(--fcolor-hsl, 0 0% 0%) / var(--table-td-border-opacity, 0.5));
       }
     `;
   }

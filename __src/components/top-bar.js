@@ -1,8 +1,6 @@
 import { html } from "/__src/js/html.js";
-import svgNinja from '/__src/components/svg-ninja.js';
+import '/__src/js/register-svg-ninja.js';
 import { readyElement } from "/__src/components/ready-element.js";
-
-customElements.define('svg-ninja', svgNinja);
 
 class topBar extends readyElement {
   constructor() {
@@ -51,6 +49,7 @@ class topBar extends readyElement {
         height: var(--top-bar-height);
         color: hsl(var(--fcolor-hsl));
         background-color: hsla(var(--bcolor-hsl) / 0.25);
+        -webkit-backdrop-filter: blur(12px);
         backdrop-filter: blur(12px);
         border-bottom: 1px solid hsla(var(--fcolor-hsl) / 0.2);
         font-family: var(--ff-2, sans-serif);
@@ -252,6 +251,7 @@ class topBar extends readyElement {
         display: none;
         flex-direction: column;
         background-color: hsla(var(--bcolor-hsl) / 0.97);
+        -webkit-backdrop-filter: blur(12px);
         backdrop-filter: blur(12px);
         border-top: 1px solid hsla(var(--fcolor-hsl) / 0.1);
         padding-block: calc(var(--space-unit, 0.5rem) * 2);

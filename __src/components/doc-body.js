@@ -109,20 +109,30 @@ class docBody extends readyElement {
 
       doc-body {
         position: relative;
-        top: calc( var(--top-bar-height) + var(--space-unit) * 3);
+        top: calc( var(--top-bar-height) + var(--space-unit) * 4);
         left: var(--doc-aside-width);
-        min-height: calc(100% - var(--top-bar-height, calc(var(--space-unit, 0.5rem) * 6) - var(--space-unit, 0.5rem) * 3));
+        min-height: calc(100dvh - var(--top-bar-height) - var(--space-unit) * 4);
         padding-left: var(--page-padding-x);
-        padding-right: var(--page-padding-x);
+        /* padding-right: var(--page-padding-x); */
+        
         color: hsla(var(--fcolor-hsl, 0 0% 0%) / var(--fcolor, 0.8));
         padding-bottom: calc(var(--space-unit, 0.5rem) * 64);
         display: flex;
         flex-direction: column;
-        width: calc(100% - var(--doc-aside-width) - var(--page-padding-x, 1rem) * 2);
+        width: calc(100% - var(--doc-aside-width) - var(--page-padding-x, 1rem) * 1);
         max-width: 60rem;
         row-gap: calc(var(--space-unit, 0.5rem) * 3);
         line-height: 1.6;
         counter-reset: h2;
+      }
+
+      doc-body > re-md {
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+
+      doc-body:has(> flex-container) {
+        padding-bottom: calc(var(--space-unit) * 4);
       }
 
       @media (max-width: 60rem) {

@@ -92,14 +92,14 @@
   --accent-color-hsl: var(--darkest);
 }
 
-body{
+body {
   overflow-x: hidden;
   color: hsl(var(--fcolor-hsl));
   background-color: hsl(var(--bcolor-hsl));
+}
 
-  :where(h1, h2, h3, h4, h5, h6) {
-    font-family: var(--ff-1);
-  }
+body :where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--ff-1);
 }
 .--accent-is-light {
   --over-accent-color-hsl: var(--darkest);
@@ -119,16 +119,11 @@ body{
   --over-accent-color-hsl: var(--darkest);
 }
 
-html{
-  p{
-    font-family: var(--ff-2);
-    font-size: var(--f-size-p);
-    line-height: 1.4;
-    color: hsla(var(--fcolor-hsl) / 0.8);
-  }
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--ff-1);
-  }
+html p {
+  font-family: var(--ff-2);
+  font-size: var(--f-size-p);
+  line-height: 1.4;
+  color: hsla(var(--fcolor-hsl) / 0.8);
 }
 
 :is(top-bar, page-container, flex-container, base-footer, doc-body, doc-aside):not([ready]) {
