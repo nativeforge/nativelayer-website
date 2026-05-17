@@ -552,7 +552,7 @@ The `html` tag is purely for IDE support and doesn't transform the string - it r
 
 ## Directives
 
-### 1. Conditional Rendering (`x-if`)
+### Conditional Rendering (`x-if`)
 
 ```html
 <div x-if="someCondition">
@@ -562,7 +562,7 @@ The `html` tag is purely for IDE support and doesn't transform the string - it r
 
 The element is completely removed from the DOM (not just hidden) when the condition is false.
 
-### 2. List Rendering (`x-for`)
+### List Rendering (`x-for`)
 
 Supports two syntaxes:
 
@@ -626,7 +626,7 @@ Features:
 - Provides iteration context to nested elements
 - **Per-item diffing with `x-key` for optimal performance**
 
-### 3. Class Binding (`x-class`)
+### Class Binding (`x-class`)
 
 Two syntaxes available:
 
@@ -640,7 +640,7 @@ Two syntaxes available:
 </div>
 ```
 
-### 4. Dynamic Attributes (`x-*`)
+### Dynamic Attributes (`x-*`)
 
 Any attribute prefixed with `x-` (except special directives) becomes dynamic:
 
@@ -650,7 +650,7 @@ Any attribute prefixed with `x-` (except special directives) becomes dynamic:
 <div x-data-id="getId()">
 ```
 
-### 5. Text Content (`x-text`)
+### Text Content (`x-text`)
 
 Renders dynamic text content:
 
@@ -671,7 +671,7 @@ Features:
 - Handles objects (converts to JSON)
 - Supports conditional rendering
 
-### 6. Event Handling (`@event` / `x-on:event`)
+### Event Handling (`@event` / `x-on:event`)
 
 Two equivalent syntaxes are available for event handlers:
 
@@ -1083,9 +1083,9 @@ Tested on: Chrome, Firefox, Safari, Edge (evergreen).
 - **Private fields** — Event handlers receive the real component as `this`, so private fields (`#path`) work in methods
 - **DOM replacement** — `x-for` without `x-key` replaces nodes on each render; use `x-key` for optimal performance and to preserve DOM state
 
-## Contributing
+## Reporting vulnerabilities
 
-Contributions are welcome. Please open an issue or submit a pull request on [GitHub](https://github.com/ynck-chrl/reflectx).
+**Security:** If you discover a security vulnerability, please report it privately via email at **info@nativelayer.dev** rather than opening a public issue.
 
 ## License
 
