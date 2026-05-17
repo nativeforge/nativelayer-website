@@ -50,7 +50,7 @@ const setTheme = (product) => {
   const accentColorLuminance = luminanceHSL(...product.themeColorHsl.replaceAll('%', '').split(' ').map(Number));
   const adjusted = adjustedHSL(product.themeColorHsl, { min: 35, max: 65, strength: 1 });
 
-  console.log(`[theme] luminance: ${accentColorLuminance.toFixed(3)} | adjusted: ${adjusted}`);
+  // console.log(`[theme] luminance: ${accentColorLuminance.toFixed(3)} | adjusted: ${adjusted}`);
 
   htmlElement.style.setProperty('--accent-color-hsl', `${product.themeColorHsl}`);
   htmlElement.style.setProperty('--accent-color-hsl-adjusted', adjusted);
@@ -191,27 +191,27 @@ router.beforeEach((to, query, hash) => {
 });
 
 router.on('/', () => {
-  console.log('Home page loaded');
+  // console.log('Home page loaded');
   return true;
 });
 
 router.on('/about', () => {
-  console.log('About page loaded');
+  // console.log('About page loaded');
   return true;
 });
 
 router.on('/demos', () => {
-  console.log('demos page loaded');
+  // console.log('demos page loaded');
   return true;
 });
 
 router.on('/docs', () => {
-  console.log('Docs page loaded');
+  // console.log('Docs page loaded');
   return true;
 });
 
 router.on('/packages', () => {
-  console.log('Packages page loaded');
+  // console.log('Packages page loaded');
   return true;
 });
 
@@ -247,7 +247,7 @@ router.on('/docs/:product', (params, query, hash) => {
     cacheDOMElements();
     setTheme(product);
     
-    console.log(`Product found: ${product.name}`);
+    // console.log(`Product found: ${product.name}`);
     return true; // Allow handler to proceed
   },
   
@@ -260,13 +260,13 @@ router.on('/docs/:product', (params, query, hash) => {
 
 // 404 route
 router.on('/404', () => {
-  console.log('404 page loaded');
+  // console.log('404 page loaded');
   return true;
 });
 
 // Not found handler
 router.notFound(() => {
-  console.log('404 - route not found');
+  // console.log('404 - route not found');
   router.navigate('/404');
   return true;
 });

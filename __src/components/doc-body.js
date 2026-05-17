@@ -339,20 +339,20 @@ class docBody extends readyElement {
 
   // Copy URL to clipboard with user feedback
   async copyToClipboard(url, heading) {
-    console.log('copyToClipboard called with:', url); // Debug
+    // console.log('copyToClipboard called with:', url);
     
     try {
       await navigator.clipboard.writeText(url);
-      console.log('Clipboard write successful'); // Debug
+      // console.log('Clipboard write successful');
       
       // Show 'copied' feedback via CSS class
       heading.classList.add('copied');
-      console.log('Added copied class to:', heading.textContent); // Debug
+      // console.log('Added copied class to:', heading.textContent);
       
       // Remove feedback after 3 seconds
       setTimeout(() => {
         heading.classList.remove('copied');
-        console.log('Removed copied class'); // Debug
+        // console.log('Removed copied class');
       }, 3000);
       
     } catch (err) {

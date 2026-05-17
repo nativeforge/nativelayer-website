@@ -38,8 +38,8 @@ const processAccentColors = () => {
       const accentColorHsl = el.getAttribute('accent-color-hsl');
       const luminance = luminanceHSL(...accentColorHsl.replaceAll('%', '').split(' ').map(Number));
 
-      const adjusted = adjustedHSL(accentColorHsl, { min: 35, max: 60, strength: 1, maxShift: 20 });
-      console.log(adjusted);
+      const adjusted = adjustedHSL(accentColorHsl, { min: 30, max: 70, strength: 1, maxShift: 20 });
+      // console.log(adjusted);
       el.style.setProperty('--accent-color-hsl', accentColorHsl);
       el.style.setProperty('--accent-color-hsl-adjusted', adjusted);
 
