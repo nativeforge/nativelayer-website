@@ -67,6 +67,7 @@
         color: hsl(var(--fcolor-hsl));
       }
       .about-text p {
+        font-family: var(--ff-2);
         font-weight: 300;
         line-height: 1.7;
       }
@@ -142,7 +143,9 @@
           font-weight: 400;
           color: hsla(var(--bcolor-hsl) / 0.8);
           transition: color 0.32s ease;
-          &:hover { color: hsla(var(--bcolor-hsl) / 1); }
+        }
+        base-footer a:hover {
+          color: hsla(var(--bcolor-hsl) / 1);
         }
       </style>
       <svg class="footer-logo">

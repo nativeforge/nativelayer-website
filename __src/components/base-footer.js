@@ -19,10 +19,12 @@ class BaseFooter extends readyElement {
         font-family: var(--ff-2, sans-serif);
         color: hsl(var(--bcolor-hsl));
         background-color: hsla(var(--fcolor-hsl) / 0.7);
-        * {
-          box-sizing: border-box;
-        }
-
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
       .footer {
         display: flex;
         flex-wrap: wrap;
@@ -32,11 +34,10 @@ class BaseFooter extends readyElement {
         padding-block: calc(var(--space-unit) * 4);
         gap: calc(var(--space-unit) * 4);
         padding: var(--page-padding-x);
-
-        :where(a, a:visited) {
-          color: inherit;
-          text-decoration: none;
-        }
+      }
+      .footer :where(a, a:visited) {
+        color: inherit;
+        text-decoration: none;
       }
       .footer-brand {
         display: flex;
@@ -71,7 +72,7 @@ class BaseFooter extends readyElement {
       .footer-column-title {
         font-size: var(--f-size-p);
         color: hsla(var(--bcolor-hsl) / 0.9);
-        padding-bottom: calc(var(-space-unit)* 2);
+        padding-bottom: calc(var(--space-unit) * 2);
       }
       .footer-column :where(ul) {
         list-style: none;
@@ -89,7 +90,6 @@ class BaseFooter extends readyElement {
       .footer-column :where(a:hover) {
         color: hsla(var(--fcolor-hsl) / 1);
       }
-    }
     </style>
 
     <footer class="footer">

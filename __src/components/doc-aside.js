@@ -1,5 +1,7 @@
 import { scrollToHeadingById, updateUrlHash } from '/__src/js/utils.js';
 import { readyElement } from "/__src/components/ready-element.js";
+import '/__src/js/register-svg-ninja.js';
+
 class docAside extends readyElement {
   constructor() {
     super();
@@ -55,18 +57,21 @@ class docAside extends readyElement {
 
     this.innerHTML = `
     <style>
-      :root {doc-aside * {
+      doc-aside,
+      doc-aside * {
         box-sizing: border-box;
       }
 
       doc-aside {
         font-family: var(--ff-2, sans-serif);
-        padding-left: calc(var(--doc-aside-padding));
+        padding-left: var(--page-padding-x);
         position: fixed !important;
         left: 0;
         top: var(--top-bar-height);
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
         width: var(--doc-aside-width);
-        height: 100%;
         background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / .06);
         --doc-aisde-list-item-bg-color: hsla(var(--bcolor-hsl, 0 0% 100%) / 1);
 
@@ -88,7 +93,6 @@ class docAside extends readyElement {
         gap: calc(var(--space-unit, 0.5rem) * 2);
         align-items: baseline;
         cursor: pointer;
-        // box-shadow: 0 0 0 1px hsla(var(--fcolor-hsl, 0 0% 0%) / .1) inset;
         background-color: var(--doc-aisde-list-item-bg-color);
         border-radius: calc(var(--space-unit, 0.5rem) * 1/2);
         padding: calc(var(--space-unit, 0.5rem) * 0.5) calc(var(--space-unit, 0.5rem) * 1);
@@ -174,7 +178,7 @@ class docAside extends readyElement {
         width: 100%;
         padding: calc(var(--space-unit, 0.5rem) * 0.5) calc(var(--space-unit, 0.5rem) * 1);
       }
-      doc-aside .doc-aside-list li(:not(.doc-aside-list > li)) {
+      doc-aside .doc-aside-list ol li {
         background-color: var(--doc-aisde-list-item-bg-color);
       }
       doc-aside .doc-aside-list ol li::before {
@@ -184,6 +188,14 @@ class docAside extends readyElement {
       doc-aside[section-numbers] .doc-aside-list li::before {
         content: counter(section) ".";
         margin-right: calc(var(--space-unit, 0.5rem) * 1);
+      }
+
+      doc-aside[section-numbers] .doc-aside-list {
+        padding-left: calc(var(--space-unit, 0.5rem) * 0);
+      }
+
+      .--accent-is-light doc-aside .doc-aside-title:hover > a {
+        color: hsl(var(--over-accent-color-hsl));
       }
 
       .doc-aside-title {
@@ -239,322 +251,324 @@ class docAside extends readyElement {
       }
 
       /* Custom scrollbar for webkit browsers */
-      doc-aside aside::-webkit-scrollbar {
+      doc-aside aside .doc-aside-content::-webkit-scrollbar {
         width: 4px;
       }
 
-      doc-aside aside::-webkit-scrollbar-track {
+      doc-aside aside .doc-aside-content::-webkit-scrollbar-track {
         background: transparent;
       }
 
-      doc-aside aside::-webkit-scrollbar-thumb {
+      doc-aside aside .doc-aside-content::-webkit-scrollbar-thumb {
         background: hsla(var(--fcolor-hsl, 0 0% 0%) / .25);
         border-radius: 2px;
       }
 
-      doc-aside aside::-webkit-scrollbar-thumb:hover {
+      doc-aside aside .doc-aside-content::-webkit-scrollbar-thumb:hover {
         background: hsla(var(--fcolor-hsl, 0 0% 0%) / .5);
       }
 
       doc-aside aside {
         display: flex;
         flex-direction: column;
-        height: calc(100% - var(--space-unit) * 4);
+        flex: 1;
+        min-height: 0;
         width: 100%;
-        padding-right: var(--doc-aside-padding);
-        padding-top: calc(var(--space-unit) * 4);
-        overflow-y: auto;
-        overflow-x: hidden;
+        padding-right: var(--page-padding-x);
+        padding-top: var(--page-padding-x);
+        overflow: hidden;
         scrollbar-width: thin;
         scrollbar-color: hsla(var(--fcolor-hsl, 0 0% 0%) / .3) transparent;
-
         border-right: 1px solid hsla(var(--accent-color-hsl, var(--fcolor-hsl)) / var(--aside-border-opacity, 0.4));
+      }
 
-        li, :where(a, a:visited) { 
-          font-size: var(--f-size-p);
-          font-family: var(--ff-2);
-          text-decoration: none;
-          color: hsla(var(--fcolor-hsl) / 1);
-        }
+      doc-aside aside li,
+      doc-aside aside :where(a, a:visited) {
+        font-size: var(--f-size-p);
+        font-family: var(--ff-2);
+        text-decoration: none;
+        color: hsla(var(--fcolor-hsl) / 1);
+      }
 
-        /* Title styling for h1 */
-        .doc-aside-title {
-          font-size: var(--f-size-p);
-          line-height: 1.4;
-          padding: 0; margin: 0;
-        }
-        .doc-aside-title a {
-          text-decoration: none;
-          color: inherit;
-        }
-        .--accent-is-light .doc-aside-title:hover > a {
-          color: hsl(var(--over-accent-color-hsl));
-        }
+      doc-aside aside .doc-aside-title {
+        font-size: var(--f-size-p);
+        line-height: 1.4;
+        padding: 0;
+        margin: 0;
+      }
 
-        .doc-aside-search {
-          width: 100%;
-          background-color: hsla(var(--bcolor-hsl) / 0.9);
-          height: calc(var(--space-unit, 0.5rem) * 4);
-          margin: calc(var(--space-unit, 0.5rem) * 2) 0;
-          padding: calc(var(--space-unit, 0.5rem) * 1) calc(var(--space-unit, 0.5rem) * 1);
-          border: none;
-          border-radius: calc(var(--space-unit, 0.5rem) * 0.5);
-          transition: box-shadow 0.4s ease;
-          &:focus,
-          &:active {
-            outline: 0;
-            box-shadow: 0 0 0 1px hsla(var(--accent-color-hsl, 340 100% 50%) / .8) inset;
-          }
-            &::placeholder {
-              color: hsla(var(--fcolor-hsl) / 0.75);
-            }
-        }
+      doc-aside aside .doc-aside-title a {
+        text-decoration: none;
+        color: inherit;
+      }
 
-        hr.doc-aside-separator-header {
-          width: 100%;
-          border-left: none; border-right: none; border-top: none;
-          border-bottom: 1px solid hsla(var(--accent-color-hsl, 0 0% 0%) / .4);
-          margin: calc(var(--space-unit, 0.5rem) * 2) 0 0 0;
-          padding-block-end: 0;
-        }
+      doc-aside aside .doc-aside-search {
+        width: 100%;
+        background-color: hsla(var(--bcolor-hsl) / 0.9);
+        height: calc(var(--space-unit, 0.5rem) * 4);
+        margin: calc(var(--space-unit, 0.5rem) * 2) 0;
+        padding: calc(var(--space-unit, 0.5rem) * 1) calc(var(--space-unit, 0.5rem) * 1);
+        border: none;
+        border-radius: calc(var(--space-unit, 0.5rem) * 0.5);
+        transition: box-shadow 0.4s ease;
+      }
 
-        hr.doc-aside-separator-footer {
-          width: 100%;
-          border-left: none; border-right: none; border-top: none;
-          border-bottom: 1px solid hsla(var(--accent-color-hsl, 0 0% 0%) / .4);
-          padding: 0;
-          margin: 0;
-          margin-bottom: calc(var(--space-unit, 0.5rem) * 1);
-        }
+      doc-aside aside .doc-aside-search:focus,
+      doc-aside aside .doc-aside-search:active {
+        outline: 0;
+        box-shadow: 0 0 0 1px hsla(var(--accent-color-hsl, 340 100% 50%) / .8) inset;
+      }
 
-        .doc-aside-header, 
-        .doc-aside-content,
-        .doc-aside-footer {
-          display: flex;
-          flex-direction: column;
-        }
+      doc-aside aside .doc-aside-search::placeholder {
+        color: hsla(var(--fcolor-hsl) / 0.75);
+      }
 
-        .doc-aside-footer {
-          padding: 0 0 calc(var(--space-unit, 0.5rem) * 2.5) 0;
-        }
+      doc-aside aside hr.doc-aside-separator-header {
+        width: 100%;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        border-bottom: 1px solid hsla(var(--accent-color-hsl, 0 0% 0%) / .4);
+        margin: calc(var(--space-unit, 0.5rem) * 2) 0 0 0;
+        padding-block-end: 0;
+      }
 
-        .doc-aside-content{ 
-          height: 100%;
-          padding-top: calc(var(--space-unit, 0.5rem) * 2);
-          padding-bottom: calc(var(--space-unit, 0.5rem) * 8);
-          overflow-y: auto;
-          overflow-x: hidden;
-          overscroll-behavior: contain;
-          // background-color: hsla(var(--bcolor-hsl, 0 0% 100%) / .8);
-        }
-        :where(.doc-aside-head, .doc-aside-icons) {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: calc(var(--space-unit, 0.5rem) * 1);
-        }
-        .doc-aside-head {
-          justify-content: space-between;
-        }
-        .doc-aside-logo {
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: calc(var(--space-unit, 0.5rem) * 1);
-        }
-        .doc-aside-logo-svg {
-          width: calc(var(--space-unit, 0.5rem) * 4);
-          height: calc(var(--space-unit, 0.5rem) * 4);  
-        }
-        :where(.doc-aside-icon) {
-          width: calc(var(--space-unit, 0.5rem) * 3);
-          height: calc(var(--space-unit, 0.5rem) * 3);  
-        }
+      doc-aside aside hr.doc-aside-separator-footer {
+        width: 100%;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        border-bottom: 1px solid hsla(var(--accent-color-hsl, 0 0% 0%) / .4);
+        padding: 0;
+        margin: 0;
+        margin-bottom: calc(var(--space-unit, 0.5rem) * 1);
+      }
 
-        /* ol element with its own scroll context */
-        .doc-aside-list {
-          position: sticky;
-          margin: 0;
-          display: flex;
-          flex-direction: column;
-          gap: calc(var(--space-unit, 0.5rem) * 1);
-          scrollbar-width: 4px;
-          scrollbar-color: hsla(var(--accent-color-hsl, 348 100% 50%) / .8) transparent;
-          overscroll-behavior: contain;
-        }
+      doc-aside aside .doc-aside-header,
+      doc-aside aside .doc-aside-content,
+      doc-aside aside .doc-aside-footer {
+        display: flex;
+        flex-direction: column;
+      }
 
-        [section-numbers] .doc-aside-list {
-          padding-left: calc(var(--space-unit, 0.5rem) * 0);
-        }
+      doc-aside aside .doc-aside-header {
+        flex-shrink: 0;
+      }
 
-        /* Custom scrollbar for webkit browsers */
-        .doc-aside-list::-webkit-scrollbar {
-          width: 4px;
-        }
+      doc-aside aside .doc-aside-footer {
+        flex-shrink: 0;
+        padding: 0 0 calc(var(--space-unit, 0.5rem) * 2.5) 0;
+        font-size: var(--f-size-p);
+        line-height: 1.42;
+        color: hsla(var(--fcolor-hsl, 0 0% 0%) / .6);
+      }
 
-        .doc-aside-list::-webkit-scrollbar-track {
-          background: transparent;
-        }
+      doc-aside aside .doc-aside-content {
+        flex: 1;
+        min-height: 0;
+        padding-top: calc(var(--space-unit, 0.5rem) * 3);
+        padding-bottom: calc(var(--space-unit, 0.5rem) * 8);
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: contain;
+      }
 
-        .doc-aside-list::-webkit-scrollbar-thumb {
-          background: hsla(var(--accent-color-hsl, 348 100% 50%) / .2);
-          border-radius: 2px;
-          width: 4px;
-        }
+      doc-aside aside :where(.doc-aside-head, .doc-aside-icons) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: calc(var(--space-unit, 0.5rem) * 1);
+      }
 
-        .doc-aside-list::-webkit-scrollbar-thumb:hover {
-          background: hsla(var(--accent-color-hsl, 348 100% 50%) / .5);
-        }
+      doc-aside aside .doc-aside-head {
+        justify-content: space-between;
+      }
 
-        /* Reset list styles */
-        doc-aside ol {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-        }
+      doc-aside aside .doc-aside-logo {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: calc(var(--space-unit, 0.5rem) * 1);
+      }
 
-        .doc-aside-list > li > details ol{
-          display: flex;
-          flex-direction: column;
-          row-gap: calc(var(--space-unit, 0.5rem) * 1);
-          padding-top: calc(var(--space-unit, 0.5rem) * 1);
-        }
+      doc-aside aside .doc-aside-logo-svg {
+        width: calc(var(--space-unit, 0.5rem) * 4);
+        height: calc(var(--space-unit, 0.5rem) * 4);
+      }
 
-        /* Base list item styling */
-        doc-aside ol > li {
-          list-style-type: none !important;
-          padding: 0;
-          padding-inline-start: calc(var(--space-unit, 0.5rem) * 2);
-          margin: 0;
-        }
+      doc-aside aside :where(.doc-aside-icon) {
+        width: calc(var(--space-unit, 0.5rem) * 3);
+        height: calc(var(--space-unit, 0.5rem) * 3);
+      }
 
-        doc-aside details {
-          margin: 0;
-          padding: 0;
-        }
-        
-        /* all doc-aside-list items gets width 100% */
-        .doc-aside-list li details,
-        .doc-aside-list .nav-item {
-          width: 100%;
-        }
+      doc-aside aside .doc-aside-list {
+        position: sticky;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--space-unit, 0.5rem) * 1);
+        scrollbar-width: 4px;
+        scrollbar-color: hsla(var(--accent-color-hsl, 348 100% 50%) / .8) transparent;
+        overscroll-behavior: contain;
+      }
 
-        doc-aside summary > a {
-          flex: 1;
-          min-width: 0;
-        }
-        
+      doc-aside aside .doc-aside-list::-webkit-scrollbar {
+        width: 4px;
+      }
 
-        doc-aside, doc-aside * {
-          color: hsl(var(--fcolor-hsl, 0 0% 0%));
-        }
+      doc-aside aside .doc-aside-list::-webkit-scrollbar-track {
+        background: transparent;
+      }
 
-        doc-aside a {
-          color: hsla(var(--fcolor-hsl, 0 0% 0%));
-          text-decoration: none;
-        }
+      doc-aside aside .doc-aside-list::-webkit-scrollbar-thumb {
+        background: hsla(var(--accent-color-hsl, 348 100% 50%) / .2);
+        border-radius: 2px;
+        width: 4px;
+      }
 
-        doc-aside a:hover {
-          opacity: 0.7;
-        }
+      doc-aside aside .doc-aside-list::-webkit-scrollbar-thumb:hover {
+        background: hsla(var(--accent-color-hsl, 348 100% 50%) / .5);
+      }
 
-        details[open] {
-          border: none !important;
-          ol {padding-left: 0;}
-        }
+      doc-aside aside ol {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
 
-        doc-aside .nav-item {
-          display: flex;
-          align-items: center;
-          width: 100%;
-        }
+      doc-aside aside .doc-aside-list > li > details ol {
+        display: flex;
+        flex-direction: column;
+        row-gap: calc(var(--space-unit, 0.5rem) * 1);
+        padding-top: calc(var(--space-unit, 0.5rem) * 1);
+      }
 
-        /* Nested lists styling */
-        doc-aside ol ol {
-          padding-left: 0;
-          margin: 0;
-        }
+      doc-aside aside ol > li {
+        list-style-type: none !important;
+        padding: 0;
+        padding-inline-start: calc(var(--space-unit, 0.5rem) * 2);
+        margin: 0;
+      }
 
-        /* Ensure links are clickable and styled */
-        doc-aside a {
-          text-decoration: none;
-          color: inherit;
-          display: block;
-          width: 100%;
-        }
+      doc-aside aside details {
+        margin: 0;
+        padding: 0;
+      }
 
-        doc-aside a:hover {
-          color: var(--color-sec);
-        }
+      doc-aside aside .doc-aside-list li details,
+      doc-aside aside .doc-aside-list .nav-item {
+        width: 100%;
+      }
 
-        html {
-          scroll-behavior: smooth;
-        }
+      doc-aside aside summary > a {
+        flex: 1;
+        min-width: 0;
+      }
 
-        :root :where(h1, h2, h3, h4, h5, h6) {
-          scroll-margin-top: calc(var(--top-bar-height, calc(var(--space-unit, 0.5rem) * 4)) + var(--space-unit, 0.5rem) * 3) !important;
-        }
+      doc-aside aside,
+      doc-aside aside * {
+        color: hsl(var(--fcolor-hsl, 0 0% 0%));
+      }
 
-        .doc-aside-footer {
-          display: inline-flex;
-          font-size: var(--f-size-p);
-          line-height: 1.42;
-          color: hsla(var(--fcolor-hsl, 0 0% 0%) / .6);
-          
-          .doc-aside-footer-link {
-            color: hsla(var(--fcolor-hsl, 0 0% 0%) / .6);
-            text-decoration: underline dotted;
-            text-underline-offset: 4px;
-            text-decoration-thickness: 1px;
-            text-decoration-color: hsla(var(--fcolor-hsl, 0 0% 0%) / .6);
-            text-decoration-style: dotted;
-          }
-        }
-        .doc-aside-icons {
-          display: flex;
-          align-items: center;
-          gap: calc(var(--space-unit, 0.5rem) * 1);
-        }
-        :where([class^="doc-aside-icon-container-"], .doc-aside-icon-container) { 
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: calc(var(--space-unit, 0.5rem) * 3/4);
-          height: calc(var(--space-unit, 0.5rem) * 4);
-          width: calc(var(--space-unit, 0.5rem) * 4);
-          cursor: pointer;
-          transition: background-color 0.4s ease;
-          box-shadow: 0 0 0 1px hsla(var(--fcolor-hsl, 0 0% 0%) / .2) inset;
-          background-color: hsla(var(--bcolor-hsl, 0 0% 100%) / .1);
-          border-radius: calc(var(--space-unit, 0.5rem) * 0.5);
+      doc-aside aside a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        width: 100%;
+      }
 
-          &:hover {
-            background-color: hsla(var(--accent-color-hsl, 340 100% 50%) / .1);
-          }
-          &.--active {
-            box-shadow: 0 0 0 0 transparent inset;
-            color: hsl(var(--over-accent-color-hsl, 0 100% 100%));
-            background-color: hsla(var(--accent-color-hsl, 340 100% 50%) / .8);
-          }
-        }
-        .doc-aside-footer-row{
-          display: inline-flex;
-          align-items: center;
-          justify-content: start;
-          gap: calc(var(--space-unit, 0.5rem) * 1);
-        }
-        .doc-aside-footer-logo {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: calc(var(--space-unit, 0.5rem) * 4);
-          height: calc(var(--space-unit, 0.5rem) * 4);  
-        }
-        .doc-aside-footer-logo svg {
-          width: 100%;
-          height: 100%;  
-        }
+      doc-aside aside a:hover {
+        opacity: 0.7;
+        color: var(--color-sec);
+      }
+
+      doc-aside aside details[open] {
+        border: none !important;
+      }
+
+      doc-aside aside details[open] ol {
+        padding-left: 0;
+      }
+
+      doc-aside aside .nav-item {
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+
+      doc-aside aside ol ol {
+        padding-left: 0;
+        margin: 0;
+      }
+
+      doc-aside aside .doc-aside-footer .doc-aside-footer-link {
+        color: hsla(var(--fcolor-hsl, 0 0% 0%) / .6);
+        text-decoration: underline dotted;
+        text-underline-offset: 4px;
+        text-decoration-thickness: 1px;
+        text-decoration-color: hsla(var(--fcolor-hsl, 0 0% 0%) / .6);
+        text-decoration-style: dotted;
+      }
+
+      doc-aside aside .doc-aside-icons {
+        display: flex;
+        align-items: center;
+        gap: calc(var(--space-unit, 0.5rem) * 1);
+      }
+
+      doc-aside aside :where([class^="doc-aside-icon-container-"], .doc-aside-icon-container) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: calc(var(--space-unit, 0.5rem) * 3/4);
+        height: calc(var(--space-unit, 0.5rem) * 4);
+        width: calc(var(--space-unit, 0.5rem) * 4);
+        cursor: pointer;
+        transition: background-color 0.4s ease;
+        box-shadow: 0 0 0 1px hsla(var(--fcolor-hsl, 0 0% 0%) / .2) inset;
+        background-color: hsla(var(--bcolor-hsl, 0 0% 100%) / .1);
+        border-radius: calc(var(--space-unit, 0.5rem) * 0.5);
+      }
+
+      doc-aside aside :where([class^="doc-aside-icon-container-"], .doc-aside-icon-container):hover {
+        background-color: hsla(var(--accent-color-hsl, 340 100% 50%) / .1);
+      }
+
+      doc-aside aside :where([class^="doc-aside-icon-container-"], .doc-aside-icon-container).--active {
+        box-shadow: 0 0 0 0 transparent inset;
+        color: hsl(var(--over-accent-color-hsl, 0 100% 100%));
+        background-color: hsla(var(--accent-color-hsl, 340 100% 50%) / .8);
+      }
+
+      doc-aside aside .doc-aside-footer-row {
+        display: inline-flex;
+        align-items: center;
+        justify-content: start;
+        gap: calc(var(--space-unit, 0.5rem) * 1);
+      }
+
+      doc-aside aside .doc-aside-footer-logo {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: calc(var(--space-unit, 0.5rem) * 4);
+        height: calc(var(--space-unit, 0.5rem) * 4);
+      }
+
+      doc-aside aside .doc-aside-footer-logo svg,
+      doc-aside aside .doc-aside-footer-logo svg-ninja {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      :root :where(h1, h2, h3, h4, h5, h6) {
+        scroll-margin-top: calc(var(--top-bar-height, calc(var(--space-unit, 0.5rem) * 4)) + var(--space-unit, 0.5rem) * 3) !important;
       }
     </style>
 
@@ -604,9 +618,7 @@ class docAside extends readyElement {
         <div class="doc-aside-footer-row">
           Powered by 
           <span class="doc-aside-footer-logo">
-          <svg>
-          <use href="../__src/img/sprite.svg#re-md-logo"></use>
-          </svg>
+            <svg-ninja svg-class="doc-aside-footer-logo-svg" svg-src="/__src/img/remd-logo.svg"></svg-ninja>
           </span> <strong>re-md</strong> <br/>
         </div>
         

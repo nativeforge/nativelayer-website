@@ -1,7 +1,5 @@
 import {readyElement} from '/__src/components/ready-element.js';
-import svgNinja from '/__src/components/svg-ninja.js';
-
-customElements.define('svg-ninja', svgNinja);
+import '/__src/js/register-svg-ninja.js';
 
 export default class baseBackTo extends readyElement {
   constructor() {

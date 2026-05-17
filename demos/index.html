@@ -86,6 +86,8 @@
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
         width: 100%;
+        min-height: min-content;
+        max-height: max-content;
         gap: var(--page-padding-x);
         margin: 0 auto;
       }
@@ -184,7 +186,7 @@
         font-size: var(--f-size-s);
         font-family: var(--ff-2, sans-serif);
         color: hsla(var(--bcolor-hsl) / 0.9);
-        padding-bottom: calc(var(-space-unit)* 2);
+        padding-bottom: calc(var(--space-unit) * 2);
       }
       base-footer .footer-column-link {
         display: flex;
@@ -201,16 +203,16 @@
           height: calc(var(--space-unit) * 4);
           --current-stroke-width: 2px;
         }
-        base-footer a{ 
+        base-footer a {
           text-decoration: none;
           color: inherit;
           font-size: var(--f-size-p);
           font-weight: 400;
           color: hsla(var(--bcolor-hsl) / 0.8);
           transition: color 0.32s ease;
-          &:hover {
-            color: hsla(var(--bcolor-hsl) / 1);
-          }
+        }
+        base-footer a:hover {
+          color: hsla(var(--bcolor-hsl) / 1);
         }
       </style>
       <svg class="footer-logo">
