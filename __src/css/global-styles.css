@@ -34,6 +34,7 @@
 
   --accent-color-hsl: var(--lightest);
   --accent-color-hsl-adjusted: ;
+  --accent-color: hsl(var(--accent-color-hsl));
 
   --code-block-font-size: var(--f-size-p);
 
@@ -76,6 +77,13 @@
   :root:not([theme-mode="light"]) {
     --fcolor-hsl: var(--darkest);
     --bcolor-hsl: var(--lightest);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([theme-mode="dark"]) {
+    --fcolor-hsl: var(--lightest);
+    --bcolor-hsl: var(--darkest);
   }
 }
 
@@ -127,16 +135,13 @@ html p {
 }
 
 :is(top-bar, page-container, flex-container, base-footer, doc-body, doc-aside):not([ready]) {
-  content-visibility: auto;
   contain-intrinsic-size: 300px;
-  visibility: hidden;
   opacity: 0;
   transform: translateY(16px);
   transition: opacity var(--page-transition-time) ease-in, transform var(--page-transition-time) ease-in;
 }
 
 :is(top-bar, page-container, flex-container, base-footer, doc-body, doc-aside)[ready] {
-  visibility: visible;
   opacity: 1;
   transform: translateY(0);
   transition: opacity var(--page-transition-time) ease-out, transform var(--page-transition-time) ease-out;

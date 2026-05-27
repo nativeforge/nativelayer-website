@@ -109,7 +109,7 @@ class docBody extends readyElement {
 
       doc-body {
         position: relative;
-        top: calc( var(--top-bar-height) + var(--space-unit) * 4);
+        top: calc( var(--space-unit) * 4);
         left: var(--doc-aside-width);
         min-height: calc(100dvh - var(--top-bar-height) - var(--space-unit) * 4);
         padding-left: var(--page-padding-x);
@@ -135,10 +135,10 @@ class docBody extends readyElement {
         padding-bottom: calc(var(--space-unit) * 4);
       }
 
-      @media (max-width: 60rem) {
+      @media (width < 60rem) {
         doc-body {
           left: 0;
-          width: calc(100% - var(--page-padding-x, 1rem) * 2);
+          width: calc(100% - var(--page-padding-x, 1rem) * 1);
         }
       }
 
@@ -165,7 +165,7 @@ class docBody extends readyElement {
 
       doc-body :where(h1, h2, h3, h4, h5, h6) {
         scroll-margin-top: calc( var(--top-bar-height, calc(var(--space-unit, 0.5rem) * 2) ) + calc(var(--space-unit, 0.5rem) * 1) );
-        scroll-margin-left: calc(296px + calc(var(--space-unit) * 3));
+        scroll-margin-left: calc(var(--doc-aside-width) + calc(var(--space-unit) * 3));
       }
 
       doc-body :where(h1) { margin-top: calc(var(--space-unit, 0.5rem) * 8); }

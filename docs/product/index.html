@@ -22,23 +22,13 @@
   </script>
 
   <script type="module">
-    import remd from "/__src/components/re-md.js"
-    import docBody from "/__src/components/doc-body.js"
-    import docCard from "/__src/components/doc-card.js"
-    import docAside from "/__src/components/doc-aside.js"
-    import topBar from "/__src/components/top-bar.js"
-    import flexContainer from "/__src/components/flex-container.js"
-      
-    customElements.define('re-md', remd)
-    customElements.define('doc-body', docBody) 
-    customElements.define('doc-card', docCard)
-    customElements.define('doc-aside', docAside)
-    customElements.define('top-bar', topBar)
-    customElements.define('flex-container', flexContainer)
+    import loaderElement from "/__src/components/loader-element/index.js"
+    customElements.define('loader-element', loaderElement)
   </script>
 </head>
 
 
+<loader-element app="body" path="/__src/components/" brand="nativelayer.dev"></loader-element>
 <body>
   <top-bar></top-bar>
   <doc-aside expander-color="hsl(var(--accent-color-hsl))" section-numbers></doc-aside>

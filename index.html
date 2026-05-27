@@ -98,7 +98,7 @@
         <h2 slot="quote">nativelayer extends the web with carefully designed abstractions.</h2>
       </base-quote>
 
-      <flex-container id="section-core-principles" style="padding-block: calc(var(--space-unit) * 8); gap: calc(var(--space-unit) * 8);">
+      <flex-container id="sections-main-content" style="padding-block: calc(var(--space-unit) * 8); gap: calc(var(--space-unit) * 8);">
         <style>
           .grid-container {
             display: grid;
@@ -161,6 +161,9 @@
             max-width: 6rem;
             max-height: 6rem;
           }
+          .grid-item-logo-home svg {
+            fill: hsl(var(--fcolor-hsl));
+          }
         </style>
 
         <flex-container id="core-principles" style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 1); justify-content: center; align-items: center; text-align: center;">
@@ -168,7 +171,7 @@
             Core principles
           </h2>
           <p style="font-weight: 300;">
-            Our philosophy: Primitives first.
+            The core philosophy: Primitives first.
           </p>
         </flex-container>
 
@@ -214,7 +217,7 @@
         </div>
 
 
-        <flex-container style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 2); justify-content: center; align-items: center; text-align: center;">
+        <flex-container style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 2); justify-content: center; align-items: center; text-align: center;" id="title-features-being-developed">
           <h2 style="font-size: var(--f-size-xl); font-weight: 600;">
             Features being
             <br>
@@ -226,7 +229,8 @@
           </p>
         </flex-container>
 
-        <div class="grid-container">
+        <div class="grid-container" id="list-features-being-developed">
+
           <div class="grid-item">
             <flex-container class="grid-item-content">
               <h3 class="grid-item-title">Routing</h3>
@@ -330,9 +334,9 @@
           <h2 slot="quote">Cross browser, modular and scalable.</h2>
         </base-quote>
 
-        <flex-container style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 2); justify-content: center; align-items: center; text-align: center;">
+        <flex-container style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 2); justify-content: center; align-items: center; text-align: center;" id="title-packages">
           <h2 style="font-size: var(--f-size-xl); font-weight: 600;">
-            Our packages
+            Packages
           </h2>
           <p style="font-weight: 300;">
             Framework-agnostic and fully compatible<br>
@@ -344,14 +348,18 @@
           <base-button class="--light" href="/demos">See demos</base-button>
         </flex-container>
 
-        <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); grid-gap: calc(var(--space-unit) * 3); align-items: stretch; grid-auto-rows: 1fr;">
+        <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); grid-gap: calc(var(--space-unit) * 3); align-items: stretch; grid-auto-rows: 1fr;" id="list-packages">
+
+          <!-- routerx -->
           <div class="grid-item">
+
             <flex-container class="grid-item-content --outline">
+
               <svg id="routerx-logo" class="grid-item-logo-home" xmlns="http://www.w3.org/2000/svg" width="104" height="45" viewBox="0 0 104 45">
                 <defs>
                   <style>
                     #routerx-logo polygon{
-                      fill: hsl(var(--accent-color-hsl, 348 100% 50%));
+                      fill: hsl(var(--fcolor-hsl));
                     }
                   </style>
                 </defs>
@@ -365,18 +373,20 @@
 
               <h3 class="grid-item-title" style="font-family: var(--ff-3);">routerx</h3>
               <p class="grid-item-description">
-                Router library for traditional multi-page websites (MPA), simple SPAs, or static hosting environments.
+                Client-side Router library for both MPA and SPA in static hosting environments.
               </p>
               <base-button class="--light" href="https://github.com/ynck-chrl/routerx" target="_blank">View package</base-button>
             </flex-container>
           </div>
+
+          <!-- restate -->
           <div class="grid-item">
             <flex-container class="grid-item-content --outline">
               <svg id="restate-logo" class="grid-item-logo-home" xmlns="http://www.w3.org/2000/svg" width="64" height="44" viewBox="0 0 64 44">
                 <defs>
                   <style>
                     #restate-logo polygon{
-                      fill: hsl(var(--accent-color-hsl, 220 100% 50%));
+                      fill: hsl(var(--fcolor-hsl));
                     }
                   </style>
                 </defs>
@@ -393,13 +403,15 @@
               <base-button class="--light" href="https://github.com/ynck-chrl/restate" target="_blank">View package</base-button>
             </flex-container>
           </div>
+
+          <!-- reflectx -->
           <div class="grid-item">
             <flex-container class="grid-item-content --outline">
               <svg id="reflectx-logo" class="grid-item-logo-home" xmlns="http://www.w3.org/2000/svg" width="104" height="44.57" viewBox="0 0 104 44.57">
                 <defs>
                   <style>
                     #reflectx-logo polygon{
-                      fill: hsl(var(--accent-color-hsl, 130 100% 50%));
+                      fill: hsl(var(--fcolor-hsl));
                     }
                   </style>
                 </defs>
@@ -412,15 +424,13 @@
               
               <h3 class="grid-item-title" style="font-family: var(--ff-3);">reflectx</h3>
               <p class="grid-item-description">
-                Templating and DOM binding JS library for Custom Elements (Web components) and plain HTML.
+                Templating and DOM binding JS library for Custom Elements and plain HTML.
               </p>
               <base-button class="--light" href="https://github.com/ynck-chrl/reflectx" target="_blank">View package</base-button>
             </flex-container>
           </div>
-        </div>
 
-        <flex-container style="padding-block: calc(var(--space-unit) * 2); gap: calc(var(--space-unit) * 2); justify-content: center; align-items: center; text-align: center;">
-        </flex-container>
+        </div>
         
       </flex-container>
 

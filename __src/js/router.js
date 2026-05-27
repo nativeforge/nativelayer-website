@@ -55,7 +55,7 @@ const setTheme = (product) => {
   htmlElement.style.setProperty('--accent-color-hsl', `${product.themeColorHsl}`);
   htmlElement.style.setProperty('--accent-color-hsl-adjusted', adjusted);
 
-  if(accentColorLuminance > 0.7){
+  if(accentColorLuminance > 0.6){
     htmlElement.classList.remove('--accent-is-dark');
     htmlElement.classList.add('--accent-is-light');
   }
@@ -212,6 +212,11 @@ router.on('/docs', () => {
 
 router.on('/packages', () => {
   // console.log('Packages page loaded');
+  return true;
+});
+
+router.on('/test', () => {
+  console.log('Test page loaded');
   return true;
 });
 

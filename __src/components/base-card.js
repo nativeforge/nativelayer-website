@@ -211,11 +211,6 @@ class baseCard extends HTMLElement {
   }
 
   render() {
-    // const href = this.getAttribute('link') || '#';
-    // const imgSrc = this.getAttribute('img-src') || '';
-    // const accentColorHsl = this.getAttribute('accent-color-hsl') || 'var(--accent-color-hsl)';
-    // const flexDirection = this.getAttribute('flex-direction') || 'column';
-
     this.shadowRoot.innerHTML = this.HTML;
   }
 }

@@ -4,7 +4,7 @@ const packages = [
     size: '3.4 KB',
     description: {
       headline: 'Router library for Multi-Page Application (MPA) or Single-Page Application (SPA',
-      paragraph: 'Router library for traditional multi-page websites (MPA), SPAs, or static hosting environments. It provides comprehensive routing capabilities including dynamic path parameters, query parsing, hash fragment support, route guards, lazy loading, event hooks, and navigation management—all without hijacking link clicks or requiring complex framework setup.',
+      paragraph: 'Router library for both traditional multi-page websites (MPA), single page applications (SPA), or static hosting environments. It provides comprehensive routing capabilities including dynamic path parameters, query parsing, hash fragment support, route guards, lazy loading, event hooks, and navigation management—all without hijacking link clicks or requiring complex framework setup.',
     },
     accentColorHslArry: [348, 100, 50], //numbers
     externalUrl: {

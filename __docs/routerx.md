@@ -6,10 +6,10 @@
 
 version `0.2.3`
 
-RouterX is a feature-rich yet lightweight vanilla JavaScript router with support for both history and hash-based routing modes. It provides comprehensive routing capabilities including dynamic path parameters, query parsing, hash fragment support, route guards, lazy loading, event hooks, and navigation management—all without requiring complex framework setup. Works great for traditional multi-page websites (MPA), SPAs, or static hosting environments.
+RouterX is a feature-rich yet lightweight vanilla JavaScript router with support for both history and hash-based routing modes. It provides comprehensive routing capabilities including dynamic path parameters, query parsing, hash fragment support, route guards, lazy loading, event hooks, and navigation management—all without requiring complex framework setup. Works great for both traditional multi-page websites (MPA), single page applications (SPA), or static hosting environments.
 
 - **Lightweight & Zero Dependencies** - ~3.4KB gzipped, no external dependencies
-- **Lightweight & Versatile** - Works for both traditional MPAs and simple SPAs 
+- **Lightweight & Versatile** - Works for both traditional MPA and SPA
 - **Dynamic Path Parameters** - Support for `:id` style parameters with automatic parsing
 - **Query String Parsing** - Automatic URLSearchParams parsing into objects
 - **Hash Fragment Support** - Full hash/anchor support with automatic parsing and navigation

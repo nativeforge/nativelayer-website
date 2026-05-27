@@ -10,7 +10,7 @@ export class readyElement extends HTMLElement {
 
         this._readyResolved = true
         resolve()
-        this.dispatchEvent(new Event('ready'))
+        this.dispatchEvent(new Event('ready', { bubbles: true }))
       }
     })
 

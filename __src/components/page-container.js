@@ -11,11 +11,12 @@ class pageContainer extends readyElement {
     <style>
       :host {
         position: relative;
-        top: var(--top-bar-height);
         display: flex;
         flex-direction: column;
         width: 100%;
         min-height: 100vh;
+        max-width: 75rem;
+        margin: 0 auto;
         padding-block: calc(var(--space-unit) * 4);
         padding-inline: var(--page-padding-x);
       }

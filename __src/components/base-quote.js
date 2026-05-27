@@ -1,4 +1,6 @@
-class baseQuote extends HTMLElement {
+import { readyElement } from "/__src/libs/ready-element/index.js";
+
+class baseQuote extends readyElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -39,6 +41,8 @@ class baseQuote extends HTMLElement {
     <slot name="quote"></slot>
     <slot name="author"></slot>
     `;
+    
+    this._resolveReady();
   }
 }
 

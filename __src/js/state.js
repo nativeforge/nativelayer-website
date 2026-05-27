@@ -8,6 +8,7 @@ const state = restate({
       { name: 'reflectx', themeColorHsl: '130 100% 50%'},
       { name: 're-md', themeColorHsl: '255 75% 50%'},
       { name: 'native', themeColorHsl: '60 100% 50%'},
+      { name: 'manifesto', themeColorHsl: '40 100% 70%'},
     ],
   },
   chapters: [],

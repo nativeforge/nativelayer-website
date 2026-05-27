@@ -45,7 +45,7 @@
 
     <base-hero style="align-items: flex-start; border-bottom: 1px dotted hsla(var(--fcolor-hsl) / 0.6); padding-block: calc(var(--space-unit) * 8);">
       <h1 slot="title" style="font-size: var(--f-size-2xl)">About</h1>
-      <p slot="description" style="max-width: 40rem;">nativelayer is a project that aims to extend the web platform with carefully designed abstractions — keeping things close to the metal, without the weight of a framework.</p>
+      <p slot="description" style="max-width: 40rem;">nativelayer is a project that aims to extend the web platform with carefully designed abstractions, allowing developpers to write classic html, css and javascript code while leveraging the power of the web platform.</p>
     </base-hero>
 
     <style>
@@ -93,7 +93,7 @@
 
       <div class="about-text">
         <h2>The project</h2>
-        <p>nativelayer was built with one simple goal in mind: give web developers <b>powerful, composable and extensible primitives</b> that feel native to the browser while allowing to introduce modern web development patterns and tooling when needed — no build step, no compilation, no virtual DOM, no magic.</p>
+        <p>nativelayer was built with one simple goal in mind: give web developers <b>powerful, composable and extensible primitives</b> that feel native to the browser while allowing to introduce modern web development patterns and tooling when needed: no build step, no compilation, no virtual DOM, no magic.</p>
         <p>The stack is intentionally minimal:</p>
         <ul>
           <li><strong>restate</strong> — reactive state with a proxy-based API</li>
@@ -104,8 +104,27 @@
         <p>Everything runs directly in the browser as ES modules. No bundler, no transpiler, no lock-in.</p>
       </div>
 
-      <base-profile-card profile="ynck-chrl"></base-profile-card>
+      <base-profile-card profile="nativeforge"></base-profile-card>
 
+    </div>
+
+    <div class="about-grid">
+      <h2 style="font-size: var(--f-size-xl)">Developers</h2>
+      <p>nativelayer is developed by Yannick C. ( <a href="https://github.com/ynck-chrl" target="_blank">ynck-chrl</a> ) and Richie B. ( <a href="https://github.com/rbxmatrix" target="_blank">rbxmatrix</a> ).<br>
+      "Coming from different fields, we are both passionate about technology and problem solving. Our motivation with nativelayer is to give web developers the tools to build advanced web architectures, without the weight of a framework."</p>
+    </div>
+
+    <div class="about-grid">
+      <base-profile-card profile="ynck-chrl"></base-profile-card>
+      <div>
+        <p>Yannick C. is a software engineer with a strong background in visual design, branding and a great interest in turning complex problems into simple solutions. <br>
+        Having worked for a longtime as both UI designer and front-end developer, he dug into modern programming patterns, tooling, libraries, frameworks and decided to create a set of tools that would allow developers to build advanced web architectures while staying closer to the native web platform primitives.</p>
+      </div>
+      <base-profile-card profile="rbxmatrix"></base-profile-card>
+      <div>
+        <p>Richie B. is a PhD physicist specializing in quantum dots with strong background in scientific research, materials characterization, and semiconductor devices. <br>
+        He works at the crossroads of physics, electronics, and computing, using Python, Lua, C++ and other tools for scientific and embedded development. Motivated by innovation and projects that combine research, engineering, and complex problem-solving, he decided to take part in nativelayer project to bring his expertise to the web platform.</p>
+      </div>
     </div>
 
   </page-container>

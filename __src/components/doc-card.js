@@ -77,7 +77,7 @@ class docCard extends HTMLElement {
         display: flex;
         width: 100%;
         padding: calc(var(--space-unit) * 3);
-        box-shadow: 0 0 0 1px hsla(var(--accent-color-hsl) / 0.4) inset;
+        box-shadow: 0 0 0 1px hsla(var(--accent-color-hsl) / 0.4);
         border-radius: calc(var(--space-unit) * 1);
         color: inherit;
         text-decoration: none;
@@ -85,39 +85,36 @@ class docCard extends HTMLElement {
         transition: box-shadow 0.4s ease, color .4s ease-in-out, background-color .4s ease-in-out, opacity .4s ease-in-out;
       }
       .doc-card-link:hover {
-        box-shadow: 0 0 0 2px hsla(var(--accent-color-hsl) / 0.8) inset;
+        box-shadow: 0 0 0 2px hsla(var(--accent-color-hsl) / 0.8);
       }
-      :host([data-label="previous"]) {
-        .doc-card {
-          display: flex;
-          flex-direction: row-reverse;
-          justify-content: flex-end;
-          align-items: center;
-          column-gap: calc(var(--space-unit) * 2);
-          width: 100%;
-        }
-        .doc-card-content {
-          align-items: flex-start;
-        }
-        .doc-card-arrow-icon {
-          transform: rotate(180deg);
-        }
+      :host([data-label="previous"]) .doc-card {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        align-items: center;
+        column-gap: calc(var(--space-unit) * 2);
+        width: 100%;
       }
-      :host([data-label="next"]) {
-        .doc-card {
-          display: flex;
-          justify-content: flex-end;
-          align-items: center;
-          column-gap: calc(var(--space-unit) * 2);
-          width: 100%;
-        }
-        .doc-card-content {
-          align-items: flex-end;
-        }
-        .doc-card-arrow-icon {
-          transform: rotate(0deg);
-        }
+      :host([data-label="previous"]) .doc-card-content {
+        align-items: flex-start;
       }
+      :host([data-label="previous"]) .doc-card-arrow-icon {
+        transform: rotate(180deg);
+      }
+      :host([data-label="next"]) .doc-card {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        column-gap: calc(var(--space-unit) * 2);
+        width: 100%;
+      }
+      :host([data-label="next"]) .doc-card-content {
+        align-items: flex-end;
+      }
+      :host([data-label="next"]) .doc-card-arrow-icon {
+        transform: rotate(0deg);
+      }
+      
       .doc-card-content {
         display: flex;
         flex-direction: column;

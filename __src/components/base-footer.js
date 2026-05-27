@@ -10,6 +10,7 @@ class BaseFooter extends readyElement {
     return html`
     <style>
       :host {
+        position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -30,6 +31,8 @@ class BaseFooter extends readyElement {
         flex-wrap: wrap;
         align-items: flex-start;
         width: 100%;
+        max-width: 75rem;
+        margin: 0 auto;
         justify-content: space-between;
         padding-block: calc(var(--space-unit) * 4);
         gap: calc(var(--space-unit) * 4);
