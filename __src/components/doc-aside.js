@@ -630,10 +630,6 @@ class docAside extends readyElement {
       </div>
     </aside>
     `
-
-    // <div class="doc-aside-footer-row">
-    //   By ynck-chrl <a href="https://github.com/your-username/your-repo" class="doc-aside-footer-link" target="_blank">GitHub</a>
-    // </div>
     
     // Initialize the aside functionality
     this.structureAside();
@@ -682,62 +678,12 @@ class docAside extends readyElement {
           h1.id = h1.textContent.trim().toLowerCase().replace(/\s+/g, '-');
         }
         
-        // Create anchor for the title
+        // Plain anchor; <doc-quick>'s delegated click listener handles
+        // preventDefault + URL update + chapter activation.
         const titleAnchor = document.createElement('a');
         titleAnchor.href = '#0-introduction';
         titleAnchor.textContent = h1.textContent;
-        titleAnchor.addEventListener('click', (e) => {
-          e.preventDefault();
-          
-          const remdElement = document.querySelector('re-md');
-          if (remdElement && remdElement.hasAttribute('chapter-mode')) {
-            // Chapter mode: activate the 0-introduction section
-            const contentWrapper = remdElement.querySelector('div[ref="re-md-content"]');
-            if (contentWrapper) {
-              const allSections = contentWrapper.querySelectorAll('section');
-              allSections.forEach(section => {
-                section.classList.remove('--chapter-active');
-              });
-              
-              const introSection = contentWrapper.querySelector('section[ref="0-introduction"]');
-              if (introSection) {
-                introSection.classList.add('--chapter-active');
-                
-                // Update chapterIndex on doc-body
-                const docBody = document.querySelector('doc-body');
-                if (docBody) {
-                  docBody.chapterIndex = 0;
-                }
-                
-                // Scroll to the top of the intro section with offset
-                const navHeight = getComputedStyle(document.documentElement).getPropertyValue('--top-bar-height');
-                const spaceUnit = getComputedStyle(document.documentElement).getPropertyValue('--space-unit');
-                const navHeightPx = parseFloat(navHeight) || 64;
-                const spaceUnitPx = parseFloat(spaceUnit) || 8;
-                const offset = navHeightPx + (spaceUnitPx * 3);
-                
-                const elementRect = introSection.getBoundingClientRect();
-                const absoluteElementTop = elementRect.top + window.pageYOffset;
-                const scrollToPosition = absoluteElementTop - offset;
-                
-                window.scrollTo({
-                  top: scrollToPosition,
-                  behavior: 'smooth'
-                });
-                
-                // Update URL hash
-                history.pushState(null, '', '#0-introduction');
-                
-                // Activate nav item
-                this.activateNavItem('0-introduction');
-              }
-            }
-          } else {
-            // Normal mode: scroll to the heading
-            this.scrollToHeading(h1.id);
-          }
-        });
-        
+
         titleElement.innerHTML = '';
         titleElement.appendChild(titleAnchor);
       }
@@ -818,53 +764,9 @@ class docAside extends readyElement {
             const anchor = document.createElement('a');
             anchor.href = '#' + heading.id;
             anchor.textContent = heading.textContent;
-            
-            // Add click handler for smooth scrolling or chapter navigation
-            anchor.addEventListener('click', (e) => {
-              e.preventDefault(); // Prevent default link behavior
-              e.stopPropagation(); // Prevent details toggle when clicking link
-              
-              const remdElement = document.querySelector('re-md');
-              if (remdElement && remdElement.hasAttribute('chapter-mode')) {
-                // Chapter mode: update URL hash and activate the parent section
-                const contentWrapper = remdElement.querySelector('div[ref="re-md-content"]');
-                if (contentWrapper) {
-                  // Remove --chapter-active from all sections
-                  const allSections = contentWrapper.querySelectorAll('section');
-                  allSections.forEach(section => {
-                    section.classList.remove('--chapter-active');
-                  });
-                  
-                  // Find the heading element in re-md and get its parent section
-                  // Use getElementById to avoid CSS selector issues with IDs starting with numbers
-                  const headingInContent = document.getElementById(heading.id);
-                  const parentSection = headingInContent?.closest('section');
-                  if (parentSection) {
-                    parentSection.classList.add('--chapter-active');
-                    
-                    // Update chapterIndex on doc-body
-                    const docBody = document.querySelector('doc-body');
-                    if (docBody && docBody.chapterMap) {
-                      const sectionRef = parentSection.getAttribute('ref');
-                      const index = docBody.chapterMap.indexOf(sectionRef);
-                      if (index !== -1) {
-                        docBody.chapterIndex = index;
-                      }
-                    }
-                  }
-                }
-                
-                // Activate nav item
-                this.activateNavItem(heading.id);
-                
-                // Scroll to heading with offset (also updates URL hash)
-                this.scrollToHeading(heading.id);
-              } else {
-                // Normal mode: scroll to the heading
-                this.scrollToHeading(heading.id);
-              }
-            });
-            
+            // Plain anchor; <doc-quick>'s delegated click listener handles
+            // navigation and stops propagation so the <details> doesn't toggle.
+
             // Create expander indicator
             const expander = document.createElement('span');
             expander.className = 'doc-aside-expander';
@@ -891,51 +793,8 @@ class docAside extends readyElement {
             anchor.href = '#' + heading.id;
             anchor.textContent = heading.textContent;
             
-            // Add click handler for smooth scrolling or chapter navigation
-            anchor.addEventListener('click', (e) => {
-              e.preventDefault(); // Prevent default link behavior
-              
-              const remdElement = document.querySelector('re-md');
-              if (remdElement && remdElement.hasAttribute('chapter-mode')) {
-                // Chapter mode: update URL hash and activate the parent section
-                const contentWrapper = remdElement.querySelector('div[ref="re-md-content"]');
-                if (contentWrapper) {
-                  // Remove --chapter-active from all sections
-                  const allSections = contentWrapper.querySelectorAll('section');
-                  allSections.forEach(section => {
-                    section.classList.remove('--chapter-active');
-                  });
-                  
-                  // Find the heading element in re-md and get its parent section
-                  // Use getElementById to avoid CSS selector issues with IDs starting with numbers
-                  const headingInContent = document.getElementById(heading.id);
-                  const parentSection = headingInContent?.closest('section');
-                  if (parentSection) {
-                    parentSection.classList.add('--chapter-active');
-                    
-                    // Update chapterIndex on doc-body
-                    const docBody = document.querySelector('doc-body');
-                    if (docBody && docBody.chapterMap) {
-                      const sectionRef = parentSection.getAttribute('ref');
-                      const index = docBody.chapterMap.indexOf(sectionRef);
-                      if (index !== -1) {
-                        docBody.chapterIndex = index;
-                      }
-                    }
-                  }
-                }
-                
-                // Activate nav item
-                this.activateNavItem(heading.id);
-                
-                // Scroll to heading with offset (also updates URL hash)
-                this.scrollToHeading(heading.id);
-              } else {
-                // Normal mode: scroll to the heading
-                this.scrollToHeading(heading.id);
-              }
-            });
-            
+            // Plain anchor; <doc-quick>'s delegated click listener handles it.
+
             const navItem = document.createElement('div');
             navItem.className = 'nav-item';
             navItem.appendChild(anchor);

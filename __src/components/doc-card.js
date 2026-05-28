@@ -8,23 +8,9 @@ class docCard extends HTMLElement {
   connectedCallback() {
     this.render();
     document.addEventListener('chapter-change', this._handler);
-    
-    // Handle click: prevent native navigation, update hash via pushState
-    this.shadowRoot.addEventListener('click', (e) => {
-      const link = e.target.closest('.doc-card-link');
-      if (!link) return;
-      
-      e.preventDefault();
-      const hash = link.href.split('#')[1];
-      if (!hash) return;
-      
-      // Update URL without triggering full route re-evaluation
-      const newUrl = `${window.location.pathname}#${hash}`;
-      window.history.pushState({}, '', newUrl);
-      
-      // Manually trigger hash change handling
-      window.dispatchEvent(new HashChangeEvent('hashchange'));
-    });
+    // No local click handler here. <doc-quick> installs a single delegated
+    // click listener that uses e.composedPath() to see through shadow DOM
+    // and catch this <a class="doc-card-link"> on its way out.
   }
 
   disconnectedCallback() {

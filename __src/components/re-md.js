@@ -1,6 +1,8 @@
 // Import highlight.js for syntax highlighting
 const hljs = (await import('https://esm.sh/highlight.js@11.9.0')).default;
 
+import { readyElement } from '/__src/libs/ready-element/index.js';
+
 /**
  * remd Custom Element
  * 
@@ -44,7 +46,7 @@ const hljs = (await import('https://esm.sh/highlight.js@11.9.0')).default;
  * 
  */
 
-class remd extends HTMLElement {
+class remd extends readyElement {
   constructor() {
     super();
     this.isProcessing = false;
@@ -100,6 +102,7 @@ class remd extends HTMLElement {
         this.processMarkdown();
       }
     });
+    this._resolveReady();
   }
 
   /**

@@ -1,4 +1,3 @@
-import { scrollToHeadingById, updateUrlHash } from '/__src/js/utils.js';
 import { readyElement } from "/__src/components/ready-element.js";
 
 class docBody extends readyElement {
@@ -36,18 +35,15 @@ class docBody extends readyElement {
     
     // Wait for content to be fully processed (including re-md elements)
     this.waitForContentReady().then(() => {
-      // Add click handlers to heading link icons
-      this.addHeadingLinkHandlers();
-      
-      // Note: Initial hash scroll is handled by router.js
-      
-      // Dispatch custom event when content is ready
+      // Note: heading-click → navigation + clipboard is handled by <doc-quick>
+      // via a single delegated click listener using composedPath.
+
       const event = new CustomEvent('doc-body-ready', {
         bubbles: true,
         detail: { docBody: this }
       });
       this.dispatchEvent(event);
-      
+
       this._resolveReady();
     });
   }
@@ -265,79 +261,8 @@ class docBody extends readyElement {
     document.head.appendChild(style);
   }
 
-  // Add click handlers to heading link icons
-  addHeadingLinkHandlers() {
-    // Add click handler to the doc-body element for event delegation
-    this.addEventListener('click', (e) => {
-      // Find closest heading ancestor of the clicked element
-      const heading = e.target.closest('h1, h2, h3, h4, h5, h6');
-      if (!heading) return;
-      
-      // Ensure heading has an ID
-      if (!heading.id) {
-        const headingText = heading.textContent.replace(/^[\d.]+\s*/, '').trim();
-        heading.id = headingText.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      }
-      
-      e.preventDefault();
-      e.stopPropagation();
-      
-      // Update URL
-      updateUrlHash(heading.id);
-      
-      // Check for chapter-mode
-      const remdElement = document.querySelector('re-md');
-      const isChapterMode = remdElement && remdElement.hasAttribute('chapter-mode');
-      
-      if (isChapterMode) {
-        // Chapter mode: activate parent section first
-        const contentWrapper = remdElement.querySelector('div[ref="re-md-content"]');
-        if (contentWrapper) {
-          // Remove --chapter-active from all sections
-          const allSections = contentWrapper.querySelectorAll('section');
-          allSections.forEach(section => {
-            section.classList.remove('--chapter-active');
-          });
-          
-          // Find parent section and activate it
-          const parentSection = heading.closest('section');
-          if (parentSection) {
-            parentSection.classList.add('--chapter-active');
-            
-            // Update chapterIndex
-            if (this.chapterMap) {
-              const sectionRef = parentSection.getAttribute('ref');
-              const index = this.chapterMap.indexOf(sectionRef);
-              if (index !== -1) {
-                this.chapterIndex = index;
-              }
-            }
-          }
-          
-          // Activate nav item in doc-aside
-          const docAside = document.querySelector('doc-aside');
-          if (docAside && docAside.activateNavItem) {
-            docAside.activateNavItem(heading.id);
-          }
-        }
-        
-        // Wait for layout update before scrolling
-        requestAnimationFrame(() => {
-          scrollToHeadingById(heading.id);
-        });
-      } else {
-        // Normal mode: scroll immediately
-        scrollToHeadingById(heading.id);
-      }
-      
-      // Always copy link to clipboard
-      const url = `${window.location.origin}${window.location.pathname}#${heading.id}`;
-      this.copyToClipboard(url, heading);
-    });
-  }
-
-
-  // Copy URL to clipboard with user feedback
+  // Copy URL to clipboard with user feedback.
+  // Called by <doc-quick>'s delegated click handler when a heading is clicked.
   async copyToClipboard(url, heading) {
     // console.log('copyToClipboard called with:', url);
     
