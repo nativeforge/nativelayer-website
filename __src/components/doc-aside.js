@@ -1,8 +1,6 @@
 import { scrollToHeadingById, updateUrlHash } from '/__src/js/utils.js';
-import { readyElement } from "/__src/components/ready-element.js";
-import '/__src/js/register-svg-ninja.js';
 
-class docAside extends readyElement {
+class docAside extends HTMLElement {
   constructor() {
     super();
     this.expanderColor = this.getAttribute('expander-color') || 'hsla(var(--fcolor-hsl, 0 0% 0%) / .6)';
@@ -65,7 +63,7 @@ class docAside extends readyElement {
       doc-aside {
         font-family: var(--ff-2, sans-serif);
         padding-left: var(--page-padding-x);
-        position: fixed !important;
+        position: fixed;
         left: 0;
         top: var(--top-bar-height);
         bottom: 0;
@@ -73,7 +71,7 @@ class docAside extends readyElement {
         flex-direction: column;
         width: var(--doc-aside-width);
         background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / .06);
-        --doc-aisde-list-item-bg-color: hsla(var(--bcolor-hsl, 0 0% 100%) / 1);
+        --doc-aisde-list-item-bg-color: hsla(var(--bcolor-hsl, 0 0% 100%) / 0.4);
 
         color: hsl(var(--fcolor-hsl, 0 0% 0%));
         font-weight: var(--fw-2, 300);
@@ -85,25 +83,6 @@ class docAside extends readyElement {
         }
       }
 
-      /* Hide native details marker - must be at top level, not nested */
-      doc-aside aside summary {
-        list-style: none !important;
-        display: flex;
-        justify-content: space-between;
-        gap: calc(var(--space-unit, 0.5rem) * 2);
-        align-items: baseline;
-        cursor: pointer;
-        background-color: var(--doc-aisde-list-item-bg-color);
-        border-radius: calc(var(--space-unit, 0.5rem) * 1/2);
-        padding: calc(var(--space-unit, 0.5rem) * 0.5) calc(var(--space-unit, 0.5rem) * 1);
-      }
-      doc-aside aside summary::-webkit-details-marker {
-        display: none !important;
-      }
-      doc-aside aside summary::marker {
-        display: none !important;
-        content: none !important;
-      }
       .doc-aside-list li {
         width: 100%;
       }
@@ -125,18 +104,19 @@ class docAside extends readyElement {
         display: inline-block;
         font-size: var(--f-size-p);
         color: hsla(var(--fcolor-hsl, 0 0% 0%) / .4);
-        margin-left: calc(var(--space-unit, 0.5rem) * 1);
+        padding: calc(var(--space-unit, 0.5rem) * 1);
+        margin: calc(var(--space-unit, 0.5rem) * -1) calc(var(--space-unit, 0.5rem) * -1) calc(var(--space-unit, 0.5rem) * -1) 0;
         transition: transform 0.2s ease;
         cursor: pointer;
       }
         
-      summary.--chapter-active > .doc-aside-expander,
-      li.--chapter-active > details > summary > .doc-aside-expander {
+      .doc-aside-list li.--chapter-active .doc-aside-expander,
+      .doc-aside-list .nav-item.--chapter-active .doc-aside-expander {
         color: hsl(var(--over-accent-color-hsl, 0 0% 0%)) !important;
       }
 
-      /* Rotate expander when details is open */
-      doc-aside details[open] > summary .doc-aside-expander {
+      /* Rotate expander when item is open */
+      doc-aside .doc-aside-list li[open] > .nav-item .doc-aside-expander {
         transform: rotate(90deg);
       }
 
@@ -150,6 +130,8 @@ class docAside extends readyElement {
       doc-aside .doc-aside-list li {
         counter-increment: section;
         display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
         align-items: baseline;
       }
 
@@ -163,21 +145,21 @@ class docAside extends readyElement {
       doc-aside .doc-aside-list > li {
         padding-left: 0;
       }
-      .doc-aside-list > li > div {
-        width: 100%;
-      }
-      .doc-aside-list li .nav-item > a,
-      .doc-aside-list li > a
-      {
-        display: inline-flex;
-        align-items: center;
+      doc-aside .doc-aside-list li > .nav-item {
+        display: flex;
+        align-items: baseline;
         justify-content: space-between;
-        gap: calc(var(--space-unit, 0.5rem) * 1);
+        gap: calc(var(--space-unit, 0.5rem) * 2);
         background-color: var(--doc-aisde-list-item-bg-color);
         border-radius: calc(var(--space-unit, 0.5rem) * 1/2);
-        width: -webkit-fill-content;
-        width: fill-content;
         padding: calc(var(--space-unit, 0.5rem) * 0.5) calc(var(--space-unit, 0.5rem) * 1);
+        flex: 1;
+        min-width: 0;
+        cursor: pointer;
+      }
+      doc-aside .doc-aside-list li > .nav-item > a {
+        flex: 1;
+        min-width: 0;
       }
       doc-aside .doc-aside-list ol li::before {
         margin-right: calc(var(--space-unit, 0.5rem) * var(--doc-aside-indent-width, 2));
@@ -197,48 +179,39 @@ class docAside extends readyElement {
       }
 
       .doc-aside-title {
-        display: inline-flex;
-        height: calc(var(--space-unit) * 4);
+        display: flex;
         color: hsla(var(--fcolor-hsl) / .8);
-        padding: calc(var(--space-unit) * 1) calc(var(--space-unit) * 1);
         border-radius: calc(var(--space-unit) * 1/2);
-        transition: color .32s ease, background-color .32s ease, padding .32s ease;
+        transition: color .32s ease, background-color .32s ease;
       }
       .doc-aside-title a {
-        display: inline-flex;
+        display: flex;
         flex-wrap: nowrap;
         align-items: center;
         justify-content: space-between;
         gap: calc(var(--space-unit) * 1);
-        height: 100%;
+        min-height: calc(var(--space-unit) * 4);
         width: 100%;
+        padding: calc(var(--space-unit, 0.5rem) * 0.5) calc(var(--space-unit, 0.5rem) * 1);
       }
 
       .doc-aside-title.--chapter-active{
         color: hsl(var(--over-accent-color-hsl, 0 100% 100%));
         background-color: hsla(var(--accent-color-hsl, 210 100% 50%) / 1);
-        padding: calc(var(--space-unit, 0.5rem) * 0.5) calc(var(--space-unit, 0.5rem) * 1);
         border-radius: calc(var(--space-unit, 0.5rem) * 1/2);
-        transition: color 0.4s ease, background-color 0.4s ease, padding 0.4s ease;
+        transition: color 0.4s ease, background-color 0.4s ease;
       }
       .doc-aside-title:hover {
         color: hsl(var(--over-accent-color-hsl, 0 100% 100%));
         background-color: hsla(var(--accent-color-hsl) / 1);
-        padding: calc(var(--space-unit, 0.5rem) * 0.5) calc(var(--space-unit, 0.5rem) * 1);
-        transition: color 0.32s ease, background-color 0.32s ease, padding 0.32s ease;
+        transition: color 0.32s ease, background-color 0.32s ease;
       }
       .doc-aside-title.--chapter-active > a{
         color: hsl(var(--over-accent-color-hsl));
       }
 
-      .doc-aside-list li.--chapter-active > .nav-item > a,
-      .doc-aside-list li.--chapter-active > details > summary {
-        color: hsl(var(--over-accent-color-hsl, 0 100% 100%));
-        background-color: hsla(var(--accent-color-hsl, 210 100% 50%) / 1);
-      }
-
-      .doc-aside-list summary.--chapter-active,
-      .doc-aside-list .nav-item.--chapter-active > a {
+      .doc-aside-list li.--chapter-active > .nav-item,
+      .doc-aside-list .nav-item.--chapter-active {
         color: hsl(var(--over-accent-color-hsl, 0 100% 100%));
         background-color: hsla(var(--accent-color-hsl, 210 100% 50%) / 1);
       }
@@ -291,7 +264,6 @@ class docAside extends readyElement {
       doc-aside aside .doc-aside-title {
         font-size: var(--f-size-p);
         line-height: 1.4;
-        padding: 0;
         margin: 0;
       }
 
@@ -435,9 +407,14 @@ class docAside extends readyElement {
         margin: 0;
       }
 
-      doc-aside aside .doc-aside-list > li > details ol {
+      doc-aside .doc-aside-list li > ol {
+        display: none;
+      }
+
+      doc-aside .doc-aside-list li[open] > ol {
         display: flex;
         flex-direction: column;
+        flex-basis: 100%;
         row-gap: calc(var(--space-unit, 0.5rem) * 1);
         padding-top: calc(var(--space-unit, 0.5rem) * 1);
       }
@@ -447,21 +424,6 @@ class docAside extends readyElement {
         padding: 0;
         padding-inline-start: calc(var(--space-unit, 0.5rem) * 2);
         margin: 0;
-      }
-
-      doc-aside aside details {
-        margin: 0;
-        padding: 0;
-      }
-
-      doc-aside aside .doc-aside-list li details,
-      doc-aside aside .doc-aside-list .nav-item {
-        width: 100%;
-      }
-
-      doc-aside aside summary > a {
-        flex: 1;
-        min-width: 0;
       }
 
       doc-aside aside,
@@ -476,30 +438,10 @@ class docAside extends readyElement {
         width: 100%;
       }
 
-      /* Hover feedback only outside the nav list (.doc-aside-list has none) */
-      doc-aside aside .doc-aside-header a:hover,
-      doc-aside aside .doc-aside-footer a:hover {
-        opacity: 0.7;
-        color: var(--color-sec);
-      }
-
-      doc-aside aside details[open] {
-        border: none !important;
-      }
-
-      doc-aside aside details[open] ol {
-        padding-left: 0;
-      }
-
       doc-aside aside .nav-item {
         display: flex;
         align-items: center;
         width: 100%;
-      }
-
-      doc-aside aside ol ol {
-        padding-left: 0;
-        margin: 0;
       }
 
       doc-aside aside .doc-aside-footer .doc-aside-footer-link {
@@ -642,25 +584,27 @@ class docAside extends readyElement {
       });
     }
 
-    // expand all details when clicked
+    // expand all items with children
     const expandIcon = this.querySelector('.doc-aside-icon-container-expand');
     if (expandIcon) {
       expandIcon.addEventListener('click', () => {
-        this.querySelectorAll('details').forEach(details => {
-          details.setAttribute('open', '');
+        this.querySelectorAll('.doc-aside-list li:has(> ol)').forEach(li => {
+          li.setAttribute('open', '');
         });
       });
     }
 
-    // fold all details when clicked
+    // fold all items with children
     const foldIcon = this.querySelector('.doc-aside-icon-container-fold');
     if (foldIcon) {
       foldIcon.addEventListener('click', () => {
-        this.querySelectorAll('details').forEach(details => {
-          details.removeAttribute('open');
+        this.querySelectorAll('.doc-aside-list li:has(> ol)').forEach(li => {
+          li.removeAttribute('open');
         });
       });
     }
+
+
   }
   
   structureAside() {
@@ -718,11 +662,9 @@ class docAside extends readyElement {
         }
       }
       
-      // Build hierarchical structure with details/summary
       this.buildHierarchicalNav(headings, navList);
     };
 
-    // Build hierarchical navigation with details/summary
     this.buildHierarchicalNav = (headings, container) => {
       const headingArray = Array.from(headings);
       let i = 0;
@@ -758,33 +700,32 @@ class docAside extends readyElement {
           const li = document.createElement('li');
 
           if (hasChildren) {
-            const details = document.createElement('details');
-            const summary = document.createElement('summary');
-            
+            const navItem = document.createElement('div');
+            navItem.className = 'nav-item';
+
             const anchor = document.createElement('a');
             anchor.href = '#' + heading.id;
             anchor.textContent = heading.textContent;
-            // Plain anchor; <doc-quick>'s delegated click listener handles
-            // navigation and stops propagation so the <details> doesn't toggle.
 
-            // Create expander indicator
             const expander = document.createElement('span');
             expander.className = 'doc-aside-expander';
             expander.textContent = '▶';
-            
-            summary.appendChild(anchor);
-            summary.appendChild(expander);
-            details.appendChild(summary);
-            
-            // Create nested list for children
+            expander.addEventListener('click', (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              li.toggleAttribute('open');
+            });
+
+            navItem.appendChild(anchor);
+            navItem.appendChild(expander);
+
             const childList = document.createElement('ol');
-            details.appendChild(childList);
-            
-            li.appendChild(details);
+            li.appendChild(navItem);
+            li.appendChild(childList);
             parentContainer.appendChild(li);
-            
+
             i++; // Move to next heading
-            
+
             // Process children
             processHeadings(childList, level);
           } else {
@@ -792,8 +733,6 @@ class docAside extends readyElement {
             const anchor = document.createElement('a');
             anchor.href = '#' + heading.id;
             anchor.textContent = heading.textContent;
-            
-            // Plain anchor; <doc-quick>'s delegated click listener handles it.
 
             const navItem = document.createElement('div');
             navItem.className = 'nav-item';
@@ -849,17 +788,14 @@ class docAside extends readyElement {
       if (isH2) {
         // For h2: activate the parent li
         const li = anchor.closest('.doc-aside-list > li');
-        if (li) {
-          li.classList.add('--chapter-active');
-        }
+        if (li) li.classList.add('--chapter-active');
       } else {
-        // For h3-h6: activate the summary or .nav-item
-        const summary = anchor.closest('summary');
+        // For h3-h6: activate the .nav-item and open its parent li so it's visible
         const navItem = anchor.closest('.nav-item');
-        if (summary) {
-          summary.classList.add('--chapter-active');
-        } else if (navItem) {
+        if (navItem) {
           navItem.classList.add('--chapter-active');
+          const parentLi = navItem.closest('li');
+          if (parentLi) parentLi.setAttribute('open', '');
         }
       }
     };
@@ -895,7 +831,18 @@ class docAside extends readyElement {
 
       // Now build the navigation
       buildNavigation(docBody);
-      this._resolveReady();
+
+      // Re-activate the current chapter if doc-quick already marked one
+      // before this nav was built (race condition on page reload)
+      const remdEl = docBody.querySelector('re-md');
+      if (remdEl) {
+        const activeSection = remdEl.querySelector('section.--chapter-active');
+        if (activeSection) {
+          const ref = activeSection.getAttribute('ref');
+          if (ref) this.activateNavItem(ref);
+        }
+      }
+      // this._resolveReady();
     };
 
     // Listen for both events

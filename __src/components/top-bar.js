@@ -1,8 +1,7 @@
 import { html } from "/__src/js/html.js";
-import '/__src/js/register-svg-ninja.js';
-import { readyElement } from "/__src/components/ready-element.js";
+// import '/__src/js/register-svg-ninja.js';
 
-class topBar extends readyElement {
+class topBar extends HTMLElement {
   constructor() {
     super();
   }
@@ -369,8 +368,6 @@ class topBar extends readyElement {
     this.initThemeToggle();
     this.setActiveNavItem();
     this.initBurger();
-
-    this._resolveReady();
   }
 
   setActiveNavItem() {

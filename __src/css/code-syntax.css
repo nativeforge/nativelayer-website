@@ -29,11 +29,14 @@ code.hljs {
 .hljs-tag {
   color: hsla(var(--accent-color-hsl) / 0.6);
 }
+:is([theme-mode="light"].--accent-is-light, [theme-mode="light"] .--accent-is-light) :is( .hljs-template-tag, .hljs-tag) {
+  color: hsl(var(--accent-color-hsl-adjusted-hard));
+}
 
 .hljs-operator,
 .hljs-punctuation,
 .hljs-subst {
-  color: hsl(88, 55%, 38%);
+  color: hsl(88, 62%, 32%);
 }
 [theme-mode="dark"] :where(.hljs-operator, .hljs-punctuation, .hljs-subst){
   color: hsl(113, 76%, 57%);
@@ -61,7 +64,7 @@ code.hljs {
 .hljs-number,
 .hljs-symbol,
 .hljs-variable.constant_ {
-  color: hsl(192, 99%, 38%)
+  color: hsl(192, 89%, 34%)
 }
 
 .hljs-class .hljs-title,
@@ -108,9 +111,15 @@ code.hljs {
 .hljs-keyword,
 .hljs-type {
   color: hsla(var(--accent-color-hsl) / 0.9);
-  /* color: hsl(348 100% 50%); */
 }
-
+:is(
+  [theme-mode="light"].--accent-is-light,
+  [theme-mode="light"] .--accent-is-light
+) :where(.diff .hljs-meta,
+.hljs-keyword,
+.hljs-type ){
+  color: hsl(var(--accent-color-hsl-adjusted-hard));
+}
 .hljs-emphasis {
   color: hsl(217 100% 50%);
   font-style: italic

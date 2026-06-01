@@ -1,7 +1,6 @@
-import {readyElement} from '/__src/components/ready-element.js';
 import '/__src/js/register-svg-ninja.js';
 
-export default class baseBackTo extends readyElement {
+export default class baseBackTo extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -9,14 +8,19 @@ export default class baseBackTo extends readyElement {
   get HTML() {
     return`
     <style>
+      :host{ 
+        background-color: hsla(var(--fcolor-hsl) / 0.2);
+        border-radius: calc(var(--space-unit) * 1);
+        box-shadow: 0 0 0 1px hsla(0 0% 100% / .8);
+        overflow: hidden;
+      }
       .back-to-container {
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: flex-start;
         gap: var(--space-unit);
-        box-shadow: 0 0 0 1px hsla(0 0% 100% / .4);
-        border-radius: calc(var(--space-unit) * 1);
+        box-shadow: 0 0 0 1px hsla(0 0% 100% / .8);
         padding: 0;
         
       }
@@ -35,6 +39,7 @@ export default class baseBackTo extends readyElement {
       .back-to-button-logo {
         width: calc(var(--space-unit) * 5);
         height: calc(var(--space-unit) * 5);
+        color: hsl(var(--bcolor-hsl));
       }
       .back-to-button-link {
         text-decoration: none;
@@ -64,6 +69,5 @@ export default class baseBackTo extends readyElement {
   }
   connectedCallback() {
     this.shadowRoot.innerHTML = this.HTML;
-    this._resolveReady();
   }
 }

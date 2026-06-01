@@ -1,16 +1,13 @@
 /**
  * @typedef {Object} WaitForElementsReadyOptions
- * @property {string}                  [revealClass="ready"] - CSS class added to the reveal element when all elements are ready
- * @property {HTMLElement | string}    [reveal]              - Element that receives revealClass. Defaults to target (root = reveal)
- * @property {number}                  [timeout=4000]        - Max ms to wait per element before rejecting
- * @property {boolean}                 [observeMutations=true] - Watch for dynamically added custom elements
- * @property {AbortSignal}             [signal]              - Disconnect the MutationObserver when aborted
- * @property {boolean}                 [debug=false]         - Log lifecycle steps to the console
+ * @property {number}       [timeout=4000]          - Max ms to wait per element before rejecting
+ * @property {boolean}      [observeMutations=true] - Watch for dynamically added custom elements
+ * @property {AbortSignal}  [signal]                - Disconnect the MutationObserver when aborted
+ * @property {boolean}      [debug=false]           - Log lifecycle steps to the console
  */
 
 /**
- * Waits until all custom elements inside `target` are defined and ready,
- * then adds `revealClass` to the reveal element (defaults to `target`).
+ * Waits until all custom elements inside `target` are defined and ready.
  *
  * @param {HTMLElement | string} [target=document.body]
  * @param {WaitForElementsReadyOptions} [options={}]
@@ -21,8 +18,6 @@ export async function waitForElementsReady(
   options = {}
 ) {
   const {
-    revealClass = "ready",
-    reveal,
     timeout = 4000,
     observeMutations = true,
     signal,
@@ -40,16 +35,7 @@ export async function waitForElementsReady(
     throw new Error("Target element not found");
   }
 
-  const revealEl = reveal
-    ? (typeof reveal === "string" ? document.querySelector(reveal) : reveal)
-    : root;
-
-  if (!revealEl) {
-    throw new Error("Reveal element not found");
-  }
-
-  log("root:", root, "| reveal:", revealEl);
-  revealEl.classList.remove(revealClass);
+  log("root:", root);
 
   const isCustomElement = (el) =>
     el.tagName.includes("-");
@@ -119,7 +105,6 @@ export async function waitForElementsReady(
       if (hasNewCustomElements) {
         log("observer: new custom elements detected — reprocessing");
         await processElements();
-        revealEl.classList.add(revealClass);
       }
     });
 
@@ -128,6 +113,5 @@ export async function waitForElementsReady(
     signal?.addEventListener("abort", () => observer.disconnect(), { once: true });
   }
 
-  log(`all ready — adding "${revealClass}" to`, revealEl);
-  revealEl.classList.add(revealClass);
+  log("all ready");
 }

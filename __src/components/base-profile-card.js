@@ -1,6 +1,4 @@
-import { readyElement } from '/__src/components/ready-element.js';
-
-class baseProfileCard extends readyElement {
+class baseProfileCard extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -18,7 +16,6 @@ class baseProfileCard extends readyElement {
   connectedCallback() {
     this._render({ state: 'loading' });
     this._fetch();
-    this._resolveReady();
   }
 
   attributeChangedCallback() {

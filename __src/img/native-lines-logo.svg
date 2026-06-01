@@ -3,7 +3,7 @@
     <style>
       .native-logo {
         fill: none;
-        stroke: hsl(var(--fcolor-hsl, 0 0 100%));
+        stroke: currentColor;
         stroke-width: 1.5;
       }
     </style>

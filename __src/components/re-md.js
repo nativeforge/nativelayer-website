@@ -80,7 +80,7 @@ class remd extends readyElement {
   }
 
   static get observedAttributes() {
-    return ['src', 'transform', 'logs'];
+    return ['src', 'transform'];
   }
 
   connectedCallback() {
@@ -305,14 +305,12 @@ class remd extends readyElement {
         line-height: var(--remmd-line-height, 1.6);
       }
 
-      re-md :where(ul li, ol li),
-      re-md :where(ol li, ul li) {
+      re-md :where(ul li, ol li) {
         list-style-type: disc;
         padding-bottom: calc(var(--space-unit, 0.5rem) * 1);
       }
 
-      re-md :where(ul, ol),
-      re-md :where(ul ol) {
+      re-md :where(ul, ol) {
         padding: calc(var(--space-unit) * 1) 0 calc(var(--space-unit) * 1) calc(var(--space-unit) * 2);
       }
 
@@ -327,7 +325,7 @@ class remd extends readyElement {
         font-size: var(--blockquote-font-size);
         margin: 0;
         padding: calc(var(--space-unit, 0.5rem) * 2) calc(var(--space-unit, 0.5rem) * 2);
-        margin-block-end: calc(var(--space-unit, 0.5rem) * 6);
+        margin-block: calc(var(--space-unit, 0.5rem) * 3) calc(var(--space-unit, 0.5rem) * 6);
         background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / var(--blockquote-bg-opacity, 0.04));
         border-radius: calc(var(--size-unit, 0.5rem) * 0.25);
         border-left: 4px solid hsla( var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / var(--blockquote-border-opacity, 0.4));
@@ -346,6 +344,10 @@ class remd extends readyElement {
         font-size: var(--codeblock-font-size);
         padding: calc(var(--space-unit, 0.5rem) * 2) calc(var(--space-unit, 0.5rem) * 4);
         border-radius: calc(var(--size-unit, 0.5rem) * 0.25);
+      }
+
+      :is([theme-mode="light"].--accent-is-light code-block, [theme-mode="light"].--accent-is-light code) {
+        --accent-color-hsl: var(--accent-color-hsl-adjusted-hard);
       }
 
       re-md code-block .copy-btn {
@@ -374,7 +376,6 @@ class remd extends readyElement {
       re-md .re-md-table {
         white-space: nowrap;
         border-collapse: collapse;
-        overflow-x: hidden;
         font-family: var(--ff-3, monospace);
         font-size: var(--re-md-font-size);
         border-radius: calc(var(--size-unit, 0.5rem) * 1) calc(var(--size-unit, 0.5rem) * 1) 0 0;
@@ -387,9 +388,9 @@ class remd extends readyElement {
 
       re-md .re-md-table th {
         padding: calc(var(--space-unit, 0.5rem) * 2) calc(var(--space-unit, 0.5rem) * 3);
-        font-weight: 300;
+        font-weight: 500;
         text-align: left;
-        color: hsla(var(--over-accent-color-hsl) / var(--table-thead-color-opacity, 0.8));
+        color: hsla(var(--over-accent-color-hsl) / var(--table-thead-color-opacity, 1));
       }
 
       re-md .re-md-table th:not(:first-child) {
@@ -815,68 +816,6 @@ class remd extends readyElement {
     return attributes;
   }
 
-  // Convert markdown to HTML using transform rules
-  processMarkdownContent(markdown, transformRules) {
-    // Process headings first
-    let content = markdown.replace(/^(#{1,6})\s+(.+)$/gm, (match, hashes, title) => {
-      const level = hashes.length;
-      return `<h${level}>${title.trim()}</h${level}>`;
-    });
-
-    // Process lists
-    content = content.replace(/^(\s*)[*+-]\s+(.+)$/gm, (match, indent, text) => {
-      return `${indent}<li>${text}</li>`;
-    });
-
-    // Process code blocks with better language handling
-    content = content.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
-      // Clean up the language identifier and handle special cases
-      let language = lang.trim().toLowerCase() || 'plaintext';
-      
-      // Map common language aliases
-      const languageMap = {
-        'sh': 'bash',
-        'shell': 'bash',
-        'zsh': 'bash',
-        'console': 'bash',
-        'terminal': 'bash',
-        'env': 'properties',
-        '.env': 'properties',
-        'dotenv': 'properties'
-      };
-      language = languageMap[language] || language;
-      
-      // Clean up the code content
-      const cleanCode = code.trim()
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-      
-      // Create doc-code element if specified in transform rules
-      const codeRule = transformRules.get('codeblock');
-      if (codeRule && codeRule.element === 'doc-code') {
-        return `<doc-code language="${language}">${cleanCode}</doc-code>`;
-      }
-      
-      // Default fallback
-      return `<pre><code class="language-${language}">${cleanCode}</code></pre>`;
-    });
-
-    // Process inline code
-    content = content.replace(/`([^`]+)`/g, '<code>$1</code>');
-
-    // Process bold
-    content = content.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-
-    // Process italic
-    content = content.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-
-    // Process links
-    content = content.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
-
-    return content;
-  }
-
   async markdownToHtml(markdown, transformRules) {
     // Replace escaped characters with placeholders before parsing
     const { text: processedMarkdown, placeholders } = this.escapeToPlaceholder(markdown);
@@ -898,9 +837,6 @@ class remd extends readyElement {
     // Track if document contains tables
     this.hasTable = false;
     
-    // Process markdown content first
-    const content = this.processMarkdownContent(markdown, transformRules);
-
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       
@@ -1552,63 +1488,6 @@ class remd extends readyElement {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
-  }
-
-  // Detect language from file extension
-  detectLangFromExtension(filename) {
-    const ext = filename.split('.').pop()?.toLowerCase();
-    const extensionMap = {
-      'env': 'properties',
-      'js': 'javascript',
-      'jsx': 'javascript', 
-      'ts': 'typescript',
-      'tsx': 'typescript',
-      'py': 'python',
-      'rb': 'ruby',
-      'php': 'php',
-      'java': 'java',
-      'c': 'c',
-      'cpp': 'cpp',
-      'cc': 'cpp',
-      'cxx': 'cpp',
-      'h': 'c',
-      'hpp': 'cpp',
-      'cs': 'csharp',
-      'go': 'go',
-      'rs': 'rust',
-      'swift': 'swift',
-      'kt': 'kotlin',
-      'scala': 'scala',
-      'html': 'html',
-      'htm': 'html',
-      'xml': 'xml',
-      'css': 'css',
-      'scss': 'scss',
-      'sass': 'sass',
-      'less': 'less',
-      'json': 'json',
-      'yaml': 'yaml',
-      'yml': 'yaml',
-      'toml': 'toml',
-      'ini': 'ini',
-      'sql': 'sql',
-      'sh': 'bash',
-      'bash': 'bash',
-      'zsh': 'bash',
-      'fish': 'bash',
-      'ps1': 'powershell',
-      'dockerfile': 'dockerfile',
-      'md': 'markdown',
-      'markdown': 'markdown',
-      'tex': 'latex',
-      'r': 'r',
-      'R': 'r',
-      'dart': 'dart',
-      'lua': 'lua',
-      'perl': 'perl',
-      'pl': 'perl'
-    };
-    return extensionMap[ext] || null;
   }
 
   // Detect language from code content

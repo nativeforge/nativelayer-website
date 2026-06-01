@@ -1,5 +1,4 @@
-import { readyElement } from "/__src/components/ready-element.js";
-class baseHero extends readyElement {
+class baseHero extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -27,8 +26,6 @@ class baseHero extends readyElement {
     <slot name="title"></slot>
     <slot name="description"></slot>
     `;
-
-    this._resolveReady();
   }
 }
 

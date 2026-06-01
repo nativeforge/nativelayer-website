@@ -252,6 +252,7 @@ console.log(formatDate(new Date()));
 The fastest code is the code the browser already understands.
 
 nativeHtml achieves performance by:
+
 - Avoiding unnecessary layers
 - Leveraging native rendering paths
 - Minimizing runtime overhead

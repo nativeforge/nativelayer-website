@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>native web dev</title>
+  <title>nativelayer.dev: Packages</title>
 
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
@@ -12,9 +12,9 @@
   <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   
-  <link rel="stylesheet" href="/__src/css/reset.css">
-  <link rel="stylesheet" href="/__src/css/fonts.css">
-  <link rel="stylesheet" href="/__src/css/global-styles.css">
+  <link rel="stylesheet" href="/__src/css/reset.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/fonts.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/global-styles.css" blocking="render">
   
   <script type="module">
     import {router} from "/__src/js/router.js";
@@ -26,21 +26,19 @@
     customElements.define('loader-element', loaderElement)
   </script>
 
-  <script type="module">
-    import docQuick from "/__src/components/doc-quick.js"
-    customElements.define('doc-quick', docQuick)
-  </script>
 </head>
 
 
-<loader-element app="body" path="/__src/components/" brand="nativelayer.dev"></loader-element>
-<body>
-  <top-bar></top-bar>
+<loader-element app="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400" overlay-fade="640"></loader-element>
+
+<body style="opacity: 0; transform: translateY(16px);">
+  <top-bar reveal></top-bar>
   <doc-quick
     chapter-mode
     theme-css="/__src/css/code-syntax.css"
     expander-color="hsl(var(--accent-color-hsl))"
     section-numbers
+    reveal
   ></doc-quick>
 </body>
 </html>

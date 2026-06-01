@@ -1,0 +1,447 @@
+import { restate }        from '/__src/libs/restate/restate.esm.min.js'
+import { reflectx }       from '/__src/libs/reflectx/reflectx.esm.min.js'
+import { scramblePlugin } from '/__src/libs/reflectx/plugins/scramble/scramble.esm.min.js'
+
+reflectx.use(scramblePlugin({
+  duration: 900,
+  chars: 'upperCase',
+  easing: 'easeOut'
+}))
+
+class breakingNews extends HTMLElement {
+  constructor() {
+    super()
+    this.attachShadow({ mode: 'open' })
+  }
+
+  connectedCallback() {
+    this.shadowRoot.innerHTML = `
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap">
+      <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :host {
+          --space-unit: 0.5rem;
+
+          --bg: #a6acc4;
+          --surface: #59627a;
+          --surface-2: #828ca8;
+          --surface-hover: #c4c1d6;
+
+          --accent: #00d4ff;
+          --accent-light: #53e1fe;
+          --accent-dark: #01a2c3;
+          --accent-darker: #006d8e;
+          --accent-dim: #00688e;
+          --accent-dim-dark: rgb(0, 83, 122);
+          --accent-glow: #00d5ff6f;
+
+          --screen-bg: #263548;
+          --screen-bg-darker: #1a2330;
+          --screen-text: #ffffff;
+          --screen-text-dim: #afbfc7;
+          --screen-scanline: #85aeff1c;
+          --screen-accent: #84ceff;
+
+          --text: #dbe5fd;
+          --text-dim: #a1a7b9;
+          --white: #fff;
+
+          --danger: #cc2244;
+          --danger-light: #ff3366;
+
+          --secondary: #ff8833;
+          --secondary-dim: #aa6622;
+
+          --border-dim: #ccc7bb;
+
+          --cut: 12px;
+          --cut-sm: 8px;
+          --gap: 6px;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1rem;
+          background: var(--bg);
+          color: var(--text);
+          font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* Panel */
+        .panel {
+          width: 100%;
+          max-width: 480px;
+          clip-path: polygon(
+            var(--cut) 0%, calc(100% - var(--cut)) 0%,
+            100% var(--cut), 100% calc(100% - var(--cut) * 2),
+            calc(100% - var(--cut) * 2) 100%, var(--cut) 100%,
+            0% calc(100% - var(--cut)), 0% var(--cut)
+          );
+          padding: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          position: relative;
+          background: var(--surface);
+        }
+
+        .panel-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 0.25rem;
+        }
+
+        .panel-header .brand {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 0.7rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: var(--accent);
+        }
+
+        .panel-header .model {
+          font-size: 0.7rem;
+          color: var(--text);
+          letter-spacing: 0.15em;
+        }
+
+        /* Topic filters */
+        .topics {
+          display: flex;
+          gap: 4px;
+          overflow-x: auto;
+          padding: 0.15rem 0;
+          scrollbar-width: none;
+        }
+        .topics::-webkit-scrollbar { display: none; }
+
+        .topic-btn {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.65rem;
+          border: none;
+          cursor: pointer;
+          padding: 0.4rem 0.65rem;
+          color: var(--screen-bg-darker);
+          background: var(--surface-2);
+          clip-path: polygon(
+            4px 0%, 100% 0%,
+            100% calc(100% - 4px), calc(100% - 4px) 100%,
+            0% 100%, 0% 4px
+          );
+          transition: background 0.2s ease, color 0.2s ease;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          white-space: nowrap;
+          flex-shrink: 0;
+          user-select: none;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        .topic-btn:hover { background: var(--surface-hover); }
+
+        .topic-btn.--active {
+          background: var(--accent);
+          color: var(--screen-bg-darker);
+        }
+
+        .topic-btn.--active:hover { background: var(--accent-light); }
+
+        /* Screen */
+        .screen {
+          background: var(--screen-bg);
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          position: relative;
+          overflow: hidden;
+          border-top: 4px solid var(--accent-darker);
+          border-left: 4px solid var(--accent-dark);
+          border-bottom: 3px solid var(--accent-dim);
+          border-right: 2px solid var(--accent-dim);
+        }
+
+        .screen::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: repeating-linear-gradient(
+            0deg,
+            transparent, transparent 2px,
+            var(--screen-scanline) 2px, var(--screen-scanline) 4px
+          );
+          pointer-events: none;
+        }
+
+        .screen-header-container {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.6rem 0.75rem;
+          background: linear-gradient(0deg, var(--screen-bg-darker), transparent);
+        }
+
+        .screen-title {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 0.65rem;
+          font-weight: 700;
+          color: var(--danger-light);
+          letter-spacing: 0.2em;
+        }
+
+        .screen-count {
+          font-size: 0.6rem;
+          color: var(--screen-text-dim);
+          letter-spacing: 0.1em;
+          transition: opacity 0.3s ease;
+        }
+
+        .screen-count.--loading {
+          animation: count-pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes count-pulse {
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 1; }
+        }
+
+        /* News list */
+        .news-item-list {
+          height: 360px;
+          overflow-y: auto;
+          scrollbar-width: thin;
+          scrollbar-color: var(--accent-dim-dark) transparent;
+        }
+
+        .news-item-list::-webkit-scrollbar { width: 4px; }
+        .news-item-list::-webkit-scrollbar-track { background: transparent; }
+        .news-item-list::-webkit-scrollbar-thumb { background: var(--accent-dim-dark); }
+
+        .news-item {
+          cursor: pointer;
+          border-bottom: 1px solid var(--accent-dim-dark);
+          transition: background 1.6s ease;
+        }
+        .news-item:hover {
+          background: var(--screen-bg-darker);
+          transition: background 0.4s ease;
+        }
+        .news-item:last-child { border-bottom: none; }
+
+        .news-item-container {
+          display: flex;
+          gap: 0.65rem;
+          padding: 0.55rem 0.75rem;
+        }
+
+        .news-idx {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 0.55rem;
+          font-weight: 700;
+          color: var(--screen-text-dim);
+          min-width: 1.4rem;
+          padding-top: 0.1rem;
+        }
+
+        .news-content {
+          display: flex;
+          flex-direction: column;
+          gap: 0.2rem;
+          min-width: 0;
+          flex: 1;
+        }
+
+        .news-headline {
+          font-size: 0.78rem;
+          color: var(--screen-text);
+          line-height: 1.3;
+          letter-spacing: 0.03em;
+        }
+
+        .news-meta {
+          font-size: 0.6rem;
+          color: var(--screen-text-dim);
+          letter-spacing: 0.08em;
+        }
+
+        /* Footer */
+        .panel-footer {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.15rem;
+          padding-top: 0.15rem;
+        }
+
+        .panel-footer p {
+          font-size: 0.8rem;
+          color: var(--text);
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+        }
+
+        .panel-footer a {
+          color: var(--accent);
+          text-decoration: none;
+        }
+      </style>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="brand">nativelayer</span>
+          <span class="model">NX-NEWS v1.0</span>
+        </div>
+
+        <div class="topics">
+          <button class="topic-btn" data-topic="business"      @click="setTopic('business')">Business</button>
+          <button class="topic-btn" data-topic="politics"      @click="setTopic('politics')">Politics</button>
+          <button class="topic-btn" data-topic="AI"            @click="setTopic('AI')">AI</button>
+          <button class="topic-btn" data-topic="technology"    @click="setTopic('technology')">Technology</button>
+          <button class="topic-btn" data-topic="science"       @click="setTopic('science')">Science</button>
+          <button class="topic-btn" data-topic="security"      @click="setTopic('security')">Security</button>
+          <button class="topic-btn" data-topic="finance"       @click="setTopic('finance')">Finance</button>
+          <button class="topic-btn" data-topic="health"        @click="setTopic('health')">Health</button>
+          <button class="topic-btn" data-topic="art"           @click="setTopic('art')">Art</button>
+          <button class="topic-btn" data-topic="entertainment" @click="setTopic('entertainment')">Entertainment</button>
+          <button class="topic-btn" data-topic="travel"        @click="setTopic('travel')">Travel</button>
+        </div>
+
+        <div class="screen">
+          <div class="screen-header">
+            <div class="screen-header-container">
+              <span class="screen-title">BREAKING NEWS</span>
+              <span class="screen-count" x-text="topicLabel"></span>
+            </div>
+          </div>
+          <div class="news-item-list">
+            ${Array.from({ length: 16 }, (_, i) => `
+            <div class="news-item" @click="openNews(${i})">
+              <div class="news-item-container">
+                <span class="news-idx">${String(i + 1).padStart(2, '0')}</span>
+                <div class="news-content">
+                  <div class="news-headline" x-text.scramble="scramble(headline${i})"></div>
+                  <div class="news-meta" x-text="meta${i}"></div>
+                </div>
+              </div>
+            </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="panel-footer">
+          <p>Demo by <a href="/">nativelayer.dev</a></p>
+          <p>Powered by restate + reflectx</p>
+        </div>
+      </div>
+    `
+
+    // ── State ──────────────────────────────────────────────────────────────
+    const stateInit = { activeTopic: '', loading: false, error: false, errorMsg: '' }
+    for (let i = 0; i < 16; i++) {
+      stateInit[`headline${i}`] = ''
+      stateInit[`meta${i}`]     = ''
+    }
+
+    const state = restate(stateInit)
+
+    state.$computed({
+      topicLabel(s) {
+        if (s.loading) return 'RECEIVING...'
+        if (s.error)   return 'ERROR'
+        return s.activeTopic ? s.activeTopic.toUpperCase() : ''
+      }
+    })
+
+    const newsLinks  = []
+    const newsCache  = {}
+    const root       = this.shadowRoot
+    const panel      = root.querySelector('.panel')
+
+    // ── Helpers ────────────────────────────────────────────────────────────
+    function timeAgo(dateStr) {
+      const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000)
+      if (diff < 1)    return 'just now'
+      if (diff < 60)   return diff + 'm ago'
+      if (diff < 1440) return Math.floor(diff / 60) + 'h ago'
+      return Math.floor(diff / 1440) + 'd ago'
+    }
+
+    function parseTitle(raw) {
+      const lastDash = raw.lastIndexOf(' - ')
+      if (lastDash === -1) return { headline: raw, source: '' }
+      return { headline: raw.substring(0, lastDash), source: raw.substring(lastDash + 3) }
+    }
+
+    async function fetchNews(topic) {
+      if (newsCache[topic]) return newsCache[topic]
+      const rssUrl   = `https://news.google.com/rss/search?q=${encodeURIComponent(topic)}+when:1d&hl=en-US&gl=US&ceid=US:en`
+      const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(rssUrl)}`
+      const res      = await fetch(proxyUrl)
+      if (!res.ok) throw new Error('Proxy error')
+      const text    = await res.text()
+      const xml     = new DOMParser().parseFromString(text, 'text/xml')
+      const entries = [...xml.querySelectorAll('item')].slice(0, 16)
+      if (entries.length === 0) throw new Error('No results')
+      const items = entries.map(el => {
+        const raw     = el.querySelector('title')?.textContent   || ''
+        const pubDate = el.querySelector('pubDate')?.textContent || ''
+        const link    = el.querySelector('link')?.textContent    || ''
+        const parsed  = parseTitle(raw)
+        return { headline: parsed.headline.toUpperCase(), source: parsed.source, time: timeAgo(pubDate), link }
+      })
+      newsCache[topic] = items
+      return items
+    }
+
+    function applyNews(items) {
+      newsLinks.length = 0
+      for (let i = 0; i < 16; i++) newsLinks[i] = items[i]?.link || ''
+      state.$set(s => {
+        for (let i = 0; i < 16; i++) {
+          const n = items[i]
+          s[`headline${i}`] = n ? n.headline : ''
+          s[`meta${i}`]     = n ? n.source + '  ·  ' + n.time : ''
+        }
+        s.loading = false
+        s.error   = false
+      })
+    }
+
+    // ── Methods ────────────────────────────────────────────────────────────
+    state.$methods({
+      openNews(idx) {
+        const url = newsLinks[idx]
+        if (url) window.open(url, '_blank')
+      },
+
+      setTopic(topic) {
+        if (state.activeTopic === topic && !state.error) return
+        state.$set(s => { s.activeTopic = topic; s.loading = true; s.error = false })
+        fetchNews(topic)
+          .then(items => applyNews(items))
+          .catch(() => {
+            state.$set(s => {
+              s.loading = false; s.error = true; s.errorMsg = 'FEED UNAVAILABLE'
+              for (let i = 0; i < 16; i++) { s[`headline${i}`] = ''; s[`meta${i}`] = '' }
+            })
+          })
+      }
+    })
+
+    // ── Render ─────────────────────────────────────────────────────────────
+    const render = () => {
+      reflectx(state, panel)
+      root.querySelectorAll('.topic-btn').forEach(btn => {
+        btn.classList.toggle('--active', btn.dataset.topic === state.activeTopic)
+      })
+      root.querySelector('.screen-count')?.classList.toggle('--loading', state.loading)
+    }
+
+    state.$onChange(() => render())
+    render()
+
+    setTimeout(() => state.setTopic('business'), 200)
+  }
+}
+
+export default breakingNews

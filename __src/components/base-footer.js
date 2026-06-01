@@ -1,7 +1,6 @@
 import { html } from "/__src/js/html.js";
-import { readyElement } from "/__src/components/ready-element.js";
-
-class BaseFooter extends readyElement {
+// class BaseFooter extends readyElement {
+class BaseFooter extends HTMLElement {
   constructor() {
     super();
   }
@@ -115,7 +114,7 @@ class BaseFooter extends readyElement {
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = this.HTML;
 
-    this._resolveReady();
+    // this._resolveReady();
   }
 }
 

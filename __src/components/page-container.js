@@ -1,6 +1,5 @@
-import { readyElement } from "/__src/components/ready-element.js";
-
-class pageContainer extends readyElement {
+// class pageContainer extends readyElement {
+class pageContainer extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'})
@@ -26,7 +25,7 @@ class pageContainer extends readyElement {
     </style>
     <slot></slot>`
 
-    this._resolveReady();
+    // this._resolveReady();
   }
 }
 

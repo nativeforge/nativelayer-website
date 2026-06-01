@@ -1,23 +1,17 @@
-import { luminanceHSL, adjustedHSL } from '/__src/js/luminance.js'
-import { scrollToHeadingById }       from '/__src/js/utils.js'
+import { luminanceHSL, adjustedHSL }  from '/__src/js/luminance.js'
+import { scrollToHeadingElement }      from '/__src/js/utils.js'
 
 // ── Child component imports (self-contained: no external autoDefine needed) ──
 import docAsideClass    from '/__src/components/doc-aside.js'
 import docBodyClass     from '/__src/components/doc-body.js'
 import reMd            from '/__src/components/re-md.js'
-import flexContainer    from '/__src/components/flex-container.js'
 import docCard          from '/__src/components/doc-card.js'
-import topBar           from '/__src/components/top-bar.js'
-import pageContainer    from '/__src/components/page-container.js'
 
 const define = (tag, cls) => { if (!customElements.get(tag)) customElements.define(tag, cls) }
 define('doc-aside',      docAsideClass)
 define('doc-body',       docBodyClass)
 define('re-md',          reMd)
-define('flex-container', flexContainer)
 define('doc-card',       docCard)
-define('top-bar',        topBar)
-define('page-container', pageContainer)
 
 // ───────────────────────────────────────────────────────────────────────────
 // <doc-quick> — self-contained documentation viewer
@@ -91,7 +85,6 @@ class docQuick extends HTMLElement {
       if (!anchor && !heading) return
 
       e.preventDefault()
-      // Stops <details>/<summary> from toggling when its inner <a> is clicked.
       e.stopPropagation()
 
       const hash = anchor
@@ -167,30 +160,38 @@ class docQuick extends HTMLElement {
   // ── Rendering ─────────────────────────────────────────────────────────────
 
   _render() {
-    const chapterMode   = this.hasAttribute('chapter-mode')   ? 'chapter-mode'   : ''
-    const sectionNums   = this.hasAttribute('section-numbers') ? 'section-numbers' : ''
-    const themeCss      = this.getAttribute('theme-css')      || ''
+    const chapterMode = this.hasAttribute('chapter-mode') ? 'chapter-mode' : ''
+    const sectionNums = this.hasAttribute('section-numbers') ? 'section-numbers' : ''
+    const themeCss = this.getAttribute('theme-css') || ''
     const expanderColor = this.getAttribute('expander-color') || ''
-    const src           = this.getAttribute('src')            || ''
+    const src = this.getAttribute('src') || ''
 
     this.innerHTML = `
+      <style>
+        .doc-quick-cards {
+          display: flex;
+          flex-direction: row;
+          gap: calc(var(--space-unit) * 4);
+          width: 100%;
+          flex-shrink: 0;
+          margin-top: calc(var(--space-unit) * 8);
+        }
+      </style>
       <doc-aside
         ${expanderColor ? `expander-color="${expanderColor}"` : ''}
         ${sectionNums}
       ></doc-aside>
       <doc-body>
         <re-md
-          ${src         ? `src="${src}"`             : ''}
-          ${themeCss    ? `theme-css="${themeCss}"`   : ''}
+          ${src? `src="${src}"` : ''}
+          ${themeCss ? `theme-css="${themeCss}"` : ''}
           ${chapterMode}
         ></re-md>
-        <flex-container
-          direction="row"
-          style="gap: calc(var(--space-unit) * 4); width: 100%; flex-shrink: 0; margin-top: calc(var(--space-unit) * 8);"
-        >
+        ${chapterMode ? `
+        <div class="doc-quick-cards">
           <doc-card data-label="previous"></doc-card>
           <doc-card data-label="next"></doc-card>
-        </flex-container>
+        </div>` : ''}
       </doc-body>
     `
   }
@@ -200,12 +201,20 @@ class docQuick extends HTMLElement {
   _applyTheme(hsl) {
     if (!this._htmlEl || !hsl) return
 
-    const parts = hsl.replaceAll('%', '').split(' ').map(Number)
-    const lum      = luminanceHSL(...parts)
-    const adjusted = adjustedHSL(hsl, { min: 35, max: 65, strength: 1 })
+    const parts        = hsl.replaceAll('%', '').split(' ').map(Number)
+    const lum          = luminanceHSL(...parts)
+    const isLight      = lum > 0.6
+    const adjustedSoft = adjustedHSL(hsl, {
+      min: 30, max: 58, strength: 1, maxShift: 30,
+    })
+    const adjustedHard = isLight
+      ? adjustedHSL(hsl, { min: 25, max: 40, strength: 0.2, maxShift: 65 })
+      : adjustedSoft
 
-    this._htmlEl.style.setProperty('--accent-color-hsl', hsl)
-    this._htmlEl.style.setProperty('--accent-color-hsl-adjusted', adjusted)
+    this._htmlEl.style.setProperty('--accent-color-hsl',          hsl)
+    this._htmlEl.style.setProperty('--accent-color-hsl-adjusted-soft',  adjustedSoft)
+    this._htmlEl.style.setProperty('--accent-color-hsl-adjusted-hard',  adjustedHard)
+    this._htmlEl.style.setProperty('--accent-color-hsl-adjusted', adjustedSoft)
 
     if (lum > 0.6) {
       this._htmlEl.classList.remove('--accent-is-dark')
@@ -263,12 +272,26 @@ class docQuick extends HTMLElement {
     return true
   }
 
+  // Scroll to the element matching `hash`.
+  // Real heading IDs (e.g. "1-installation", "2-1-core-methods") are found
+  // directly via getElementById. Synthetic chapter keys like "0-introduction"
+  // have no matching element — they always map to the first section, so we
+  // scroll to the absolute top of the page instead.
+  _scrollTo(hash) {
+    const el = document.getElementById(hash)
+    if (el) {
+      scrollToHeadingElement(el)
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
   _activateChapterWhenReady(hash) {
     if (!hash || !this._remd) return
 
     // Try once — re-md content may already be present.
     if (this._activateChapter(hash)) {
-      requestAnimationFrame(() => scrollToHeadingById(hash))
+      requestAnimationFrame(() => this._scrollTo(hash))
       return
     }
 
@@ -285,7 +308,7 @@ class docQuick extends HTMLElement {
           clearTimeout(this._pendingSafetyTimeout)
           this._pendingSafetyTimeout = null
         }
-        requestAnimationFrame(() => scrollToHeadingById(hash))
+        requestAnimationFrame(() => this._scrollTo(hash))
       }
     })
     observer.observe(this._remd, { childList: true, subtree: true })

@@ -1,6 +1,5 @@
-import { readyElement } from "/__src/components/ready-element.js";
-
-class flexContainer extends readyElement {
+// class flexContainer extends readyElement {
+class flexContainer extends HTMLElement {
   constructor() {
     super();
     this.direction = this.getAttribute('direction') || 'column';
@@ -15,14 +14,11 @@ class flexContainer extends readyElement {
           width: 100%;
           flex-direction: ${this.direction};
         }
-        :host > * {
-          flex: 1;
-        }
       </style>
         <slot></slot>
       `;
 
-    this._resolveReady();
+    // this._resolveReady();
   }
 }
 

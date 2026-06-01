@@ -63,7 +63,8 @@
   --table-td-border-opacity: 0.5;
   --table-td-even-bg-opacity: 0.04;
 
-  --page-transition-time: 0.4s;
+  --page-transition-time: 0.8s;
+  --show-duration-delay: ;
 }
 /* Default (light) */
 :root {
@@ -117,6 +118,7 @@ body :where(h1, h2, h3, h4, h5, h6) {
   [theme-mode="light"] .--accent-is-light
 ) {
   --accent-color-hsl: var(--accent-color-hsl-adjusted) !important;
+  --accent-color: hsl(var(--accent-color-hsl-adjusted)) !important;
   --over-accent-color-hsl: var(--darkest);
 }
 :is(
@@ -134,15 +136,48 @@ html p {
   color: hsla(var(--fcolor-hsl) / 0.8);
 }
 
-:is(top-bar, page-container, flex-container, base-footer, doc-body, doc-aside):not([ready]) {
+html h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ff-1);
+  line-height: 1.25;
+}
+
+html a {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: hsla(var(--fcolor-hsl) / 0.8);
+  color: hsla(var(--fcolor-hsl) / 0.8);
+}
+
+/* Reveal animation — opt-in per element with the `reveal` attribute.
+--show-duration-delay is set at runtime by monitor-make-ready / loader-element
+from their `show-duration` attribute. Defaults to 0ms (no delay) when no loader is used. */
+
+:is(top-bar, base-hero, base-quote, base-back-to, base-button, page-container, flex-container, base-footer, base-profile-card, base-card, doc-quick, doc-body, doc-aside)[reveal]:not([ready]) {
   contain-intrinsic-size: 300px;
   opacity: 0;
   transform: translateY(16px);
-  transition: opacity var(--page-transition-time) ease-in, transform var(--page-transition-time) ease-in;
+  transition-property: opacity, transform;
+  transition-duration: var(--page-transition-time);
+  transition-delay: var(--show-duration-delay, 0ms);
+  transition-timing-function: ease-in;
 }
 
-:is(top-bar, page-container, flex-container, base-footer, doc-body, doc-aside)[ready] {
+:is(top-bar, base-hero, base-quote, base-back-to, base-button, base-profile-card, base-card, page-container, flex-container, base-footer, doc-quick, doc-body, doc-aside)[reveal][ready] {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity var(--page-transition-time) ease-out, transform var(--page-transition-time) ease-out;
+  transition-property: opacity, transform;
+  transition-duration: var(--page-transition-time);
+  transition-delay: var(--show-duration-delay, 0ms);
+  transition-timing-function: ease-out;
+}
+
+/* Explicit starting values for browsers that support @starting-style (Chrome 117+, Safari 17.5+, Firefox 129+).
+   Ensures the transition fires even when [ready] is set before the first paint. */
+@starting-style {
+  :is(top-bar, base-hero, base-quote, base-back-to, base-button, base-profile-card, base-card, page-container, flex-container, base-footer, doc-quick, doc-body, doc-aside)[reveal][ready] {
+    opacity: 0;
+    transform: translateY(16px);
+  }
 }

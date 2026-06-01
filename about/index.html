@@ -12,9 +12,9 @@
   <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 
-  <link rel="stylesheet" href="/__src/css/reset.css">
-  <link rel="stylesheet" href="/__src/css/fonts.css">
-  <link rel="stylesheet" href="/__src/css/global-styles.css">
+  <link rel="stylesheet" href="/__src/css/reset.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/fonts.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/global-styles.css" blocking="render">
 
   <script type="module">
     import { router } from "/__src/js/router.js";
@@ -22,30 +22,23 @@
   </script>
 
   <script type="module">
-    import topBar from "/__src/components/top-bar.js";
-    import pageContainer from "/__src/components/page-container.js";
-    import flexContainer from "/__src/components/flex-container.js";
-    import baseHero from "/__src/components/base-hero.js";
-    import baseFooter from "/__src/components/base-footer.js";
-    import baseProfileCard from "/__src/components/base-profile-card.js";
-
-    customElements.define('top-bar', topBar);
-    customElements.define('page-container', pageContainer);
-    customElements.define('flex-container', flexContainer);
-    customElements.define('base-hero', baseHero);
-    customElements.define('base-footer', baseFooter);
-    customElements.define('base-profile-card', baseProfileCard);
+    import loaderElement from "/__src/components/loader-element/index.js"
+    customElements.define('loader-element', loaderElement)
   </script>
 </head>
 
-<body>
-  <top-bar></top-bar>
+<loader-element app="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400" overlay-fade="400"></loader-element>
 
-  <page-container style="gap: calc(var(--space-unit) * 16); padding-block-start: 0; padding-block-end: calc(var(--space-unit) * 24);">
+<body style="opacity: 0; transform: translateY(16px);">
+  <top-bar reveal></top-bar>
 
-    <base-hero style="align-items: flex-start; border-bottom: 1px dotted hsla(var(--fcolor-hsl) / 0.6); padding-block: calc(var(--space-unit) * 8);">
+  <page-container style="gap: calc(var(--space-unit) * 16); padding-block-start: 0; padding-block-end: calc(var(--space-unit) * 24);" reveal>
+
+    <base-hero style="align-items: flex-start; border-bottom: 1px dotted hsla(var(--fcolor-hsl) / 0.6); padding-block: calc(var(--space-unit) * 8);" reveal>
+
       <h1 slot="title" style="font-size: var(--f-size-2xl)">About</h1>
       <p slot="description" style="max-width: 40rem;">nativelayer is a project that aims to extend the web platform with carefully designed abstractions, allowing developpers to write classic html, css and javascript code while leveraging the power of the web platform.</p>
+
     </base-hero>
 
     <style>
@@ -104,32 +97,32 @@
         <p>Everything runs directly in the browser as ES modules. No bundler, no transpiler, no lock-in.</p>
       </div>
 
-      <base-profile-card profile="nativeforge"></base-profile-card>
+      <base-profile-card profile="nativeforge" reveal></base-profile-card>
 
     </div>
 
-    <div class="about-grid">
+    <div class="about-grid" style="align-items: center;">
       <h2 style="font-size: var(--f-size-xl)">Developers</h2>
-      <p>nativelayer is developed by Yannick C. ( <a href="https://github.com/ynck-chrl" target="_blank">ynck-chrl</a> ) and Richie B. ( <a href="https://github.com/rbxmatrix" target="_blank">rbxmatrix</a> ).<br>
-      "Coming from different fields, we are both passionate about technology and problem solving. Our motivation with nativelayer is to give web developers the tools to build advanced web architectures, without the weight of a framework."</p>
+      <p>nativelayer is developed by <a href="https://github.com/ynck-chrl" target="_blank">ynck-chrl</a> and <a href="https://github.com/rbxmatrix" target="_blank">rbxmatrix</a>.
+      </p>
     </div>
 
     <div class="about-grid">
       <base-profile-card profile="ynck-chrl"></base-profile-card>
       <div>
-        <p>Yannick C. is a software engineer with a strong background in visual design, branding and a great interest in turning complex problems into simple solutions. <br>
-        Having worked for a longtime as both UI designer and front-end developer, he dug into modern programming patterns, tooling, libraries, frameworks and decided to create a set of tools that would allow developers to build advanced web architectures while staying closer to the native web platform primitives.</p>
+        <p>ynck is a front-end architect with a strong background in visual design, branding, UI design and a great interest in turning complex problems into simple solutions. <br>
+        Having worked for a longtime as both UI designer and front-end developer with different frameworks and libraries, he dug into modern programming patterns, tooling, libraries, frameworks and decided to create a set of tools that would allow developers to build advanced web architectures while staying the closest possible to the native web platform primitives.</p>
       </div>
       <base-profile-card profile="rbxmatrix"></base-profile-card>
       <div>
-        <p>Richie B. is a PhD physicist specializing in quantum dots with strong background in scientific research, materials characterization, and semiconductor devices. <br>
+        <p>rbxmatrix is a PhD physicist specializing in quantum dots with strong background in scientific research, materials characterization, and semiconductor devices. <br>
         He works at the crossroads of physics, electronics, and computing, using Python, Lua, C++ and other tools for scientific and embedded development. Motivated by innovation and projects that combine research, engineering, and complex problem-solving, he decided to take part in nativelayer project to bring his expertise to the web platform.</p>
       </div>
     </div>
 
   </page-container>
 
-  <base-footer>
+  <base-footer reveal>
     <style>
       base-footer {
         font-size: var(--f-size-s);

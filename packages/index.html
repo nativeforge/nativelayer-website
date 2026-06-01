@@ -12,9 +12,9 @@
   <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 
-  <link rel="stylesheet" href="/__src/css/reset.css">
-  <link rel="stylesheet" href="/__src/css/fonts.css">
-  <link rel="stylesheet" href="/__src/css/global-styles.css">
+  <link rel="stylesheet" href="/__src/css/reset.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/fonts.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/global-styles.css" blocking="render">
 
   <script type="module">
     import {router} from "/__src/js/router.js";
@@ -22,21 +22,10 @@
   </script>
 
   <script type="module">
-    import topBar from "/__src/components/top-bar.js"
-    import pageContainer from "/__src/components/page-container.js"
-    import flexContainer from "/__src/components/flex-container.js"
-    import baseHero from "/__src/components/base-hero.js"
-    import baseCard from "/__src/components/base-card.js"
-    import titleSection from "/__src/components/title-section.js"
-    import baseFooter from "/__src/components/base-footer.js"
-
-    customElements.define('top-bar', topBar)
-    customElements.define('page-container', pageContainer)
-    customElements.define('flex-container', flexContainer)
-    customElements.define('base-hero', baseHero)
-    customElements.define('base-card', baseCard)
-    customElements.define('title-section', titleSection)
-    customElements.define('base-footer', baseFooter)
+    import monitorMakeReady from "/__src/components/monitor-make-ready/index.js"
+    import loaderElement from "/__src/components/loader-element/index.js"
+    customElements.define('monitor-make-ready', monitorMakeReady)
+    customElements.define('loader-element', loaderElement)
   </script>
 
   <script type="module" scramble>
@@ -68,18 +57,20 @@
 
 </head>
 
-<body>
-  <top-bar></top-bar>
 
-  <page-container style="padding-block-start: 0; padding-block-end: calc(var(--space-unit) * 16);">
+<loader-element app="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400" overlay-fade="400"></loader-element>
 
-    <base-hero id="hero" style="align-items: flex-start; border-bottom: 1px dotted hsla(var(--fcolor-hsl) / 0.6);">
+<body style="opacity: 0; transform: translateY(16px);">
+  <top-bar reveal></top-bar>
+
+  <page-container style="padding-block-start: 0; padding-block-end: calc(var(--space-unit) * 16);" reveal>
+
+    <base-hero id="hero" style="align-items: flex-start; border-bottom: 1px dotted hsla(var(--fcolor-hsl) / 0.6);" reveal>
       <h1 slot="title" style="font-size: var(--f-size-2xl)">
         Packages
       </h1>
     </base-hero>
 
-    
     <style>
       .grid-container {
         display: grid;
@@ -140,7 +131,7 @@
       }
     </style>
 
-    <div class="grid-2-columns">
+    <div class="grid-2-columns" reveal>
 
       <title-section class="--sticky --align-left">
         <h1 slot="title">JS Libraries</h1>
@@ -260,7 +251,7 @@
 
   </page-container>
   
-  <base-footer>
+  <base-footer reveal>
     <style>
       base-footer {
         font-size: var(--f-size-s);
@@ -303,6 +294,7 @@
       </svg>
       <p style="font-weight: 400; font-size: var(--f-size-s); color: hsla(var(--bcolor-hsl) / 0.8);">nativelayer is a project that aims to extend the web platform with carefully designed abstractions.</p>
     </flex-container>
+
     <flex-container slot="column-2" style="gap: calc(var(--space-unit) *2);">
       <h3 class="footer-column-title">Pages</h3>
       <a class="footer-column-link" href="/packages">Packages</a>

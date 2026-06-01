@@ -1,6 +1,5 @@
-import { readyElement } from "/__src/components/ready-element.js";
-
-class docBody extends readyElement {
+// class docBody extends readyElement {
+class docBody extends HTMLElement {
   constructor() {
     super();
     this._chapterIndex = -1;
@@ -23,29 +22,14 @@ class docBody extends readyElement {
   
 
   connectedCallback() {
-    // Dispatch doc-body-ready event when content is ready
     requestAnimationFrame(() => {
-      const event = new CustomEvent('doc-body-ready', {
-        bubbles: true,
+      this.dispatchEvent(new CustomEvent('doc-body-ready', {
+        bubbles:  true,
         composed: true,
-        detail: { docBody: this }
-      });
-      this.dispatchEvent(event);
-    });
-    
-    // Wait for content to be fully processed (including re-md elements)
-    this.waitForContentReady().then(() => {
-      // Note: heading-click → navigation + clipboard is handled by <doc-quick>
-      // via a single delegated click listener using composedPath.
-
-      const event = new CustomEvent('doc-body-ready', {
-        bubbles: true,
-        detail: { docBody: this }
-      });
-      this.dispatchEvent(event);
-
-      this._resolveReady();
-    });
+        detail:   { docBody: this },
+      }))
+    })
+    // this._resolveReady()
   }
 
   // Inject all styles into document head
@@ -112,7 +96,7 @@ class docBody extends readyElement {
         /* padding-right: var(--page-padding-x); */
         
         color: hsla(var(--fcolor-hsl, 0 0% 0%) / var(--fcolor, 0.8));
-        padding-bottom: calc(var(--space-unit, 0.5rem) * 64);
+        padding-bottom: calc(var(--space-unit, 0.5rem) * 16);
         display: flex;
         flex-direction: column;
         width: calc(100% - var(--doc-aside-width) - var(--page-padding-x, 1rem) * 1);
@@ -122,12 +106,16 @@ class docBody extends readyElement {
         counter-reset: h2;
       }
 
+      [theme-mode="dark"].--accent-is-dark doc-body {
+        --accent-color-hsl: var(--accent-color-hsl-adjusted-soft);
+      }
+
       doc-body > re-md {
         flex: 1 1 auto;
         min-height: 0;
       }
 
-      doc-body:has(> flex-container) {
+      doc-body:has(> .doc-quick-cards) {
         padding-bottom: calc(var(--space-unit) * 4);
       }
 

@@ -21,24 +21,6 @@
     router.start();
   </script>
 
-  <script type="module">
-    import topBar from "/__src/components/top-bar.js"
-    import pageContainer from "/__src/components/page-container.js"
-    import flexContainer from "/__src/components/flex-container.js"
-    import baseHero from "/__src/components/base-hero.js"
-    import baseCard from "/__src/components/base-card.js"
-    import titleSection from "/__src/components/title-section.js"
-    import baseFooter from "/__src/components/base-footer.js"
-
-    customElements.define('top-bar', topBar)
-    customElements.define('page-container', pageContainer)
-    customElements.define('flex-container', flexContainer)
-    customElements.define('base-hero', baseHero)
-    customElements.define('base-card', baseCard)
-    customElements.define('title-section', titleSection)
-    customElements.define('base-footer', baseFooter)
-  </script>
-
   <script type="module" scramble>
     import { scrambleTo } from "/__src/libs/reflectx/plugins/scramble/scramble.esm.min.js";
 
@@ -66,15 +48,23 @@
     processAccentColors();
   </script>
 
+  <script type="module">
+    import loaderElement from "/__src/components/loader-element/index.js"
+    customElements.define('loader-element', loaderElement)
+  </script>
+
 </head>
 
 
-<body>
-  <top-bar></top-bar>
+<loader-element app="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400" overlay-fade="400"></loader-element>
 
-  <page-container style="gap: calc(var(--space-unit) * 16); padding-block-start: 0; padding-block-end: calc(var(--space-unit) * 24);">
+<body style="opacity: 0; transform: translateY(16px);">
 
-    <base-hero id="hero" style="align-items: flex-start; border-bottom: 1px dotted hsla(var(--fcolor-hsl) / 0.6); padding-block: calc(var(--space-unit) * 8);">
+  <top-bar reveal></top-bar>
+
+  <page-container style="gap: calc(var(--space-unit) * 16); padding-block-start: 0; padding-block-end: calc(var(--space-unit) * 24);" reveal>
+
+    <base-hero id="hero" style="align-items: flex-start; border-bottom: 1px dotted hsla(var(--fcolor-hsl) / 0.6); padding-block: calc(var(--space-unit) * 8);" reveal>
       <h1 slot="title" style="font-size: var(--f-size-2xl)">
         Demos
       </h1>
@@ -136,38 +126,38 @@
 
       <div class="grid-container --demos" style="grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));">
 
-        <base-card img-src="/__src/img/demos-thumbs/calculator.png" class="grid-item --sans-serif-title --top-center" link="/demos/calculator" accent-color-hsl="172 100% 45%">
+        <base-card img-src="/__src/img/demos-thumbs/calculator.png" class="grid-item --sans-serif-title --top-center" link="/demos/calculator" accent-color-hsl="172 100% 45%" reveal>
           <span slot="title">Calculator</span>
           <span slot="description">Calculator for current basic arithmetic operations.</span>
           <span slot="caption">restate + reflectx</span>
         </base-card>
 
-        <base-card img-src="/__src/img/demos-thumbs/password-generator.png" class="grid-item --sans-serif-title --top-center" link="/demos/password-generator" accent-color-hsl="172 100% 45%">
+        <base-card img-src="/__src/img/demos-thumbs/password-generator.png" class="grid-item --sans-serif-title --top-center" link="/demos/password-generator" accent-color-hsl="172 100% 45%" reveal>
           <span slot="title">Password Generator</span>
           <span slot="description">Password generator with strength meter and 5 parameters.</span>
           <span slot="caption">restate + reflectx</span>
         </base-card>
 
-        <base-card img-src="/__src/img/demos-thumbs/weather-report.png" class="grid-item --sans-serif-title --top-center" link="/demos/weather-report" accent-color-hsl="172 100% 45%">
+        <base-card img-src="/__src/img/demos-thumbs/weather-report.png" class="grid-item --sans-serif-title --top-center" link="/demos/weather-report" accent-color-hsl="172 100% 45%" reveal>
           <span slot="title">Weather Report</span>
           <span slot="description">Weather station with live data, local time, and city selector.</span>
           <span slot="caption">restate + reflectx</span>
         </base-card>
 
-        <base-card img-src="/__src/img/demos-thumbs/radio-tuner.png" class="grid-item --sans-serif-title --top-center" link="/demos/radio-tuner" accent-color-hsl="350 100% 63%">
+        <base-card img-src="/__src/img/demos-thumbs/radio-tuner.png" class="grid-item --sans-serif-title --top-center" link="/demos/radio-tuner" accent-color-hsl="350 100% 63%" reveal>
           <span slot="title">Radio Tuner</span>
           <span slot="description">Internet radio tuner with 30,000+ stations, genre presets, and live streaming.</span>
           <span slot="caption">restate + reflectx</span>
         </base-card>
 
-        <base-card img-src="/__src/img/demos-thumbs/breaking-news.png" class="grid-item --sans-serif-title --top-center" link="/demos/breaking-news" accent-color-hsl="220 100% 50%">
+        <base-card img-src="/__src/img/demos-thumbs/breaking-news.png" class="grid-item --sans-serif-title --top-center" link="/demos/breaking-news" accent-color-hsl="220 100% 50%" reveal>
           <span slot="title">Breaking News</span>
           <span slot="description">News fetching terminal with topic filters.</span>
           <span slot="caption">restate + reflectx + scramblePlugin</span>
         </base-card>
 
         <base-card img-src="/__src/img/demos-thumbs/stock-market.png"
-        class="grid-item --sans-serif-title --top-center" link="/demos/stock-market" accent-color-hsl="240 100% 50%">
+        class="grid-item --sans-serif-title --top-center" link="/demos/stock-market" accent-color-hsl="240 100% 50%" reveal>
           <span slot="title">Stock Market</span>
           <span slot="description">Live stock & crypto tracker with charts, favorites, and persistent watchlist.</span>
           <span slot="caption">restate + reflectx + async + persistence</span>
@@ -177,7 +167,7 @@
 
   </page-container>
   
-  <base-footer>
+  <base-footer reveal>
     <style>
       base-footer {
         font-size: var(--f-size-s);

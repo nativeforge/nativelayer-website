@@ -44,7 +44,10 @@ export class readyElement extends HTMLElement {
   _resolveReady() {
     if (this.#readyResolved) return
     this.#readyResolved = true
-    this.dispatchEvent(new Event('ready', { bubbles: true, composed: true }))
-    this.#resolveReady()
+    requestAnimationFrame(() => {
+      this.setAttribute('ready', '')
+      this.dispatchEvent(new Event('ready', { bubbles: true, composed: true }))
+      this.#resolveReady()
+    })
   }
 }

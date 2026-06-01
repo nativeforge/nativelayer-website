@@ -22,47 +22,40 @@
   </script>
   
   <script type="module">
-    import topBar from "/__src/components/top-bar.js"
-    import pageContainer from "/__src/components/page-container.js"
-    import flexContainer from "/__src/components/flex-container.js"
-    import baseFooter from "/__src/components/base-footer.js"
-    import baseButton from "/__src/components/base-button.js"
-
-    customElements.define('base-button', baseButton)
-    customElements.define('top-bar', topBar)
-    customElements.define('page-container', pageContainer)
-    customElements.define('flex-container', flexContainer)
-    customElements.define('base-footer', baseFooter)
+    import loaderElement from "/__src/components/loader-element/index.js"
+    customElements.define('loader-element', loaderElement)
   </script>
 
 </head>
 
 
 
-<body>
+<loader-element app="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400" overlay-fade="400"></loader-element>
+<body style="opacity: 0; transform: translateY(16px);">
 
-  <top-bar></top-bar>
+  <top-bar reveal></top-bar>
 
-  <page-container style="gap: calc(var(--space-unit) * 3); min-height: calc(100vh);">
-    <flex-container style="width: 100%; align-items: center;">
-      <h1 style="font-size: var(--f-size-l);">
+  <page-container style="gap: calc(var(--space-unit) * 3); min-height: calc(100vh);" reveal>
+
+    <flex-container style="width: 100%; align-items: center;" reveal>
+      <h1 style="font-size: var(--f-size-7xl);">
         404<br>
       </h1>
     </flex-container>
-    <flex-container style="width: 100%; align-items: center; justify-content: space-between; gap: calc(var(--space-unit) * 3);">
-      <flex-container style="flex-direction: column; align-items: center; justify-content: center;">
-        <p>The page you are looking for does not exist.</p>
-        <p>Please check the URL and try again.</p>
+
+    <flex-container style="width: 100%; align-items: center; justify-content: space-between; gap: calc(var(--space-unit) * 3);" reveal>
+      <flex-container style="flex-direction: column; align-items: center; justify-content: center;" reveal>
+        <p>The page you are looking for does not exist, or has been moved.
+        </p>
+        <p>Please check the URL or navigate with the links below.</p>
       </flex-container>
       </div>
-      <base-button>
-        <a href="/">home page</a>
-      </base-button>
+      <base-button reveal href="/" class="--dense">home page</base-button>
     </flex-container>
   </page-container>
 
 
-  <base-footer>
+  <base-footer reveal>
     <style>
       base-footer {
         font-size: var(--f-size-s);

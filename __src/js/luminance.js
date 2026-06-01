@@ -21,7 +21,7 @@ const luminanceHex = (hex) => {
 const luminanceHSL = (h,s,l) =>
   luminanceRGB(...hslToRgb(h,s,l))
 
-const adjustedHSL = (hslString, { min = 35, max = 80, strength = 1.5, maxShift = 25 } = {}) => {
+const adjustedHSL = (hslString, { min = 25, max = 70, strength = 1.7, maxShift = 40 } = {}) => {
   const [h, s, l] = hslString.replaceAll('%', '').split(' ').map(Number);
   const lum = luminanceHSL(h, s, l);
   const deviation = lum - 0.5;
@@ -38,10 +38,18 @@ const processAccentColors = () => {
       const accentColorHsl = el.getAttribute('accent-color-hsl');
       const luminance = luminanceHSL(...accentColorHsl.replaceAll('%', '').split(' ').map(Number));
 
-      const adjusted = adjustedHSL(accentColorHsl, { min: 30, max: 70, strength: 1, maxShift: 20 });
-      // console.log(adjusted);
-      el.style.setProperty('--accent-color-hsl', accentColorHsl);
-      el.style.setProperty('--accent-color-hsl-adjusted', adjusted);
+      const isLight     = luminance > 0.6
+      const adjustedSoft = adjustedHSL(accentColorHsl, {
+        min: 30, max: 60, strength: 1, maxShift: 25,
+      });
+      const adjustedHard = isLight
+        ? adjustedHSL(accentColorHsl, { min: 20, max: 40, strength: 0.2, maxShift: 65 })
+        : adjustedSoft;
+
+      el.style.setProperty('--accent-color-hsl',          accentColorHsl);
+      el.style.setProperty('--accent-color-hsl-adjusted-soft',  adjustedSoft);
+      el.style.setProperty('--accent-color-hsl-adjusted-hard',  adjustedHard);
+      el.style.setProperty('--accent-color-hsl-adjusted', adjustedSoft);
 
       if(luminance > 0.7){
         el.classList.add('--accent-is-light');

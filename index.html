@@ -12,32 +12,21 @@
   <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   
-  <link rel="stylesheet" href="/__src/css/reset.css">
-  <link rel="stylesheet" href="/__src/css/fonts.css">
-  <link rel="stylesheet" href="/__src/css/global-styles.css">
-
-  <script type="module">
-    import topBar from "/__src/components/top-bar.js"
-    import pageContainer from "/__src/components/page-container.js"
-    import flexContainer from "/__src/components/flex-container.js"
-    import baseHero from "/__src/components/base-hero.js"
-    import baseQuote from "/__src/components/base-quote.js"
-    import baseButton from "/__src/components/base-button.js"
-    import baseFooter from "/__src/components/base-footer.js"
-
-    customElements.define('top-bar', topBar)
-    customElements.define('page-container', pageContainer)
-    customElements.define('flex-container', flexContainer)
-    customElements.define('base-hero', baseHero)
-    customElements.define('base-quote', baseQuote)
-    customElements.define('base-button', baseButton)
-    customElements.define('base-footer', baseFooter)
-  </script>
+  <link rel="stylesheet" href="/__src/css/reset.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/fonts.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/global-styles.css" blocking="render">
 
   <script type="module">
     import {router} from "/__src/js/router.js";
     router.start();
   </script>
+
+  <script type="module">
+    import monitorMakeReady from "/__src/components/monitor-make-ready/index.js"
+    customElements.define('monitor-make-ready', monitorMakeReady)
+  </script>
+
+  <monitor-make-ready app="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400"></monitor-make-ready>
 
   <script type="module" scramble>
     import { scrambleTo } from "/__src/libs/reflectx/plugins/scramble/scramble.esm.min.js";
@@ -63,25 +52,18 @@
     
   </script>
 
-  <script type="module">
-    import { waitElementsReady } from "/__src/libs/elements-ready/wait-elements-ready.js";
-
-    waitElementsReady(document.body, {
-      revealClass: "--ready",
-    });
-  </script>
-
 </head>
 
 
-  <body>
-    <top-bar></top-bar>
-    <page-container style="padding-block: 0;">
+  <body style="opacity: 0; transform: translateY(16px);">
+    
+    <top-bar reveal></top-bar>
+    <page-container style="padding-block: 0;" reveal>
       <style>
         * { box-sizing: border-box; }
       </style>
       
-      <base-hero id="hero" style="align-items: flex-start;">
+      <base-hero id="hero" style="align-items: flex-start;" reveal>
         <h1 slot="title" style="font-size: var(--f-size-2xl)">
           Web native
           <br>
@@ -94,11 +76,11 @@
         </p>
       </base-hero>
 
-      <base-quote>
+      <base-quote reveal>
         <h2 slot="quote">nativelayer extends the web with carefully designed abstractions.</h2>
       </base-quote>
 
-      <flex-container id="sections-main-content" style="padding-block: calc(var(--space-unit) * 8); gap: calc(var(--space-unit) * 8);">
+      <flex-container id="sections-main-content" style="padding-block: calc(var(--space-unit) * 8); gap: calc(var(--space-unit) * 8);" reveal>
         <style>
           .grid-container {
             display: grid;
@@ -436,7 +418,7 @@
 
     </page-container>
 
-    <base-footer>
+    <base-footer reveal>
       <style>
         base-footer {
           font-size: var(--f-size-s);

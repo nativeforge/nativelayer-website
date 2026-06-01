@@ -1,10 +1,10 @@
-// ── readyElement core ───────────────────────────────────────────────────────
 import { autoDefine }           from '/__src/libs/autoDefine/index.js'
 import { waitForElementsReady } from '/__src/libs/waitForElementsReady/index.js'
+import { makeReady }            from '/__src/libs/makeReady/index.js'
 import '/__src/js/register-svg-ninja.js'
 
 // ───────────────────────────────────────────────────────────────────────────
-// <loader-element> — minimal progress-bar loading overlay
+// <loader-element> — minimal progress-bar loading overlay with makeReady patching
 //
 // Usage:
 //   <loader-element app="main" path="/__src/components/" brand="My App"></loader-element>
@@ -12,35 +12,35 @@ import '/__src/js/register-svg-ninja.js'
 // Attributes:
 //   app               — CSS selector for the element to reveal        (default: 'body')
 //   reveal-attribute  — attribute set on the app target when ready    (default: 'ready')
-//   path              — components path passed to autoDefine          (default: '/components/')
+//   path              — components path passed to autoDefine          (default: '/__src/components/')
 //   naming            — naming convention for autoDefine              (default: 'kebab')
 //   brand             — brand name shown in the overlay               (default: '@nativelayer.dev')
 //   svg-icon-url      — path to SVG file for the brand icon           (default: '/__src/img/native-lines-logo.svg')
 //   show-duration     — ms to keep overlay visible after 100%         (default: 800)
 //   step-duration     — CSS transition duration (ms) per progress step (default: 800)
+//   overlay-fade      — ms for the overlay fade-out transition          (default: 640)
 //
 // Events:
 //   loader-done  — fires when all components are ready
 //                  detail: { elapsed: number, components: { tag: string }[] }
 // ───────────────────────────────────────────────────────────────────────────
 
-/** Internal class used by waitForElementsReady; stripped before the reveal attribute is set. */
-const LOADER_INTERNAL_CLASS = 'loader-ready'
-
 class loaderElement extends HTMLElement {
   static get observedAttributes() {
-    return ['app', 'path', 'naming', 'brand', 'svg-icon-url', 'reveal-attribute', 'show-duration', 'step-duration']
+    return ['app', 'path', 'naming', 'brand', 'svg-icon-url', 'reveal-attribute', 'show-duration', 'step-duration', 'overlay-fade']
   }
 
   async connectedCallback() {
     const appSel       = this.getAttribute('app')              || 'body'
-    const path         = this.getAttribute('path')             || '/components/'
+    const path         = this.getAttribute('path')             || '/__src/components/'
     const naming       = this.getAttribute('naming')           || 'kebab'
     const brand        = this.getAttribute('brand')            || '@nativelayer.dev'
     const svgIconURL   = this.getAttribute('svg-icon-url')     || '/__src/img/native-lines-logo.svg'
     const revealAttr   = this.getAttribute('reveal-attribute') || 'ready'
-    const showDuration = Number(this.getAttribute('show-duration') ?? 800) || 800
-    const stepDuration = Number(this.getAttribute('step-duration')  ?? 800) || 800
+    const showDuration  = Number(this.getAttribute('show-duration')  ?? 800) || 800
+    const stepDuration  = Number(this.getAttribute('step-duration')  ?? 800) || 800
+    const overlayFadeMs = Number(this.getAttribute('overlay-fade')   ?? 640) || 640
+    document.documentElement.style.setProperty('--show-duration-delay', `${showDuration + overlayFadeMs}ms`)
 
     // One microtask so the rest of the document is fully parsed
     await Promise.resolve()
@@ -66,7 +66,7 @@ class loaderElement extends HTMLElement {
     const total = tags.length
     let readyCount = 0
 
-    this.shadowRoot.innerHTML = buildTemplate({ brand, svgIconURL, stepDuration })
+    this.shadowRoot.innerHTML = buildTemplate({ brand, svgIconURL, stepDuration, overlayFadeMs })
 
     const fillEl = this.shadowRoot.querySelector('.progress-fill')
 
@@ -83,18 +83,27 @@ class loaderElement extends HTMLElement {
     }
     document.body.addEventListener('ready', onReady)
 
-    // ── 1. Auto-import and define all custom elements ─────────────────────
+    // ── 1. Wrap customElements.define to apply makeReady before each class
+    //       is registered, then auto-import and define all custom elements.
+    const origDefine = customElements.define.bind(customElements)
+    customElements.define = (tag, Ctor, options) => {
+      makeReady(Ctor)
+      origDefine(tag, Ctor, options)
+    }
+
     await autoDefine({ root: appEl, path, naming })
+
+    // Restore native define
+    customElements.define = origDefine
 
     // ── 2. Wait for every component to call _resolveReady() ──────────────
     await waitForElementsReady(appEl, {
-      revealClass:      LOADER_INTERNAL_CLASS,
       observeMutations: false,
     })
 
-    appEl.classList.remove(LOADER_INTERNAL_CLASS)
     setProgress(100)
     appEl.setAttribute(revealAttr, '')
+    if (appEl.hasAttribute('style')) appEl.removeAttribute('style')
 
     document.body.removeEventListener('ready', onReady)
 
@@ -120,7 +129,7 @@ class loaderElement extends HTMLElement {
 }
 
 // ── Template ───────────────────────────────────────────────────────────────
-function buildTemplate({ brand, svgIconURL, stepDuration }) {
+function buildTemplate({ brand, svgIconURL, stepDuration, overlayFadeMs }) {
   return `
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -136,7 +145,7 @@ function buildTemplate({ brand, svgIconURL, stepDuration }) {
         font-weight: 300;
         color: hsla(var(--fcolor-hsl) / 1);
         z-index: 9999;
-        transition: opacity 0.64s ease, visibility 0.64s ease;
+        transition: opacity ${overlayFadeMs}ms ease, visibility ${overlayFadeMs}ms ease;
       }
 
       :host(.done) {
