@@ -1068,7 +1068,7 @@ When creating plugins, ensure you:
 
 ## Browser Support
 
-reflectx works in all modern browsers that support:
+`reflectx` works in all modern browsers that support:
 
 - **ES6+** (Proxy, template literals, modules)
 - **Custom Elements** (for Web Components usage)
@@ -1089,11 +1089,38 @@ Tested on: Chrome, Firefox, Safari, Edge (evergreen).
 
 ## License
 
-`reflectx` is licensed under the [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0/).
+`reflectx` is licensed under the **PolyForm Noncommercial License 1.0.0** for non-commercial use, with a commercial license option available.
 
-- ✅ Personal projects, hobby use, education, research, non-profits
-- ❌ Commercial / revenue-generating use requires a separate license
+### Non-Commercial Use
 
-See [LICENSE](./LICENSE) for full terms.
+`reflectx` is free under the **PolyForm Noncommercial License** for:
 
-**For commercial licensing inquiries:** info@nativelayer.dev
+- ✓ Open-source projects (OSI-approved licenses)
+- ✓ Personal projects and non-revenue generating applications
+- ✓ Educational purposes and academic research
+- ✓ Non-profit organizations
+- ✓ Internal company tools (non-revenue generating)
+- ✓ Prototypes and MVPs
+
+See [LICENSE](./LICENSE) for full details.
+
+### Commercial Use
+
+A **commercial license** is required for:
+
+- Proprietary software and closed-source commercial applications
+- SaaS products and revenue-generating applications
+- Enterprise deployments and large-scale corporate use
+- White-label products sold or licensed to third parties
+
+**Commercial licenses include:**
+
+- Legal protection and indemnification
+- Priority support
+- Updates and bug fixes during license term
+- Custom licensing terms for enterprise needs
+
+### Licensing Inquiries
+
+**For commercial licensing, pricing, or questions:**
+- **Email:** info@nativelayer.dev

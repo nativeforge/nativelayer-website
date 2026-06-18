@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>nativelayer.dev: about</title>
 
@@ -22,12 +23,13 @@
   </script>
 
   <script type="module">
-    import loaderElement from "/__src/components/loader-element/index.js"
-    customElements.define('loader-element', loaderElement)
+    import monitorLoading from "/__src/components/monitor-loading/index.js"
+    customElements.define('monitor-loading', monitorLoading)
   </script>
-</head>
 
-<loader-element app="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400" overlay-fade="400"></loader-element>
+  <monitor-loading target="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400"></monitor-loading>
+  
+</head>
 
 <body style="opacity: 0; transform: translateY(16px);">
   <top-bar reveal></top-bar>
@@ -37,7 +39,6 @@
     <base-hero style="align-items: flex-start; border-bottom: 1px dotted hsla(var(--fcolor-hsl) / 0.6); padding-block: calc(var(--space-unit) * 8);" reveal>
 
       <h1 slot="title" style="font-size: var(--f-size-2xl)">About</h1>
-      <p slot="description" style="max-width: 40rem;">nativelayer is a project that aims to extend the web platform with carefully designed abstractions, allowing developpers to write classic html, css and javascript code while leveraging the power of the web platform.</p>
 
     </base-hero>
 
@@ -86,14 +87,17 @@
 
       <div class="about-text">
         <h2>The project</h2>
-        <p>nativelayer was built with one simple goal in mind: give web developers <b>powerful, composable and extensible primitives</b> that feel native to the browser while allowing to introduce modern web development patterns and tooling when needed: no build step, no compilation, no virtual DOM, no magic.</p>
-        <p>The stack is intentionally minimal:</p>
-        <ul>
-          <li><strong>restate</strong> — reactive state with a proxy-based API</li>
-          <li><strong>reflectx</strong> — declarative DOM bindings via custom HTML attributes, wired to any state object</li>
-          <li><strong>routerx</strong> — a client-side router built on the History API</li>
-          <li><strong>Web Components</strong> — custom elements for every UI building block, no framework required</li>
-        </ul>
+        <style>
+          .about-text p {
+            font-family: var(--ff-2);
+            font-weight: 400;
+            line-height: 1.4;
+          }
+        </style>
+        <p>
+          nativelayer is a project that bring advanced features and capabilities to the base HTML, CSS and Javascript stack.<br>
+          Implement DOM binding, templating, reactivity, state management, routing, lifecycle management, all while staying close to the web platform primitives, without mandatory compilation or build steps.
+        </p>
         <p>Everything runs directly in the browser as ES modules. No bundler, no transpiler, no lock-in.</p>
       </div>
 
@@ -110,8 +114,9 @@
     <div class="about-grid">
       <base-profile-card profile="ynck-chrl"></base-profile-card>
       <div>
-        <p>ynck is a front-end architect with a strong background in visual design, branding, UI design and a great interest in turning complex problems into simple solutions. <br>
-        Having worked for a longtime as both UI designer and front-end developer with different frameworks and libraries, he dug into modern programming patterns, tooling, libraries, frameworks and decided to create a set of tools that would allow developers to build advanced web architectures while staying the closest possible to the native web platform primitives.</p>
+        <p><a href="https://github.com/ynck-chrl" target="_blank">ynck-chrl</a> is a front-end architect with a strong background in branding, UI design and a great interest in turning complex problems into simple solutions.<br>
+        After having worked for some time as a front-end developer with different frameworks and libraries, he realized that the web plateform already had all the capabilities to offer modern developement patterns and tooling.<br>
+        So he decided to create a set of libraries and components that would allow developers to use advanced developement patterns while staying close to the native web platform primitives.</p>
       </div>
       <base-profile-card profile="rbxmatrix"></base-profile-card>
       <div>

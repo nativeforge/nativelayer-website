@@ -24,20 +24,20 @@ class baseQuote extends HTMLElement {
         font-style: italic;
         color: hsla(var(--fcolor-hsl) / 0.4);
       }
-      ::slotted([slot="quote"])::before {
-        content: "“";
+      :host([quotes]) ::slotted([slot="quote"])::before {
+        content: "\u201C";
       }
-      ::slotted([slot="quote"])::after {
-        content: "”";
+      :host([quotes]) ::slotted([slot="quote"])::after {
+        content: "\u201D";
       }
-      ::slotted([slot="author"]) {
+      ::slotted([slot="content"]) {
         font-family: var(--ff-2);
         font-weight: regular;
         color: hsla(var(--fcolor-hsl) / 0.4);
       }
     </style>
     <slot name="quote"></slot>
-    <slot name="author"></slot>
+    <slot name="content"></slot>
     `;
     
 

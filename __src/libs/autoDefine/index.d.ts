@@ -31,9 +31,9 @@ export interface AutoDefineOptions {
 
   /**
    * How tag names are transformed when constructing file and class names.
-   * Default: `'pascal'`
+   * Default: `'kebab'`
    */
-  naming?: NamingConvention;
+  caseConvention?: NamingConvention;
 
   /**
    * Watch for dynamically added custom elements and define them on the fly.
@@ -56,23 +56,33 @@ export interface AutoDefineOptions {
 }
 
 /**
+ * Result returned by `autoDefine`.
+ */
+export interface AutoDefineResult {
+  /** Tags that were successfully imported and registered. */
+  resolved: string[];
+  /** Tags that could not be resolved or had no usable export. */
+  failed: string[];
+}
+
+/**
  * Scans the DOM for undefined custom elements and automatically imports and
  * registers them via `customElements.define()`.
  *
  * For each discovered tag name, the library constructs a file name using the
- * chosen `naming` convention and attempts to import from up to three candidate
+ * chosen `caseConvention` and attempts to import from up to three candidate
  * paths under `path`. If the imported module self-registers (calls
  * `customElements.define` internally), that is respected. Otherwise the
  * module's default export is used as the constructor.
  *
  * @example
  * // Zero-config
- * await autoDefine()
+ * const { resolved, failed } = await autoDefine()
  *
  * @example
- * // Custom path, naming, with observer
+ * // Custom path, case-convention, with observer
  * const controller = new AbortController()
- * await autoDefine({ path: '/elements/', naming: 'kebab', observe: true, signal: controller.signal })
+ * await autoDefine({ path: '/elements/', caseConvention: 'kebab', observe: true, signal: controller.signal })
  * // later: controller.abort()
  */
-export function autoDefine(options?: AutoDefineOptions): Promise<void>;
+export function autoDefine(options?: AutoDefineOptions): Promise<AutoDefineResult>;

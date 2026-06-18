@@ -226,9 +226,9 @@ One of the practical challenges of building with **Custome Element**, particular
 
 `nativelayer` includes a coherent, layered system for managing this.
 
-### `ready-element` — the async-ready base class
+### `readyElement` — the async-ready base class
 
-`ready-element` is a base class that **Custome Elements** can extend to signal when their async initialization is complete. It exposes a `ready` Promise and a `_resolveReady()` method.
+`readyElement` is a base class that **Custome Elements** can extend to signal when their async initialization is complete. It exposes a `ready` Promise and a `_resolveReady()` method.
 
 ```js
 class MyHeader extends readyElement {
@@ -272,12 +272,12 @@ When all elements are ready, it adds a class (or attribute) to a reveal element.
 <monitor-element app="main" path="/__src/components/" brand="nativelayer.dev"></monitor-element>
 ```
 
-### `loader-element` — the minimal overlay
+### `monitor-loading` — the minimal overlay
 
-`<loader-element>` provides the same loading orchestration as `<monitor-element>` but replaces the component list with a single progress bar. Each component that becomes ready advances the bar by one step, animated by a configurable CSS transition.
+`<monitor-loading>` provides the same loading orchestration as `<monitor-element>` but replaces the component list with a single progress bar. Each component that becomes ready advances the bar by one step, animated by a configurable CSS transition.
 
 ```html
-<loader-element app="main" path="/__src/components/" step-duration="600"></loader-element>
+<monitor-loading target="main" path="/__src/components/" step-duration="600"></monitor-loading>
 ```
 
 Both overlays fade out and remove themselves from the DOM when loading is complete. The page CSS controls the reveal animation using attribute selectors:
@@ -350,7 +350,7 @@ The web platform is the most widely deployed, most durably specified software ru
 | UI primitives | `Custome Element` with `Shadow DOM` and slots |
 | Theming | CSS custom properties on `:root` |
 | Loading orchestration | `readyElement` + `autoDefine` + `waitForElementsReady`  |
-| Loading overlays | `<monitor-element>` (verbose) or `<loader-element>` (minimal) |
+| Loading overlays | `<monitor-loading>` (minimal) or `<monitor-loading monitor>` (verbose) |
 | Build step | Optional — everything runs natively |
 | Total framework overhead | 0 Kb |
 

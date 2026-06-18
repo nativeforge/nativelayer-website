@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>nativelayer.dev : documentation</title>
 
@@ -21,28 +22,17 @@
     router.start();
   </script>
 
-  <script type="module">
-    import topBar from "/__src/components/top-bar.js"
-    import baseHero from "/__src/components/base-hero.js"
-    import pageContainer from "/__src/components/page-container.js"
-    import flexContainer from "/__src/components/flex-container.js"
-    import baseFooter from "/__src/components/base-footer.js"
-    import baseCard from "/__src/components/base-card.js"
-    import titleSection from "/__src/components/title-section.js"
-
-    customElements.define('top-bar', topBar)
-    customElements.define('base-hero', baseHero)
-    customElements.define('page-container', pageContainer)
-    customElements.define('flex-container', flexContainer)
-    customElements.define('base-footer', baseFooter)
-    customElements.define('base-card', baseCard)
-    customElements.define('title-section', titleSection)
-  </script>
-
   <script type="module" attach-inline-styles>
     import { processAccentColors } from "/__src/js/luminance.js";
     processAccentColors();
   </script>
+
+  <script type="module">
+    import monitorLoading from "/__src/components/monitor-loading/index.js"
+    customElements.define('monitor-loading', monitorLoading)
+  </script>
+
+  <monitor-loading target="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400"></monitor-loading>
 
 </head>
 
@@ -108,7 +98,7 @@
 
     <base-hero id="hero" style="align-items: flex-start; border-bottom: 1px dotted hsla(var(--fcolor-hsl) / 0.6); padding-block: calc(var(--space-unit) * 8);">
       <h1 slot="title" style="font-size: var(--f-size-2xl)">
-        Docs
+        Blog
       </h1>
       <!-- <p slot="description" style="font-size: var(--f-size-1); font-family: var(--ff-2);">
         Everything you need to know about the nativelayer.

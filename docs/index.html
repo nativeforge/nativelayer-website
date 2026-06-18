@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>nativelayer.dev : documentation</title>
 
@@ -27,14 +28,14 @@
   </script>
 
   <script type="module">
-    import loaderElement from "/__src/components/loader-element/index.js"
-    customElements.define('loader-element', loaderElement)
+    import monitorLoading from "/__src/components/monitor-loading/index.js"
+    customElements.define('monitor-loading', monitorLoading)
   </script>
+
+  <monitor-loading target="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400"></monitor-loading>
 
 </head>
 
-
-<loader-element app="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400" overlay-fade="400"></loader-element>
 
 <body style="opacity: 0; transform: translateY(16px);">
 
@@ -143,7 +144,7 @@
         </svg>
       </base-card>
 
-      <base-card class="grid-item" flex-direction="row" link="/docs/manifesto" img-src="" accent-color-hsl="50 100% 60%" reveal>
+      <base-card class="grid-item" flex-direction="row" link="/docs/manifesto" img-src="" accent-color-hsl="45 100% 50%" reveal>
         <span slot="title">manifesto</span>
         <span slot="description">nativelayer, a composable layer of HTML, CSS and Javascript packages based on the native web platform primitives.</span>
         <span slot="caption">unset</span>
@@ -152,7 +153,7 @@
           <defs>
             <style>
               .nativelayer-logo {
-                fill: hsl(var(--accent-color-hsl, 50 100% 60%));
+                fill: hsl(var(--accent-color-hsl, 45 100% 50%));
               }
             </style>
           </defs>
@@ -256,7 +257,7 @@
         GitHub
       </a>
     </flex-container>
-    
+
   </base-footer>
 
 </body>

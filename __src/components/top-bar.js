@@ -1,5 +1,6 @@
 import { html } from "/__src/js/html.js";
-// import '/__src/js/register-svg-ninja.js';
+import svgInsert from '/__src/components/svg-insert/index.js'
+// customElements.define('svg-insert', svgInsert)
 
 class topBar extends HTMLElement {
   constructor() {
@@ -55,10 +56,10 @@ class topBar extends HTMLElement {
         container-type: inline-size;
         container-name: top-bar;
 
-        :where(a, a:visited) {
-          color: inherit;
-          text-decoration: none;
-        }
+      }
+      .top-bar :where(a, a:visited) {
+        color: inherit;
+        text-decoration: none;
       }
       .top-bar-container {
         display: flex;
@@ -307,8 +308,8 @@ class topBar extends HTMLElement {
         <div class="top-bar-container-left">
           <div class="top-bar-logo-container">
             <a href="/" class="top-bar-logo-link">
-              <svg-ninja svg-class="top-bar-logo" svg-src="/__src/img/native-lines-logo.svg">
-              </svg-ninja>
+              <svg-insert svg-class="top-bar-logo" src="/__src/img/native-lines-logo.svg">
+              </svg-insert>
               <h1 class="top-bar-title">native<span style="color: hsla(var(--fcolor-hsl) / 0.6);">layer.dev</span></h1>
             </a>
           </div>
@@ -318,8 +319,8 @@ class topBar extends HTMLElement {
           <nav class="top-bar-nav">
             <ul class="top-bar-nav-list">
               <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/packages">Packages</a></li>
-              <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/docs">Docs</a></li>
               <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/demos">Demos</a></li>
+              <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/tutos">Tutos</a></li>
               <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/about">About</a></li>
             </ul>
           </nav>
@@ -353,8 +354,8 @@ class topBar extends HTMLElement {
         <nav>
           <ul class="top-bar-drawer-nav-list">
             <li><a class="top-bar-drawer-nav-item-link" href="/packages">Packages</a></li>
-            <li><a class="top-bar-drawer-nav-item-link" href="/docs">Docs</a></li>
             <li><a class="top-bar-drawer-nav-item-link" href="/demos">Demos</a></li>
+            <li><a class="top-bar-drawer-nav-item-link" href="/tutos">Tutos</a></li>
             <li><a class="top-bar-drawer-nav-item-link" href="/about">About</a></li>
           </ul>
         </nav>

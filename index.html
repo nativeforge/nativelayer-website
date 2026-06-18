@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>nativelayer.dev - system for the web platform</title>
 
@@ -22,11 +23,11 @@
   </script>
 
   <script type="module">
-    import monitorMakeReady from "/__src/components/monitor-make-ready/index.js"
-    customElements.define('monitor-make-ready', monitorMakeReady)
+    import monitorLoading from "/__src/components/monitor-loading/index.js"
+    customElements.define('monitor-loading', monitorLoading)
   </script>
 
-  <monitor-make-ready app="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400"></monitor-make-ready>
+  <monitor-loading target="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400"></monitor-loading>
 
   <script type="module" scramble>
     import { scrambleTo } from "/__src/libs/reflectx/plugins/scramble/scramble.esm.min.js";
@@ -65,19 +66,42 @@
       
       <base-hero id="hero" style="align-items: flex-start;" reveal>
         <h1 slot="title" style="font-size: var(--f-size-2xl)">
-          Web native
+          Superpowers
           <br>
-          modular system.
+          in a basic stack
         </h1>
         <p slot="description" style="font-size: var(--f-size-1);">
-          A composable layer for
+          Lightweight packages for HTML,
           <br>
-          modern web applications.
+          CSS and Javascript.
         </p>
       </base-hero>
 
       <base-quote reveal>
-        <h2 slot="quote">nativelayer extends the web with carefully designed abstractions.</h2>
+        <h2 slot="quote">
+          HTML, CSS, JS &amp; static hosting. That's all you need.
+        </h2>
+        
+        <style>
+          .quote-logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: calc(var(--space-unit) * 1);
+          }
+          .quote-logo {
+            max-width: 2rem;
+            max-height: 2rem;
+            min-height: 2rem;
+            min-width: 2rem;
+          }
+        </style>
+
+        <div slot="content" class="quote-logo-container">
+          <svg-insert src="/__src/img/html5-logo.svg" svg-class="quote-logo"></svg-insert>
+          <svg-insert src="/__src/img/css3-logo.svg" svg-class="quote-logo"></svg-insert>
+          <svg-insert src="/__src/img/javascript-logo.svg" svg-class="quote-logo"></svg-insert>
+        </div>
       </base-quote>
 
       <flex-container id="sections-main-content" style="padding-block: calc(var(--space-unit) * 8); gap: calc(var(--space-unit) * 8);" reveal>
@@ -148,18 +172,27 @@
           }
         </style>
 
+        
+
         <flex-container id="core-principles" style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 1); justify-content: center; align-items: center; text-align: center;">
-          <h2 style="font-size: var(--f-size-xl); font-weight: 600;">
-            Core principles
+          <!-- <h2 style="font-size: var(--f-size-xl); font-weight: 600;">
+            Principles
           </h2>
           <p style="font-weight: 300;">
             The core philosophy: Primitives first.
+          </p> -->
+          <h2 style="font-size: var(--f-size-xl); font-weight: 600;">
+            Built-in benefits
+          </h2>
+          <p style="font-weight: 300;">
+            Right out of the box
           </p>
         </flex-container>
 
+
         <div id="section-core-principles-items" class="grid-container" style="grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); row-gap: calc(var(--space-unit) * 8);">
           
-          <div class="grid-item --numbered">
+          <!-- <div class="grid-item --numbered">
             <flex-container class="grid-item-content">
               <h3 class="grid-item-title">Platform-based</h3>
               <p class="grid-item-description">
@@ -194,20 +227,88 @@
                 Built to be extended without rewriting foundations.
               </p>
             </flex-container>
+          </div> -->
+
+          <div class="grid-item --numbered">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">ES Modules</h3>
+              <p class="grid-item-description">
+                Native import and export: the browser resolves your dependencies directly, no bundler required.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item --numbered">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title" style="font-family: var(--ff-3);">
+                Reusable components
+              </h3>
+              <p class="grid-item-description">
+                Slots and Shadow DOM allow you to project content into your components, making them more flexible and reusable.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item --numbered">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">File-based routing</h3>
+              <p class="grid-item-description">
+                Your folder structure is your routing table. Add a page by adding a file.
+              </p>
+            </flex-container>
+          </div>
+          
+          <div class="grid-item --numbered">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Scoped components</h3>
+              <p class="grid-item-description">
+                Shadow DOM keeps each component's styles and markup isolated. Reuse the same patterns everywhere without collisions.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item --numbered">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Same Origin Fetch</h3>
+              <p class="grid-item-description">
+                Same Origin Fetch allows you to fetch resources from the same origin as the page, over http or https requests.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item --numbered">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Responsive components</h3>
+              <p class="grid-item-description">
+                Container queries allow components to respond to their container's size and layout, making them truly responsive.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item --numbered">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">Page transition API</h3>
+              <p class="grid-item-description">
+                The Page Transition API allows you to animate the transition between pages, making it easier to create a smooth user experience in MPAs or SPAs.
+              </p>
+            </flex-container>
           </div>
 
         </div>
 
+        <base-quote reveal>
+        <h2 slot="quote">Consistent behavior across all major browsers.</h2>
+        <div slot="content" class="quote-logo-container">
+          <svg-insert src="/__src/img/logo-chrome.svg" svg-class="quote-logo"></svg-insert>
+          <svg-insert src="/__src/img/logo-firefox.svg" svg-class="quote-logo"></svg-insert>
+          <svg-insert src="/__src/img/logo-safari.svg" svg-class="quote-logo"></svg-insert>
+          <svg-insert src="/__src/img/logo-edge.svg" svg-class="quote-logo"></svg-insert>
+        </div>
+        </base-quote>
+
 
         <flex-container style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 2); justify-content: center; align-items: center; text-align: center;" id="title-features-being-developed">
           <h2 style="font-size: var(--f-size-xl); font-weight: 600;">
-            Features being
-            <br>
-            developed
+            Added features
           </h2>
           <p style="font-weight: 300;">
-            A quick list of some of the features<br>
-            being implemented.
+            A quick list of the features implemented<br>
+            in our libraries and components
           </p>
         </flex-container>
 
@@ -313,7 +414,15 @@
         </div>
 
         <base-quote>
-          <h2 slot="quote">Cross browser, modular and scalable.</h2>
+          <h2 slot="quote">Compatible with all major frameworks</h2>
+          <div slot="content" class="quote-logo-container">
+            <svg-insert src="/__src/img/svg/vue-logo.svg" svg-class="quote-logo"></svg-insert>
+            <svg-insert src="/__src/img/svg/react-logo.svg" svg-class="quote-logo"></svg-insert>
+            <svg-insert src="/__src/img/svg/svelte-logo.svg" svg-class="quote-logo"></svg-insert>
+            <svg-insert src="/__src/img/svg/solid-logo.svg" svg-class="quote-logo"></svg-insert>
+            <svg-insert src="/__src/img/svg/nextjs-logo.svg" svg-class="quote-logo"></svg-insert>
+            <svg-insert src="/__src/img/svg/nuxt-logo.svg" svg-class="quote-logo"></svg-insert>
+          </div>
         </base-quote>
 
         <flex-container style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 2); justify-content: center; align-items: center; text-align: center;" id="title-packages">

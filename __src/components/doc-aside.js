@@ -1,4 +1,5 @@
 import { scrollToHeadingById, updateUrlHash } from '/__src/js/utils.js';
+import svgInsert from '/__src/components/svg-insert/index.js'
 
 class docAside extends HTMLElement {
   constructor() {
@@ -62,14 +63,14 @@ class docAside extends HTMLElement {
 
       doc-aside {
         font-family: var(--ff-2, sans-serif);
-        padding-left: var(--page-padding-x);
+        padding-left: var(--page-padding-x, 1rem);
         position: fixed;
         left: 0;
-        top: var(--top-bar-height);
+        top: var(--top-bar-height, 3rem);
         bottom: 0;
         display: flex;
         flex-direction: column;
-        width: var(--doc-aside-width);
+        width: var(--doc-aside-width, 16rem);
         background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / .06);
         --doc-aisde-list-item-bg-color: hsla(var(--bcolor-hsl, 0 0% 100%) / 0.4);
 
@@ -110,8 +111,7 @@ class docAside extends HTMLElement {
         cursor: pointer;
       }
         
-      .doc-aside-list li.--chapter-active .doc-aside-expander,
-      .doc-aside-list .nav-item.--chapter-active .doc-aside-expander {
+      .--chapter-active > .nav-item > .doc-aside-expander, .nav-item.--chapter-active > .doc-aside-expander {
         color: hsl(var(--over-accent-color-hsl, 0 0% 0%)) !important;
       }
 
@@ -166,7 +166,7 @@ class docAside extends HTMLElement {
       }
 
       doc-aside[section-numbers] .doc-aside-list li::before {
-        content: counter(section) ".";
+        content: attr(data-counter) ".";
         margin-right: calc(var(--space-unit, 0.5rem) * 1);
       }
 
@@ -181,7 +181,7 @@ class docAside extends HTMLElement {
       .doc-aside-title {
         display: flex;
         color: hsla(var(--fcolor-hsl) / .8);
-        border-radius: calc(var(--space-unit) * 1/2);
+        border-radius: calc(var(--space-unit, 0.5rem) * 1/2);
         transition: color .32s ease, background-color .32s ease;
       }
       .doc-aside-title a {
@@ -189,8 +189,8 @@ class docAside extends HTMLElement {
         flex-wrap: nowrap;
         align-items: center;
         justify-content: space-between;
-        gap: calc(var(--space-unit) * 1);
-        min-height: calc(var(--space-unit) * 4);
+        gap: calc(var(--space-unit, 0.5rem) * 1);
+        min-height: calc(var(--space-unit, 0.5rem) * 4);
         width: 100%;
         padding: calc(var(--space-unit, 0.5rem) * 0.5) calc(var(--space-unit, 0.5rem) * 1);
       }
@@ -245,8 +245,8 @@ class docAside extends HTMLElement {
         flex: 1;
         min-height: 0;
         width: 100%;
-        padding-right: var(--page-padding-x);
-        padding-top: var(--page-padding-x);
+        padding-right: var(--page-padding-x, 1rem);
+        padding-top: var(--page-padding-x, 1rem);
         overflow: hidden;
         scrollbar-width: thin;
         scrollbar-color: hsla(var(--fcolor-hsl, 0 0% 0%) / .3) transparent;
@@ -289,8 +289,52 @@ class docAside extends HTMLElement {
         box-shadow: 0 0 0 1px hsla(var(--accent-color-hsl, 340 100% 50%) / .8) inset;
       }
 
+      doc-aside aside .doc-aside-search:not(:placeholder-shown) {
+        animation: search-input-pulse 1s ease-in-out infinite;
+      }
+
+      @keyframes search-input-pulse {
+        0%, 100% { box-shadow: 0 0 0 2px hsl(var(--accent-color-hsl, 340 100% 50%) / 0.8) inset; }
+        50%       { box-shadow: 0 0 0 1px hsl(var(--accent-color-hsl, 340 100% 50%) / 0.25) inset; }
+      }
+
+      doc-aside aside .doc-aside-search::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 14px;
+        height: 14px;
+        cursor: pointer;
+        background-color: hsl(var(--accent-color-hsl, 340 100% 50%));
+        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cline x1='2' y1='2' x2='12' y2='12' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='12' y1='2' x2='2' y2='12' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / contain;
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cline x1='2' y1='2' x2='12' y2='12' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='12' y1='2' x2='2' y2='12' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / contain;
+      }
+
       doc-aside aside .doc-aside-search::placeholder {
         color: hsla(var(--fcolor-hsl) / 0.75);
+      }
+
+      .doc-aside-list li.--search-hidden { display: none; }
+
+      mark.search-mark {
+        background: hsl(var(--accent-color-hsl) / 0.25);
+        color: inherit;
+        border-radius: 2px;
+      }
+
+      .search-heading-hit {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: hsl(var(--accent-color-hsl));
+        margin-left: 0.6em;
+        vertical-align: middle;
+        animation: search-pulse 1s ease-in-out infinite;
+      }
+
+      @keyframes search-pulse {
+        0%, 100% { opacity: 1;   transform: scale(1);   }
+        50%       { opacity: 0.4; transform: scale(0.65); }
       }
 
       doc-aside aside hr.doc-aside-separator-header {
@@ -504,7 +548,7 @@ class docAside extends HTMLElement {
       }
 
       doc-aside aside .doc-aside-footer-logo svg,
-      doc-aside aside .doc-aside-footer-logo svg-ninja {
+      doc-aside aside .doc-aside-footer-logo svg-insert {
         display: block;
         width: 100%;
         height: 100%;
@@ -565,7 +609,7 @@ class docAside extends HTMLElement {
         <div class="doc-aside-footer-row">
           Powered by 
           <span class="doc-aside-footer-logo">
-            <svg-ninja svg-class="doc-aside-footer-logo-svg" svg-src="/__src/img/remd-logo.svg"></svg-ninja>
+            <svg-insert class="doc-aside-footer-logo-svg" src="/__src/img/remd-logo.svg"></svg-insert>
           </span> <strong>re-md</strong> <br/>
         </div>
         
@@ -604,6 +648,131 @@ class docAside extends HTMLElement {
       });
     }
 
+    // search
+    const escapeRegex = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+    // Returns a Set of heading elements in doc-body whose section contains the query.
+    // Used both for placing dots and for keeping matching nav items visible.
+    const computeBodyHits = (query) => {
+      const hitHeadings = new Set()
+      if (!query) return hitHeadings
+      const content = document.querySelector('re-md div[ref="re-md-content"]')
+      if (!content) return hitHeadings
+
+      // Walk all block elements in document order, tracking the closest heading
+      // above each match so dots land on the exact heading level (h2-h6) nearest
+      // to the matched text, not just the section's top-level h2.
+      // textContent of each element includes ALL descendant text, so blockquote/table
+      // entries naturally cover their full nested content.
+      const allEls = content.querySelectorAll(
+        'h2, h3, h4, h5, h6,' +
+        'p, pre, code, code-block, blockquote, span,' +
+        'ul, ol, li, dl, dt, dd,' +
+        'table, td, th, caption,' +
+        'figure, figcaption, details, summary'
+      )
+      let currentHeading = null
+
+      allEls.forEach(el => {
+        if (/^H[2-6]$/.test(el.tagName)) {
+          currentHeading = el
+          if (el.textContent.toLowerCase().includes(query)) hitHeadings.add(el)
+        } else if (currentHeading && el.textContent.toLowerCase().includes(query)) {
+          hitHeadings.add(currentHeading)
+        }
+      })
+
+      // Fallback: any section whose full textContent matches but whose heading
+      // was not yet marked (e.g. content inside custom elements not in the selector above)
+      content.querySelectorAll('section').forEach(section => {
+        if (!section.textContent.toLowerCase().includes(query)) return
+        const alreadyCovered = Array.from(hitHeadings).some(h => section.contains(h))
+        if (!alreadyCovered) {
+          const firstHeading = section.querySelector('h2, h3, h4, h5, h6')
+          if (firstHeading) hitHeadings.add(firstHeading)
+        }
+      })
+
+      return hitHeadings
+    }
+
+    const markHitsInBody = (query) => {
+      document.querySelectorAll('.search-heading-hit').forEach(el => el.remove())
+      const hitHeadings = computeBodyHits(query)
+      hitHeadings.forEach(heading => {
+        const dot = document.createElement('span')
+        dot.className = 'search-heading-hit'
+        heading.appendChild(dot)
+      })
+      return hitHeadings
+    }
+
+    const searchInput = this.querySelector('.doc-aside-search')
+    let savedOpenState = new Map()
+
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim().toLowerCase()
+        const navList = this.querySelector('.doc-aside-list')
+        if (!navList) return
+
+        const cards = document.querySelector('.doc-quick-cards')
+
+        if (!query) {
+          navList.querySelectorAll('.--search-hidden').forEach(el => el.classList.remove('--search-hidden'))
+          savedOpenState.forEach((wasOpen, li) => {
+            wasOpen ? li.setAttribute('open', '') : li.removeAttribute('open')
+          })
+          savedOpenState.clear()
+          navList.querySelectorAll('a[data-original-text]').forEach(anchor => {
+            anchor.textContent = anchor.dataset.originalText
+            delete anchor.dataset.originalText
+          })
+          if (cards) cards.style.display = ''
+          markHitsInBody('')
+          return
+        }
+
+        if (cards) cards.style.display = 'none'
+
+        if (savedOpenState.size === 0) {
+          navList.querySelectorAll('li:has(> ol)').forEach(li => {
+            savedOpenState.set(li, li.hasAttribute('open'))
+          })
+        }
+
+        // Compute body hits first so nav filtering can keep their items visible
+        const bodyHitIds = new Set(
+          Array.from(markHitsInBody(query))
+            .map(h => h.id)
+            .filter(Boolean)
+        )
+
+        navList.querySelectorAll('li').forEach(li => li.classList.add('--search-hidden'))
+        navList.querySelectorAll('a').forEach(anchor => {
+          if (anchor.dataset.originalText) anchor.textContent = anchor.dataset.originalText
+          else anchor.dataset.originalText = anchor.textContent
+
+          const hrefId = (anchor.getAttribute('href') || '').slice(1)
+          const textMatches = anchor.textContent.toLowerCase().includes(query)
+          const bodyMatches = bodyHitIds.has(hrefId)
+
+          if (textMatches || bodyMatches) {
+            let el = anchor.closest('li')
+            while (el && navList.contains(el)) {
+              el.classList.remove('--search-hidden')
+              el.setAttribute('open', '')
+              el = el.parentElement?.closest('li')
+            }
+            // Only highlight anchor text when the match is in the anchor itself
+            if (textMatches) {
+              const regex = new RegExp(`(${escapeRegex(query)})`, 'gi')
+              anchor.innerHTML = anchor.dataset.originalText.replace(regex, '<mark class="search-mark">$1</mark>')
+            }
+          }
+        })
+      })
+    }
 
   }
   
@@ -663,6 +832,17 @@ class docAside extends HTMLElement {
       }
       
       this.buildHierarchicalNav(headings, navList);
+
+      // Stamp each li with its permanent 1-based position so counter display
+      // stays accurate when search filtering hides sibling items.
+      const assignCounters = (list) => {
+        Array.from(list.querySelectorAll(':scope > li')).forEach((li, idx) => {
+          li.dataset.counter = String(idx + 1)
+          const subList = li.querySelector(':scope > ol')
+          if (subList) assignCounters(subList)
+        })
+      }
+      assignCounters(navList)
     };
 
     this.buildHierarchicalNav = (headings, container) => {

@@ -78,7 +78,8 @@ class baseCard extends HTMLElement {
         height: 100%;
         justify-content: flex-start;
         width: var(--card-width);
-        box-shadow: 0 0 0 1px hsla(var(--fcolor-hsl) / 0.2) inset;
+        box-shadow: 0 0 0 1px hsla(var(--fcolor-hsl) / 0.2) inset, 
+        0 0 0px 0px hsla(var(--accent-color-hsl) / 0);
         background: hsl(var(--card-bg-color-hsl));
         border-radius: var(--card-border-radius);
         overflow: hidden;
@@ -88,7 +89,7 @@ class baseCard extends HTMLElement {
       }
 
       .card-container:hover {
-        box-shadow: 0 0 0 2px hsla(var(--fcolor-hsl) / 0.75) inset;
+        box-shadow: 0 0 0 2px hsla(var(--accent-color-hsl) / 0.4) inset, 0 0 8px 1px hsla(var(--accent-color-hsl) / 0.4);
         transform: translateY(-2px);
       }
 

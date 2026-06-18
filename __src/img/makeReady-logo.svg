@@ -1,0 +1,20 @@
+<svg id="makeReady-logo" xmlns="http://www.w3.org/2000/svg" width="108" height="36" viewBox="0 0 108 36">
+  <defs>
+    <style>
+      .makeReady-logo {
+        fill: hsl(var(--fcolor-hsl));
+      }
+    </style>
+  </defs>
+  <polygon class="makeReady-logo" points="45 27 63 27 72 18 54 18 45 27"/>
+  <polygon class="makeReady-logo" points="9 27 27 27 36 18 18 18 9 27"/>
+  <polygon class="makeReady-logo" points="81 27 99 27 108 18 90 18 81 27"/>
+  <polygon class="makeReady-logo" points="36 36 54 36 63 27 45 27 36 36"/>
+  <polygon class="makeReady-logo" points="0 36 18 36 27 27 9 27 0 36"/>
+  <polygon class="makeReady-logo" points="72 36 90 36 99 27 81 27 72 36"/>
+  <polygon class="makeReady-logo" points="72 18 54 18 45 9 63 9 72 18"/>
+  <polygon class="makeReady-logo" points="63 9 45 9 36 0 54 0 63 9"/>
+  <polygon class="makeReady-logo" points="63 9 81 9 90 0 72 0 63 9"/>
+  <polygon class="makeReady-logo" points="108 18 90 18 81 9 99 9 108 18"/>
+  <polygon class="makeReady-logo" points="18 18 36 18 45 9 27 9 18 18"/>
+</svg>

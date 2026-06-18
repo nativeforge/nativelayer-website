@@ -1407,7 +1407,7 @@ Create `_redirects` file:
 
 ##### Nginx
 
-```nginx
+```shell
 server {
     listen 80;
     server_name example.com;
@@ -1445,7 +1445,7 @@ server {
 
 ##### Apache (.htaccess)
 
-```apache
+```shell
 RewriteEngine On
 RewriteBase /
 
@@ -2227,11 +2227,11 @@ RouterX is production-ready with comprehensive security protections built-in.
 
 ## License
 
-RouterX is licensed under the **PolyForm Noncommercial License 1.0.0** for non-commercial use, with a commercial license option available.
+`routerx` is licensed under the **PolyForm Noncommercial License 1.0.0** for non-commercial use, with a commercial license option available.
 
 ### Non-Commercial Use
 
-RouterX is free under the **PolyForm Noncommercial License** for:
+`routerx` is free under the **PolyForm Noncommercial License** for:
 
 - ✓ Open-source projects (OSI-approved licenses)
 - ✓ Personal projects and non-revenue generating applications

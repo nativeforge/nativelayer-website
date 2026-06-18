@@ -1,3 +1,8 @@
+// Keyed by instance. Keeps internal state off the element's own properties
+// so external code cannot accidentally bypass the resolution guards.
+const _resolvers  = new WeakMap() // instance → Promise resolve fn
+const _observers  = new WeakMap() // instance → MutationObserver (strategy 3)
+
 /**
  * makeReady(ComponentClass)
  *
@@ -27,7 +32,7 @@ export function makeReady(ComponentClass) {
     get() {
       if (!this.__readyPromise) {
         this.__readyPromise = new Promise(resolve => {
-          this.__resolveReady = resolve
+          _resolvers.set(this, resolve)
         })
       }
       return this.__readyPromise
@@ -58,13 +63,14 @@ export function makeReady(ComponentClass) {
     requestAnimationFrame(() => {
       this.setAttribute('ready', '')
       this.dispatchEvent(new Event('ready', { bubbles: true, composed: true }))
-      this.__resolveReady()
+      _resolvers.get(this)?.()
     })
   }
 
-  // ── Wrap connectedCallback ─────────────────────────────────────────────────
+  // ── Wrap connectedCallback + disconnectedCallback ──────────────────────────
 
-  const original = ComponentClass.prototype.connectedCallback
+  const original             = ComponentClass.prototype.connectedCallback
+  const originalDisconnected = ComponentClass.prototype.disconnectedCallback
 
   ComponentClass.prototype.connectedCallback = function connectedCallback() {
     // Strategy 2 — static readyEvent
@@ -85,9 +91,11 @@ export function makeReady(ComponentClass) {
         const observer = new MutationObserver(() => {
           if (this.hasAttribute(readyAttr)) {
             observer.disconnect()
+            _observers.delete(this)
             this._resolveReady()
           }
         })
+        _observers.set(this, observer)
         observer.observe(this, { attributes: true, attributeFilter: [readyAttr] })
         original?.call(this)
       }
@@ -98,10 +106,24 @@ export function makeReady(ComponentClass) {
     // Strategy 5 — synchronous fallback
     const result = original?.call(this)
     if (result instanceof Promise) {
-      result.then(() => this._resolveReady())
+      // Swallow rejections here — the component's own connectedCallback is
+      // responsible for its error handling. An unhandled rejection from the
+      // wrapper would be confusing and unactionable.
+      result.then(() => this._resolveReady()).catch(() => {})
     } else {
       this._resolveReady()
     }
+  }
+
+  ComponentClass.prototype.disconnectedCallback = function disconnectedCallback() {
+    // Strategy 3 cleanup — disconnect the attribute observer when the element
+    // leaves the DOM so it can be garbage-collected if never re-inserted.
+    const observer = _observers.get(this)
+    if (observer) {
+      observer.disconnect()
+      _observers.delete(this)
+    }
+    originalDisconnected?.call(this)
   }
 
   return ComponentClass

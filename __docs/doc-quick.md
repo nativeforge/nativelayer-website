@@ -1,28 +1,56 @@
-
+:: { style="width: 96px; height: auto;" }
+![doc-quick logo](../__src/img/doc-quick-logo.svg)
+::
 
 # doc-quick
 
-`<doc-quick>` is a self-contained documentation viewer. It orchestrates `<doc-aside>`, `<doc-body>`, `<re-md>`, and `<doc-card>` into a single element that you drop into a page. All navigation, chapter activation, theming, and scroll behaviour are handled internally. The host page, and `routerx` if used, only need to set attributes.
+`< doc-quick >` is a `Custom Element` that allows to easily navigate a markdown file by formating it into a documentation browser.
 
-## Why doc-quick exists
+Features of `< doc-quick >` :
 
-Before `<doc-quick>`, wiring up a documentation page required `router.js` to reach into the DOM and coordinate multiple components manually: setting `src` on `<re-md>`, managing `--chapter-active` CSS classes, handling hash changes, forwarding theme colours, and subscribing to events from `<doc-card>` and `<doc-aside>`. This made `doc-body` and `doc-aside` impossible to reuse without copying all that orchestration logic.
+- automatic markdown rendering (with re-md package from **nativelayer**)
+- automatic sections and subsections generation from markdown file
+- automatic sections and subsections listing
+- automatic and optional sections and subsections automatic numbering
+- automatic multipage documentation
+- automatic bottom page navigation buttons with title generation from markdown file
+- search feature with sections and subsections filtering
+- default markdown rendering styles
+- customizable markdown rendering styles
 
-`<doc-quick>` encapsulates the orchestration. Drop one element in the page; set attributes from outside.
+## Why doc-quick ?
+
+`<doc-quick>` helps building documentation pages quickly from `markdown` files.
+
+`<doc-quick>` is a Custom Element that contains 4 other components, each responsible for a particular feature in the context of a documentation page :
+
+- `<doc-aside>`
+- `<doc-body>`
+- `<re-md>`
+- `<doc-card>`
+
+into a single element that you drop into a page. All navigation, chapter activation, theming, and scroll behaviour are handled internally. The host page only need to set attributes.
 
 ## Architecture
 
-```
+```bash
 <doc-quick>                     ← orchestrator, owns all navigation state
   ├── <doc-aside>               ← fixed sidebar, built from re-md headings
   └── <doc-body>
         ├── <re-md>             ← fetches + renders the markdown source
-        └── <flex-container>
+        └── <div>
               ├── <doc-card data-label="previous">
               └── <doc-card data-label="next">
 ```
 
-All child components are registered by `doc-quick` itself via an idempotent `define()` helper — no separate registration needed for `re-md`, `doc-aside`, `doc-body`, `doc-card`, or `flex-container`.
+All child components are registered by `doc-quick` itself via an idempotent `define()` helper — no separate registration needed for `re-md`, `doc-aside`, `doc-body` or `doc-card`.
+
+### Dependencies
+
+- `<doc-aside>`
+- `<doc-body>`
+- `<re-md>`
+- `<doc-card>`
 
 ## Basic usage
 
@@ -46,7 +74,7 @@ Register `doc-quick` in the page `<head>`, then place the element in `<body>`. C
   <doc-quick
     src="/path/to/document.md"
     chapter-mode
-    theme-css="/__src/css/code-syntax.css"
+    syntax-css="/__src/css/code-syntax.css"
     expander-color="hsl(var(--accent-color-hsl))"
     section-numbers
   ></doc-quick>
@@ -60,7 +88,8 @@ Register `doc-quick` in the page `<head>`, then place the element in `<body>`. C
 | `src` | `string` | Markdown URL. Forwarded to the internal `<re-md>`. |
 | `hash` | `string` | Heading or chapter ID to activate and scroll to (e.g. `2-api-reference`). Set by the router on navigation. |
 | `chapter-mode` | `boolean` | Enables chapter-mode layout. Forwarded to `<re-md>`. In this mode the document is split into `<section>` elements, one per `h2`. |
-| `theme-css` | `string` | CSS URL for syntax highlighting. Forwarded to `<re-md>`. |
+| `syntax-css` | `string` | CSS URL for syntax highlighting. Forwarded to `<re-md>`. |
+| `hljs-src` | `string` | URL to load `highlight.js` from. Forwarded to `<re-md>`. Only fetched when the markdown contains at least one code block. Defaults to `https://esm.sh/highlight.js` when omitted. |
 | `theme-color-hsl` | `string` | HSL string (e.g. `"210 80% 55%"`) applied as `--accent-color-hsl` on `<html>`. Also computes `--accent-color-hsl-adjusted` and sets `--accent-is-light` / `--accent-is-dark` classes. |
 | `expander-color` | `string` | Any CSS colour value for the `▶` expand icons in `<doc-aside>`. |
 | `section-numbers` | `boolean` | Shows numbered section counters in `<doc-aside>`. |
@@ -74,7 +103,7 @@ All navigation flows through a single delegated `click` listener on `<doc-quick>
 
 When either is found, the listener calls `_navigate(hash)`:
 
-```
+```bash
 click → composedPath() → _navigate(hash)
            │
            ├── window.history.pushState(…, '#' + hash)
@@ -166,3 +195,9 @@ No direct manipulation of `<doc-aside>`, `<doc-body>`, or `<re-md>` is needed in
   --space-unit: 0.5rem;       /* base spacing unit */
 }
 ```
+
+## License
+
+MIT License. Copyright (c) 2026 ynck-chrl.
+
+See [LICENSE](../LICENSE) for the full text.

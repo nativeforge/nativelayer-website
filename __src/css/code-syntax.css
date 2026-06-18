@@ -32,6 +32,9 @@ code.hljs {
 :is([theme-mode="light"].--accent-is-light, [theme-mode="light"] .--accent-is-light) :is( .hljs-template-tag, .hljs-tag) {
   color: hsl(var(--accent-color-hsl-adjusted-hard));
 }
+:is([theme-mode="dark"].--accent-is-dark, [theme-mode="dark"] .--accent-is-dark) :is( .hljs-template-tag, .hljs-tag) {
+  color: hsl(var(--accent-color-hsl-adjusted));
+}
 
 .hljs-operator,
 .hljs-punctuation,
@@ -43,7 +46,7 @@ code.hljs {
 }
 
 .hljs-operator {
-  opacity: .7
+  opacity: 1
 }
 
 .hljs-bullet,

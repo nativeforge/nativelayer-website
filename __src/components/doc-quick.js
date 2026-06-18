@@ -2,15 +2,15 @@ import { luminanceHSL, adjustedHSL }  from '/__src/js/luminance.js'
 import { scrollToHeadingElement }      from '/__src/js/utils.js'
 
 // ── Child component imports (self-contained: no external autoDefine needed) ──
-import docAsideClass    from '/__src/components/doc-aside.js'
-import docBodyClass     from '/__src/components/doc-body.js'
-import reMd            from '/__src/components/re-md.js'
 import docCard          from '/__src/components/doc-card.js'
+import docBodyClass     from '/__src/components/doc-body.js'
+import docAsideClass    from '/__src/components/doc-aside.js'
+import reMd            from '/__src/components/re-md/index.js'
 
 const define = (tag, cls) => { if (!customElements.get(tag)) customElements.define(tag, cls) }
-define('doc-aside',      docAsideClass)
-define('doc-body',       docBodyClass)
 define('re-md',          reMd)
+define('doc-body',       docBodyClass)
+define('doc-aside',      docAsideClass)
 define('doc-card',       docCard)
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -25,7 +25,8 @@ define('doc-card',       docCard)
 //   hash              — heading/chapter id to activate (e.g. '0-introduction')
 //   theme-color-hsl   — HSL string applied as --accent-color-hsl on <html>
 //   chapter-mode      — boolean; forwarded to <re-md>
-//   theme-css         — CSS URL forwarded to <re-md>
+//   syntax-css        — CSS URL forwarded to <re-md>
+//   hljs-src          — highlight.js URL forwarded to <re-md> (CDN default used when omitted)
 //   expander-color    — forwarded to <doc-aside>
 //   section-numbers   — boolean; forwarded to <doc-aside>
 // ───────────────────────────────────────────────────────────────────────────
@@ -34,7 +35,7 @@ class docQuick extends HTMLElement {
   static get observedAttributes() {
     return [
       'src', 'hash', 'theme-color-hsl',
-      'chapter-mode', 'theme-css',
+      'chapter-mode', 'syntax-css', 'hljs-src',
       'expander-color', 'section-numbers',
     ]
   }
@@ -139,8 +140,12 @@ class docQuick extends HTMLElement {
         }
         break
 
-      case 'theme-css':
-        if (this._remd && newValue) this._remd.setAttribute('theme-css', newValue)
+      case 'syntax-css':
+        if (this._remd && newValue) this._remd.setAttribute('syntax-css', newValue)
+        break
+
+      case 'hljs-src':
+        if (this._remd && newValue) this._remd.setAttribute('hljs-src', newValue)
         break
 
       case 'expander-color':
@@ -162,9 +167,10 @@ class docQuick extends HTMLElement {
   _render() {
     const chapterMode = this.hasAttribute('chapter-mode') ? 'chapter-mode' : ''
     const sectionNums = this.hasAttribute('section-numbers') ? 'section-numbers' : ''
-    const themeCss = this.getAttribute('theme-css') || ''
+    const themeCss = this.getAttribute('syntax-css') || ''
     const expanderColor = this.getAttribute('expander-color') || ''
     const src = this.getAttribute('src') || ''
+    const hljsSrc = this.getAttribute('hljs-src') || ''
 
     this.innerHTML = `
       <style>
@@ -183,8 +189,9 @@ class docQuick extends HTMLElement {
       ></doc-aside>
       <doc-body>
         <re-md
-          ${src? `src="${src}"` : ''}
-          ${themeCss ? `theme-css="${themeCss}"` : ''}
+          ${src ? `src="${src}"` : ''}
+          ${themeCss ? `syntax-css="${themeCss}"` : ''}
+          ${hljsSrc ? `hljs-src="${hljsSrc}"` : ''}
           ${chapterMode}
         ></re-md>
         ${chapterMode ? `

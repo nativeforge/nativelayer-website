@@ -1,0 +1,14 @@
+<svg id="monitor-elements-logo" xmlns="http://www.w3.org/2000/svg" width="96" height="36" viewBox="0 0 96 36">
+  <defs>
+    <style>
+      .monitor-elements-logo {
+        fill: hsl(var(--fcolor-hsl));
+      }
+    </style>
+  </defs>
+  <polygon class="monitor-elements-logo" points="96 12 72 12 60 24 84 24 96 12"/>
+  <polygon class="monitor-elements-logo" points="84 0 60 0 48 12 72 12 84 0"/>
+  <polygon class="monitor-elements-logo" points="0 12 24 12 36 24 12 24 0 12"/>
+  <polygon class="monitor-elements-logo" points="12 0 36 0 48 12 24 12 12 0"/>
+  <polygon class="monitor-elements-logo" points="48 35.99 72 35.99 84 23.99 60 23.99 48 35.99"/>
+</svg>

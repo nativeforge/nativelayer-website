@@ -4,7 +4,7 @@ import { state } from '/__src/js/state.js';
 const router = new RouterX({ mode: 'history', ignoreSameNavigation: true });
 
 // Store current product for handler access
-let currentProduct = null;
+let currentDoc = null;
 
 // Helper: get the doc-quick element
 const getDocQuick = () => document.querySelector('doc-quick');
@@ -28,46 +28,46 @@ router.beforeEach((to, query, hash) => {
 router.on('/', () => true);
 router.on('/about', () => true);
 router.on('/demos', () => true);
-router.on('/docs', () => true);
+router.on('/docs', () => { window.location.replace('/packages'); });
 router.on('/packages', () => true);
+
 router.on('/test', () => true);
 
 // Product route with lifecycle hooks
-router.on('/docs/:product', (params, query, hash) => {
+router.on('/docs/:doc', (params, query, hash) => {
   // If no hash is present, add default hash #0-introduction
+  const doc = state.nav.docs.find(doc => doc.name === params.doc);
+
+  if (!doc) {
+    window.location.replace('/404');
+    return false;
+  }
+
   if (!hash) {
-    router.replace(`/docs/${currentProduct.name}#0-introduction`);
+    router.replace(`/docs/${doc.name}#0-introduction`);
     return;
   }
 
   const docQuick = getDocQuick();
   if (docQuick) {
-    docQuick.setAttribute('src', `/__docs/${currentProduct.name}.md`);
+    docQuick.setAttribute('src', `/__docs/${doc.name}.md`);
     docQuick.setAttribute('hash', hash);
   }
 },
 {
   beforeEnter: async (params) => {
-    const product = state.nav.docs.find(doc => doc.name === params.product);
-
-    if (!product) {
-      console.error(`Product not found: ${params.product}`);
-      router.replace('/404');
-      return false;
-    }
-
-    currentProduct = product;
+    const doc = state.nav.docs.find(doc => doc.name === params.doc);
 
     const docQuick = getDocQuick();
     if (docQuick) {
-      docQuick.setAttribute('theme-color-hsl', product.themeColorHsl);
+      docQuick.setAttribute('theme-color-hsl', doc.themeColorHsl);
     }
 
     return true;
   },
 
   beforeLeave: () => {
-    currentProduct = null;
+    currentDoc = null;
   }
 });
 
@@ -76,7 +76,7 @@ router.on('/404', () => true);
 
 // Not found handler
 router.notFound(() => {
-  router.navigate('/404');
+  window.location.replace('/404');
   return true;
 });
 
@@ -91,7 +91,7 @@ router.afterEach(() => {
 // Handle hash-only changes on /docs/:product routes
 router.onHashChange((newHash) => {
   const currentRoute = router.getCurrentRoute();
-  if (!currentRoute?.path.startsWith('/docs/') || !currentProduct || !newHash) return;
+  if (!currentRoute?.path.startsWith('/docs/') || !currentDoc || !newHash) return;
 
   const docQuick = getDocQuick();
   if (docQuick) docQuick.setAttribute('hash', newHash);

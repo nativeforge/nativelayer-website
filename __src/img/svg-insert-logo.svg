@@ -1,0 +1,14 @@
+<svg id="svg-insert-logo" xmlns="http://www.w3.org/2000/svg" width="64" height="36" viewBox="0 0 64 36">
+  <defs>
+    <style>
+      .svg-insert-logo {
+        fill: hsl(var(--fcolor-hsl));
+      }
+    </style>
+  </defs>
+  <polygon class="svg-insert-logo" points="63 27 45 27 36 36 54 36 63 27"/>
+  <polygon class="svg-insert-logo" points="63 27 45 27 36 18 54 18 63 27"/>
+  <polygon class="svg-insert-logo" points="45 9 27 9 18 0 36 0 45 9"/>
+  <polygon class="svg-insert-logo" points="0 18 18 18 27 9 9 9 0 18"/>
+  <polygon class="svg-insert-logo" points="0 18 18 18 27 27 9 27 0 18"/>
+</svg>

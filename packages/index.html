@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>nativelayer.dev: Packages</title>
 
@@ -22,11 +23,11 @@
   </script>
 
   <script type="module">
-    import monitorMakeReady from "/__src/components/monitor-make-ready/index.js"
-    import loaderElement from "/__src/components/loader-element/index.js"
-    customElements.define('monitor-make-ready', monitorMakeReady)
-    customElements.define('loader-element', loaderElement)
+    import monitorLoading from "/__src/components/monitor-loading/index.js"
+    customElements.define('monitor-loading', monitorLoading)
   </script>
+
+  <monitor-loading target="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400" show-duration="400"></monitor-loading>
 
   <script type="module" scramble>
     import { scrambleTo } from "/__src/libs/reflectx/plugins/scramble/scramble.esm.min.js";
@@ -43,7 +44,7 @@
           // observer.unobserve(el);
         }
       });
-    }, { threshold: 0.3 });
+    }, { threshold: 0.1 });
 
     document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('.grid-item-title').forEach(el => observer.observe(el));
@@ -57,8 +58,6 @@
 
 </head>
 
-
-<loader-element app="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400" overlay-fade="400"></loader-element>
 
 <body style="opacity: 0; transform: translateY(16px);">
   <top-bar reveal></top-bar>
@@ -144,7 +143,7 @@
 
         <base-card class="grid-item" link="/docs/routerx" img-src="" accent-color-hsl="348 100% 50%">
           <span slot="title">routerx</span>
-          <span slot="description">Router for both traditional multi-page websites (MPA) and single page applications (SPA), or static hosting environments.</span>
+          <span slot="description">Client-side Router for both traditional multi-page websites (MPA) and single page applications (SPA) in static hosting environments.</span>
           <span slot="caption">~ 3,4 Kb</span>
 
           <svg id="svg-logo-routerx" class="grid-item-logo" slot="logo" xmlns="http://www.w3.org/2000/svg" width="104" height="45" viewBox="0 0 104 45"
@@ -243,6 +242,82 @@
             <polygon class="svg-logo-re-md" points="60 0 48 12 60 12 72 0 60 0"/>
             <polygon class="svg-logo-re-md" points="72 0 60 12 72 12 84 0 72 0"/>
           </svg>
+        </base-card>
+
+        <base-card class="grid-item" link="/docs/doc-quick" img-src="" accent-color-hsl="25 100% 50%">
+          <span slot="title">< doc-quick ></span>
+          <span slot="description">A custom element that provides a complete documentation page with automatic navigation, theme support, and markdown rendering.</span>
+          <span slot="caption">~ 6,7 Kb</span>
+          
+          <svg-insert src="/__src/img/doc-quick-logo.svg" svg-class="grid-item-logo" svg-slot="logo" ></svg-insert>
+
+        </base-card>
+
+        <base-card class="grid-item" link="/docs/monitor-loading" img-src="" accent-color-hsl="0 0% 100%">
+          <span slot="title">< monitor-loading ></span>
+          <span slot="description">A custom element that monitors the loading of custom elements and displays a list of them as they become ready.</span>
+          <span slot="caption">~ 1,6 Kb</span>
+          
+          <svg-insert src="/__src/img/monitor-loading-logo.svg" svg-class="grid-item-logo" svg-slot="logo" ></svg-insert>
+
+        </base-card>
+
+        <base-card class="grid-item" link="/docs/svg-insert" img-src="" accent-color-hsl="0 0% 100%">
+          <span slot="title">< svg-insert ></span>
+          <span slot="description">A custom element that inserts an SVG into the DOM and allows you to configure it with attributes.</span>
+          <span slot="caption">~ 0,2 Kb</span>
+          
+          <svg-insert src="/__src/img/svg-insert-logo.svg" svg-class="grid-item-logo" svg-slot="logo" ></svg-insert>
+
+        </base-card>
+
+      </div>
+
+    </div>
+
+    <div class="grid-2-columns">
+
+      <title-section class="--sticky --align-left">
+        <h1 slot="title">Utilities</h1>
+        <p class="--dimmed" slot="description">Helpers functions. Useful to build upon or around.</p>
+      </title-section>
+
+      <div class="grid-container" style="grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));">
+
+        <base-card class="grid-item" link="/docs/ready-element" img-src="" accent-color-hsl="0 0% 100%">
+          <span slot="title">readyElement</span>
+          <span slot="description">Base class for custom elements that expose a 'ready' Promise, for components orchestration purposes.</span>
+          <span slot="caption">~ 0,6 Kb</span>
+          
+          <svg-insert src="/__src/img/readyElement-logo.svg" svg-class="grid-item-logo" svg-slot="logo" ></svg-insert>
+
+        </base-card>
+
+        <base-card class="grid-item" link="/docs/auto-define" img-src="" accent-color-hsl="0 0% 100%">
+          <span slot="title">autoDefine</span>
+          <span slot="description">A function that automatically discovers and registers custom elements from a base path and naming convention.</span>
+          <span slot="caption">~ 1,2 Kb</span>
+          
+          <svg-insert src="/__src/img/autoDefine-logo.svg" svg-class="grid-item-logo" svg-slot="logo" ></svg-insert>
+
+        </base-card>
+
+        <base-card class="grid-item" link="/docs/wait-for-elements-ready" img-src="" accent-color-hsl="0 0% 100%">
+          <span slot="title">waitForElementsReady</span>
+          <span slot="description">A function that waits for all custom elements to be defined and ready, for components orchestration purposes.</span>
+          <span slot="caption">~ 0,8 Kb</span>
+          
+          <svg-insert src="/__src/img/waitForElementsReady-logo.svg" svg-class="grid-item-logo" svg-slot="logo" ></svg-insert>
+
+        </base-card>
+
+        <base-card class="grid-item" link="/docs/make-ready" img-src="" accent-color-hsl="0 0% 100%">
+          <span slot="title">makeReady</span>
+          <span slot="description">A function that patches a custom element to expose a 'ready' Promise and a '_resolveReady()' method, for components orchestration purposes.</span>
+          <span slot="caption">~ 0,4 Kb</span>
+          
+          <svg-insert src="/__src/img/makeReady-logo.svg" svg-class="grid-item-logo" svg-slot="logo" ></svg-insert>
+
         </base-card>
 
       </div>

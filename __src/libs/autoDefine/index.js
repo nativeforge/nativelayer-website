@@ -2,6 +2,15 @@
  * @typedef {'pascal' | 'camel' | 'kebab' | 'snake'} NamingConvention
  */
 
+// Hostname-based dev/prod detection — no build-tool dependency.
+// In SSR / Node.js environments, default to production (silent).
+const _isProd = typeof window === 'undefined'
+  ? true
+  : (window.location.hostname !== 'localhost' &&
+     window.location.hostname !== '127.0.0.1' &&
+     window.location.hostname !== '' &&
+     !window.location.hostname.endsWith('.local'))
+
 /**
  * @typedef {Object} AutoDefineOptions
  * @property {HTMLElement | string} [root=document.body]
@@ -12,11 +21,11 @@
  *   1. `{path}/{FileName}.js`
  *   2. `{path}/{tag-name}/{FileName}.js`
  *   3. `{path}/{tag-name}/index.js`
- * @property {NamingConvention} [naming='pascal']
+ * @property {NamingConvention} [caseConvention='kebab']
  *   How tag names are transformed when constructing file and class names.
- *   - `'pascal'` — `my-element` → `MyElement` (default)
+ *   - `'kebab'`  — `my-element` → `my-element` (default)
+ *   - `'pascal'` — `my-element` → `MyElement`
  *   - `'camel'`  — `my-element` → `myElement`
- *   - `'kebab'`  — `my-element` → `my-element`
  *   - `'snake'`  — `my-element` → `my_element`
  * @property {boolean} [observe=false]
  *   Watch for dynamically added custom elements and define them on the fly.
@@ -25,6 +34,12 @@
  *   Disconnect the MutationObserver (only relevant when `observe: true`).
  * @property {boolean} [debug=false]
  *   Log resolution attempts and results to the console.
+ */
+
+/**
+ * @typedef {Object} AutoDefineResult
+ * @property {string[]} resolved - Tags that were successfully imported and defined.
+ * @property {string[]} failed   - Tags that could not be resolved or had no usable export.
  */
 
 /**
@@ -38,27 +53,31 @@
  * module's default export is used as the constructor.
  *
  * @param {AutoDefineOptions} [options={}]
- * @returns {Promise<void>}
+ * @returns {Promise<AutoDefineResult>}
  *
  * @example
- * // Zero-config: scans document.body, looks in /components/, expects PascalCase files
- * await autoDefine()
+ * // Zero-config: scans document.body, looks in /components/, expects kebab-case files
+ * const { resolved, failed } = await autoDefine()
  *
  * @example
- * // Custom path and naming, with observer
+ * // Custom path and case-convention, with observer
  * const controller = new AbortController()
- * await autoDefine({ path: '/elements/', naming: 'kebab', observe: true, signal: controller.signal })
+ * await autoDefine({ path: '/elements/', caseConvention: 'kebab', observe: true, signal: controller.signal })
  * // later: controller.abort()
  */
 export async function autoDefine(options = {}) {
   const {
     root = document.body,
     path = '/components/',
-    naming = 'pascal',
+    caseConvention = 'kebab',
     observe = false,
     signal,
     debug = false,
   } = options
+
+  if (observe && !signal) {
+    if (!_isProd) console.warn('[autoDefine] observe: true set without a signal — the MutationObserver will never disconnect. Pass an AbortSignal to avoid memory leaks.')
+  }
 
   const basePath = path.endsWith('/') ? path : `${path}/`
 
@@ -85,7 +104,7 @@ export async function autoDefine(options = {}) {
   }
 
   const processTag = async (tag) => {
-    const fileName = applyNaming(tag, naming)
+    const fileName = applyNaming(tag, caseConvention)
 
     const candidates = [
       `${basePath}${fileName}.js`,
@@ -94,6 +113,19 @@ export async function autoDefine(options = {}) {
     ]
 
     for (const candidate of candidates) {
+      // HEAD preflight — prevents the browser from logging its own red MIME-type
+      // error when the server returns an HTML 404 page for a missing module.
+      let exists = false
+      try {
+        const res = await fetch(candidate, { method: 'HEAD' })
+        exists = res.ok
+      } catch { /* network error */ }
+
+      if (!exists) {
+        if (!_isProd) console.warn(`[autoDefine] <${tag}> not found in '${candidate}'`)
+        continue
+      }
+
       try {
         if (debug) console.log(`[autoDefine] <${tag}> trying ${candidate}`)
 
@@ -101,7 +133,7 @@ export async function autoDefine(options = {}) {
 
         if (customElements.get(tag)) {
           if (debug) console.log(`[autoDefine] <${tag}> self-registered from ${candidate}`)
-          return
+          return { tag, status: 'resolved' }
         }
 
         const Ctor = mod.default ?? mod[fileName]
@@ -109,27 +141,31 @@ export async function autoDefine(options = {}) {
         if (typeof Ctor === 'function') {
           customElements.define(tag, Ctor)
           if (debug) console.log(`[autoDefine] <${tag}> defined from ${candidate}`)
-          return
+          return { tag, status: 'resolved' }
         }
-      } catch {
-        // candidate not found — try next
-      }
+
+        if (!_isProd) {
+          console.warn(`[autoDefine] <${tag}> '${candidate}' has no usable export (expected default or named "${fileName}")`)
+        }
+      } catch { /* import() itself threw after a successful HEAD — very unlikely */ }
     }
 
-    if (debug) {
-      console.warn(`[autoDefine] <${tag}> could not be resolved under ${basePath}`)
-    }
+    return { tag, status: 'failed' }
   }
 
-  const processTags = () => {
+  const processTags = async () => {
     const tags = getUndefinedTags()
     if (debug && tags.length) {
       console.log('[autoDefine] discovered undefined custom elements:', tags)
     }
-    return Promise.all(tags.map(processTag))
+    const results = await Promise.all(tags.map(processTag))
+    return {
+      resolved: results.filter(r => r.status === 'resolved').map(r => r.tag),
+      failed:   results.filter(r => r.status === 'failed').map(r => r.tag),
+    }
   }
 
-  await processTags()
+  const result = await processTags()
 
   if (observe) {
     const containsCustomElement = (n) =>
@@ -148,6 +184,8 @@ export async function autoDefine(options = {}) {
 
     signal?.addEventListener('abort', () => observer.disconnect(), { once: true })
   }
+
+  return result
 }
 
 /* -------------------- helpers -------------------- */
@@ -156,13 +194,13 @@ export async function autoDefine(options = {}) {
  * Transform a kebab-case tag name using the given naming convention.
  *
  * @param {string} tag   - kebab-case custom element tag name
- * @param {NamingConvention} naming
+ * @param {NamingConvention} caseConvention
  * @returns {string}
  */
-function applyNaming(tag, naming) {
+function applyNaming(tag, caseConvention) {
   const parts = tag.split('-')
 
-  switch (naming) {
+  switch (caseConvention) {
     case 'pascal':
       return parts.map(capitalize).join('')
 
@@ -176,7 +214,7 @@ function applyNaming(tag, naming) {
       return parts.join('_')
 
     default:
-      throw new Error(`[autoDefine] unknown naming convention: "${naming}"`)
+      throw new Error(`[autoDefine] unknown case-convention: "${caseConvention}"`)
   }
 }
 

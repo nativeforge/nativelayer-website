@@ -1345,12 +1345,36 @@ All libraries have different trade-offs: `restate` provides fine-grained change 
 
 ## License
 
-`restate` is licensed under the **[PolyForm Noncommercial License 1.0.0](./LICENSE)**.
+`restate` is licensed under the **PolyForm Noncommercial License 1.0.0** for non-commercial use, with a commercial license option available.
 
-- ✅ Free for personal, educational, research, and non-commercial use
-- ✅ Non-profit organizations and public institutions
-- ❌ Commercial use requires a separate license
+### Non-Commercial Use
 
-See [LICENSE](./LICENSE) for full terms: https://polyformproject.org/licenses/noncommercial/1.0.0
+`restate` is free under the **PolyForm Noncommercial License** for:
 
-**For commercial licensing:** info@nativelayer.dev
+- ✓ Open-source projects (OSI-approved licenses)
+- ✓ Personal projects and non-revenue generating applications
+- ✓ Educational purposes and academic research
+- ✓ Non-profit organizations
+- ✓ Internal company tools (non-revenue generating)
+- ✓ Prototypes and MVPs
+
+### Commercial Use
+
+A **commercial license** is required for:
+
+- Proprietary software and closed-source commercial applications
+- SaaS products and revenue-generating applications
+- Enterprise deployments and large-scale corporate use
+- White-label products sold or licensed to third parties
+
+**Commercial licenses include:**
+
+- Legal protection and indemnification
+- Priority support
+- Updates and bug fixes during license term
+- Custom licensing terms for enterprise needs
+
+### Licensing Inquiries
+
+**For commercial licensing, pricing, or questions:**
+- **Email:** info@nativelayer.dev

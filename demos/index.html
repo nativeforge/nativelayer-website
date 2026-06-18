@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>nativelayer.dev: demos</title>
+  <title>nativelayer.dev: weather-report demos</title>
 
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
@@ -12,9 +13,9 @@
   <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 
-  <link rel="stylesheet" href="/__src/css/reset.css">
-  <link rel="stylesheet" href="/__src/css/fonts.css">
-  <link rel="stylesheet" href="/__src/css/global-styles.css">
+  <link rel="stylesheet" href="/__src/css/reset.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/fonts.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/global-styles.css" blocking="render">
 
   <script type="module">
     import {router} from "/__src/js/router.js";
@@ -49,14 +50,16 @@
   </script>
 
   <script type="module">
-    import loaderElement from "/__src/components/loader-element/index.js"
-    customElements.define('loader-element', loaderElement)
+    import monitorLoading from "/__src/components/monitor-loading/index.js"
+    customElements.define('monitor-loading', monitorLoading)
   </script>
+
+  <monitor-loading target="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400"></monitor-loading>
 
 </head>
 
 
-<loader-element app="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400" overlay-fade="400"></loader-element>
+
 
 <body style="opacity: 0; transform: translateY(16px);">
 

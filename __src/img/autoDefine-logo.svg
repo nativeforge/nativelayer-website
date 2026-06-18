@@ -1,0 +1,17 @@
+<svg id="autoDefine-logo" xmlns="http://www.w3.org/2000/svg" width="72" height="36" viewBox="0 0 72 36">
+  <defs>
+    <style>
+      .autoDefine-logo {
+        fill: hsl(var(--fcolor-hsl));
+      }
+    </style>
+  </defs>
+  <polygon class="autoDefine-logo" points="36 9 18 9 9 18 27 18 36 9"/>
+  <polygon class="autoDefine-logo" points="54 27 36 27 27 36 45 36 54 27"/>
+  <polygon class="autoDefine-logo" points="36 27 54 27 63 36 45 36 36 27"/>
+  <polygon class="autoDefine-logo" points="36 27 18 27 9 36 27 36 36 27"/>
+  <polygon class="autoDefine-logo" points="27 18 9 18 0 27 18 27 27 18"/>
+  <polygon class="autoDefine-logo" points="45 18 63 18 72 27 54 27 45 18"/>
+  <polygon class="autoDefine-logo" points="36 9 54 9 63 18 45 18 36 9"/>
+  <polygon class="autoDefine-logo" points="27 0 45 0 54 9 36 9 27 0"/>
+</svg>

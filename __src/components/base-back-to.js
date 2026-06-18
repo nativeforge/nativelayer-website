@@ -1,4 +1,5 @@
-import '/__src/js/register-svg-ninja.js';
+import svgInsert from '/__src/components/svg-insert/index.js'
+// customElements.define('svg-insert', svgInsert)
 
 export default class baseBackTo extends HTMLElement {
   constructor() {
@@ -9,10 +10,11 @@ export default class baseBackTo extends HTMLElement {
     return`
     <style>
       :host{ 
-        background-color: hsla(var(--fcolor-hsl) / 0.2);
+        background-color: hsla(var(--fcolor-hsl) / 0.1);
         border-radius: calc(var(--space-unit) * 1);
-        box-shadow: 0 0 0 1px hsla(0 0% 100% / .8);
+        box-shadow: 0 0 0 1px hsla(var(--fcolor-hsl) / .8);
         overflow: hidden;
+        font-family: var(--ff-3, monospace);
       }
       .back-to-container {
         display: flex;
@@ -20,7 +22,6 @@ export default class baseBackTo extends HTMLElement {
         align-items: center;
         justify-content: flex-start;
         gap: var(--space-unit);
-        box-shadow: 0 0 0 1px hsla(0 0% 100% / .8);
         padding: 0;
         
       }
@@ -39,7 +40,7 @@ export default class baseBackTo extends HTMLElement {
       .back-to-button-logo {
         width: calc(var(--space-unit) * 5);
         height: calc(var(--space-unit) * 5);
-        color: hsl(var(--bcolor-hsl));
+        color: hsl(var(--fcolor-hsl));
       }
       .back-to-button-link {
         text-decoration: none;
@@ -59,9 +60,9 @@ export default class baseBackTo extends HTMLElement {
       <base-button class="back-to-button">
         <a href="/demos" class="back-to-button-link">
           <span class="back-to-button-arrow">←</span>
-          <svg-ninja svg-class="back-to-button-logo" svg-src="/__src/img/native-lines-logo.svg">
-          </svg-ninja>
-          <p slot="text">Back to Demos</p>
+          <svg-insert svg-class="back-to-button-logo" src="/__src/img/native-lines-logo.svg" svg-style="color: hsl(var(--fcolor-hsl))">
+          </svg-insert>
+          <p slot="text">Back to /demos</p>
         </a>
       </base-button>
     </div>
