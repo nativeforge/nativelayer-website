@@ -320,7 +320,7 @@ class topBar extends HTMLElement {
             <ul class="top-bar-nav-list">
               <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/packages">Packages</a></li>
               <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/demos">Demos</a></li>
-              <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/tutos">Tutos</a></li>
+              <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/examples">Examples</a></li>
               <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/about">About</a></li>
             </ul>
           </nav>

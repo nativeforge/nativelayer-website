@@ -26,6 +26,7 @@ class nxCalculator extends HTMLElement {
           --accent-light: #33ffdd;
           --accent-lighter: #77ffee;
           --accent-dark: #00ccb3;
+          --accent-darker: #008f7f;
           --accent-dim: #11b3a077;
           --accent-dim-dark: #0f786c77;
           --accent-dim-darker: #0a7e7022;
@@ -63,6 +64,10 @@ class nxCalculator extends HTMLElement {
           font-family: 'Share Tech Mono', monospace;
         }
 
+        :host-context(html[theme-mode="light"]) {
+          --danger-bg: hsl(355, 50%, 72%);
+        }
+
         /* ── Panel ── */
         .calc {
           width: 100%;
@@ -82,7 +87,33 @@ class nxCalculator extends HTMLElement {
         }
         :host-context(html[theme-mode="light"]) .calc {
           --surface: #afb5c1;
-          // background: #afb5c1;
+        }
+
+        :host-context(html[theme-mode="light"]) .calc-header .brand {
+          color: hsl(225 20% 11%);
+        }
+
+        :host-context(html[theme-mode="light"]) .calc-header .model {
+          color: hsl(218 13% 42%);
+        }
+
+        :host-context(html[theme-mode="light"]) .display {
+          background: hsl(225 18% 86%);
+          border-top-color: hsla(173 100% 45% / 0.12);
+          border-bottom-color: hsla(173 100% 45% / 0.32);
+          border-left-color: hsla(173 100% 45% / 0.12);
+          border-right-color: hsla(173 100% 45% / 0.22);
+          --accent-scanline: rgba(0, 229, 202, 0.05);
+
+        }
+
+        :host-context(html[theme-mode="light"]) .display-operation {
+          color: hsl(218 13% 42%);
+        }
+
+        :host-context(html[theme-mode="light"]) .display-value {
+          color: hsl(225 15% 22%);
+          text-shadow: none;
         }
 
         .calc-header {
@@ -100,17 +131,11 @@ class nxCalculator extends HTMLElement {
           color: var(--accent);
           opacity: 0.8;
         }
-        :host-context(html[theme-mode="light"]) .calc-header .brand {
-          color: var(--screen-bg);
-        }
 
         .calc-header .model {
           font-size: 0.7rem;
           color: var(--text-dim);
           letter-spacing: 0.15em;
-        }
-        :host-context(html[theme-mode="light"]) .calc-header .model {
-          color: var(--text-light);
         }
 
         /* ── Display ── */
@@ -207,6 +232,13 @@ class nxCalculator extends HTMLElement {
         .btn.--op:hover { color: var(--operator-text-hover); }
         .btn.--op:hover::before { background: linear-gradient(0deg, transparent -10%, var(--operator-hover) 150%); }
 
+        :host-context(html[theme-mode="light"]) .btn.--op:hover {
+          color: var(--operator);
+        }
+        :host-context(html[theme-mode="light"]) .btn.--op:hover::before { 
+          background: transparent;
+        }
+
         .btn.--clear:hover { color: var(--danger-text-hover); }
         .btn.--clear:hover::before { background: linear-gradient(0deg, transparent -10%, var(--danger-bg-hover) 150%); }
 
@@ -217,8 +249,24 @@ class nxCalculator extends HTMLElement {
 
         .btn.--fn.--sign { font-size: 1.6rem; }
 
-        .btn.--op { background: var(--operator-dim); color: var(--operator); font-size: 1.6rem; font-weight: 700; }
-        .btn.--op.--active { background: var(--operator-hover); color: var(--operator-text-hover); }
+        .btn.--op { 
+          background: var(--operator-dim);
+          color: var(--operator);
+          font-size: 1.6rem;
+          font-weight: 700; 
+        }
+        :host-context(html[theme-mode="light"]) .btn.--op {
+          background: hsl(24, 8%, 81%);
+          color: var(--operator);
+        }
+        .btn.--op.--active {
+          background: var(--operator-hover);
+          color: var(--operator-text-hover);
+        }
+        :host-context(html[theme-mode="light"]) .btn.--op.--active {
+          background: var(--operator-hover);
+          color: var(--operator-text-hover);
+        }
 
         .btn.--fn { color: var(--text-dim); font-size: 1.2rem; }
         .btn.--fn:hover { color: var(--accent); }
@@ -317,7 +365,7 @@ class nxCalculator extends HTMLElement {
           <button class="btn --fn --bksp"  @click="backspace()">⌫</button>
           <button class="btn --eq" @click="calculate()" style="grid-column: 1 / -1;">=</button>
         </div>
-        
+
       </div>
     `
 

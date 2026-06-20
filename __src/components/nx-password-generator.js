@@ -81,6 +81,37 @@ class nxPasswordGenerator extends HTMLElement {
           background: var(--surface);
         }
 
+        :host-context(html[theme-mode="light"]) {
+          --text: hsl(200 28% 22%);
+          --text-dim: hsl(218 13% 42%);
+          --screen-bg: hsl(200 22% 86%);
+          --surface-button: hsla(226 17% 45% / 0.35);
+          --over-surface-button: hsla(226 19% 60% / 0.45);
+          --accent-glow: hsla(173 100% 45% / 0.25);
+          --accent-scanline: hsla(173 100% 45% / 0.06);
+          --danger: hsl(355, 42%, 40%);
+          --alter-darker: hsl(24, 80%, 60%);
+        }
+        :host-context(html[theme-mode="light"]) .length-value {
+          color: var(--accent-dark);
+        }
+
+        :host-context(html[theme-mode="light"]) .panel {
+          --surface: #c3c7cf;
+        }
+
+        :host-context(html[theme-mode="light"]) .panel-header .brand {
+          color: hsl(173 85% 28%);
+        }
+
+        :host-context(html[theme-mode="light"]) .toggle.--active {
+          color: var(--white);
+        }
+
+        :host-context(html[theme-mode="light"]) .btn.--generate {
+          color: var(--white);
+        }
+
         .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0 0.25rem; }
         .panel-header .brand { font-family: 'Orbitron', sans-serif; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); opacity: 0.8; }
         .panel-header .model { font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.15em; }
@@ -172,7 +203,7 @@ class nxPasswordGenerator extends HTMLElement {
         }
         .toggle:hover { color: var(--text); background: var(--over-surface-button); }
         .toggle.--active { background: var(--accent-dark); color: var(--surface); }
-        .toggle.--active:hover { background: var(--accent); }
+        .toggle.--active:hover { background: var(--accent-darker); }
 
         /* ── Actions ── */
         .actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
@@ -193,7 +224,7 @@ class nxPasswordGenerator extends HTMLElement {
         .btn:active { transform: translateY(1px) scale(0.97); }
 
         .btn.--generate { grid-column: span 2; background: var(--accent-dark); color: var(--screen-bg); font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 700; padding: 1rem 0; letter-spacing: 0.1em; }
-        .btn.--generate:hover { background: var(--accent); }
+        .btn.--generate:hover { background: var(--accent-darker); }
         .btn.--generate:active { background: var(--accent-darker); }
 
         .btn.--copy { background: var(--alter-darker); color: var(--alter-over); font-weight: 700; letter-spacing: 0.05em; }

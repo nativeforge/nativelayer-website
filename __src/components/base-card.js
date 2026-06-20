@@ -60,8 +60,12 @@ class baseCard extends HTMLElement {
         padding: 0;
       }
 
-      ::slotted([slot]) {
+      ::slotted([slot="logo"]) {
         z-index: 1;
+      }
+
+      :host(.--demo-thumb) ::slotted([slot="logo"]) {
+        z-index: 0;
       }
 
       .card {
@@ -69,6 +73,23 @@ class baseCard extends HTMLElement {
         color: currentColor;
         min-height: var(--card-img-height);
         background-color: hsl(var(--card-bg-color-hsl));
+        box-shadow: 0 0 0 0 hsla(230 100% 0% / 0) inset, 
+        0 0 0px 1px hsla(var(--fcolor-hsl) / 0.2);
+        transition: box-shadow 0.32s ease, transform 0.32s ease;
+
+      }
+      :host-context(html[theme-mode="dark"]) .card {
+        box-shadow: 0 0 0 0 hsla(230 100% 0% / 0) inset, 
+        0 0 0px 1px hsla(230 100% 0% / 0.6);
+      }
+
+      .card:hover {
+        box-shadow: 0 0 0 0px hsla(var(--fcolor-hsl) / 0.4) inset, 0 8px 16px 0px hsla(var(--fcolor-hsl) / 0.4);
+        transform: translateY(-2px);
+      }
+      :host-context(html[theme-mode="dark"]) .card:hover {
+        box-shadow: 0 0 0 1px hsla(230 100% 0% / 0.6) inset, 0 4px 12px 0px hsla(230 100% 0% / 0.8);
+        transform: translateY(-4px);
       }
 
       .card-container {
@@ -78,19 +99,12 @@ class baseCard extends HTMLElement {
         height: 100%;
         justify-content: flex-start;
         width: var(--card-width);
-        box-shadow: 0 0 0 1px hsla(var(--fcolor-hsl) / 0.2) inset, 
-        0 0 0px 0px hsla(var(--accent-color-hsl) / 0);
+
         background: hsl(var(--card-bg-color-hsl));
         border-radius: var(--card-border-radius);
         overflow: hidden;
         text-decoration: none;
         cursor: pointer;
-        transition: box-shadow 0.32s ease, transform 0.32s ease;
-      }
-
-      .card-container:hover {
-        box-shadow: 0 0 0 2px hsla(var(--accent-color-hsl) / 0.4) inset, 0 0 8px 1px hsla(var(--accent-color-hsl) / 0.4);
-        transform: translateY(-2px);
       }
 
       .card-image-block {
@@ -101,11 +115,15 @@ class baseCard extends HTMLElement {
         height: var(--card-img-height);
         width: 100%;
         max-width: var(--card-image-block-max-w);
+        isolation: isolate;
       }
 
       .card-image {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
         width: 100%;
-        height: var(--card-img-height);
+        height: 100%;
         background: linear-gradient(90deg, hsla(var(--card-accent-color-hsl) / 0.5) -350%, hsla(var(--card-accent-color-hsl) / 0) 80%), url(${this.imgSrc});
         background-size: 100%;
         background-position: var(--card-image-bg-pos);
@@ -119,8 +137,14 @@ class baseCard extends HTMLElement {
         background-size: var(--card-image-hover-size);
       }
 
+      :host(.--demo-thumb) .card-image {
+        z-index: 1;
+        pointer-events: none;
+      }
+
       .card-image-caption {
         position: absolute;
+        z-index: 2;
         right: calc(var(--space-unit) * 1);
         top: calc(var(--space-unit) * 1);
         padding: var(--card-caption-padding);

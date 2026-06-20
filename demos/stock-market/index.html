@@ -18,6 +18,12 @@
   <link rel="stylesheet" href="/__src/css/global-styles.css" blocking="render">
 
   <script type="module">
+    import { listenForCSSVars, requestCSSVars } from '/__src/js/css-vars-sync.js';
+    listenForCSSVars();
+    requestAnimationFrame(() => requestCSSVars());
+  </script>
+
+  <script type="module">
     import monitorLoading from "/__src/components/monitor-loading/index.js"
     customElements.define('monitor-loading', monitorLoading)
   </script>
@@ -26,7 +32,7 @@
 
 </head>
 <body style="opacity: 0; transform: translateY(16px);">
-
+  <re-theme target-element="nx-stock-market"></re-theme>
   <base-back-to style="position: fixed; top: calc(var(--space-unit) * 4); left: calc(var(--space-unit) * 4); z-index: 100;" reveal></base-back-to>
 
   <nx-stock-market reveal></nx-stock-market>

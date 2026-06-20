@@ -30,6 +30,7 @@ router.on('/about', () => true);
 router.on('/demos', () => true);
 router.on('/docs', () => { window.location.replace('/packages'); });
 router.on('/packages', () => true);
+router.on('/examples', () => true);
 
 router.on('/test', () => true);
 

@@ -69,6 +69,10 @@ export default class baseBackTo extends HTMLElement {
     `;
   }
   connectedCallback() {
+    if (window.self !== window.top) {
+      this.style.display = 'none';
+      return;
+    }
     this.shadowRoot.innerHTML = this.HTML;
   }
 }

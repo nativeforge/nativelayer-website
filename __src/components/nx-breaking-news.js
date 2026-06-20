@@ -86,6 +86,40 @@ class breakingNews extends HTMLElement {
           background: var(--surface);
         }
 
+        :host-context(html[theme-mode="light"]) {
+          --text: hsl(215 35% 22%);
+          --text-dim: hsl(218 13% 42%);
+          --screen-bg: hsl(215 22% 88%);
+          --screen-bg-darker: hsl(215 18% 82%);
+          --screen-text: hsl(215 40% 18%);
+          --screen-text-dim: hsl(218 13% 42%);
+          --screen-scanline: rgba(0, 140, 200, 0.06);
+          --screen-accent: hsl(195 85% 38%);
+          --surface-2: #9aa3b8;
+          --surface-hover: #c8cdd8;
+          --accent-glow: #00d5ff33;
+        }
+
+        :host-context(html[theme-mode="light"]) .panel {
+          --surface: #c5c9d2;
+        }
+
+        :host-context(html[theme-mode="light"]) .panel-header .brand {
+          color: hsl(195 90% 32%);
+        }
+
+        :host-context(html[theme-mode="light"]) .topic-btn {
+          color: hsl(215 40% 18%);
+        }
+
+        :host-context(html[theme-mode="light"]) .topic-btn.--active {
+          color: var(--white);
+        }
+
+        :host-context(html[theme-mode="light"]) .screen-title {
+          color: hsl(355 78% 42%);
+        }
+
         .panel-header {
           display: flex;
           align-items: center;

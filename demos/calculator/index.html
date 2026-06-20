@@ -18,6 +18,12 @@
   <link rel="stylesheet" href="/__src/css/global-styles.css" blocking="render">
 
   <script type="module">
+    import { listenForCSSVars, requestCSSVars } from '/__src/js/css-vars-sync.js';
+    listenForCSSVars();
+    requestAnimationFrame(() => requestCSSVars());
+  </script>
+
+  <script type="module">
     import monitorLoading from '/__src/components/monitor-loading/index.js';
     customElements.define('monitor-loading', monitorLoading);
   </script>

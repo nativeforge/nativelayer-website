@@ -54,6 +54,42 @@
     customElements.define('monitor-loading', monitorLoading)
   </script>
 
+  <script type="module">
+    import { initCSSVarsBroadcaster } from '/__src/js/css-vars-sync.js';
+
+    const THUMB_BASE_W = 1280;
+    const THUMB_BASE_H = 720;
+
+    function fitDemoThumbCover(iframe) {
+      const wrap = iframe.parentElement;
+      if (!wrap) return;
+
+      const scale = Math.max(
+        wrap.clientWidth / THUMB_BASE_W,
+        wrap.clientHeight / THUMB_BASE_H
+      );
+
+      iframe.style.transform = `translateX(-50%) scale(${scale})`;
+    }
+
+    const { requestCSSVars } = initCSSVarsBroadcaster();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.demo-thumb-wrap iframe').forEach((iframe) => {
+        const wrap = iframe.parentElement;
+        const resize = () => fitDemoThumbCover(iframe);
+
+        iframe.addEventListener('load', () => {
+          resize();
+          requestCSSVars();
+        });
+
+        if (wrap) new ResizeObserver(resize).observe(wrap);
+        resize();
+      });
+    });
+  </script>
+
   <monitor-loading target="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400"></monitor-loading>
 
 </head>
@@ -125,42 +161,74 @@
         font-family: var(--ff-2);
         line-height: 1.4;
       }
+      .demo-thumb-wrap {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .demo-thumb-wrap iframe {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 1280px;
+        height: 720px;
+        border: 0;
+        transform-origin: top center;
+      }
     </style>
 
       <div class="grid-container --demos" style="grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));">
 
-        <base-card img-src="/__src/img/demos-thumbs/calculator.png" class="grid-item --sans-serif-title --top-center" link="/demos/calculator" accent-color-hsl="172 100% 45%" reveal>
+        <base-card img-src="" class="grid-item --sans-serif-title --top-center --demo-thumb" link="/demos/calculator" accent-color-hsl="172 100% 45%" reveal>
+          <div slot="logo" class="demo-thumb-wrap">
+            <iframe src="/demos/calculator" loading="lazy" tabindex="-1" title="Calculator demo preview"></iframe>
+          </div>
           <span slot="title">Calculator</span>
           <span slot="description">Calculator for current basic arithmetic operations.</span>
           <span slot="caption">restate + reflectx</span>
         </base-card>
 
-        <base-card img-src="/__src/img/demos-thumbs/password-generator.png" class="grid-item --sans-serif-title --top-center" link="/demos/password-generator" accent-color-hsl="172 100% 45%" reveal>
+        <base-card img-src="" class="grid-item --sans-serif-title --top-center --demo-thumb" link="/demos/password-generator" accent-color-hsl="172 100% 45%" reveal>
+          <div slot="logo" class="demo-thumb-wrap">
+            <iframe src="/demos/password-generator" loading="lazy" tabindex="-1" title="Password Generator demo preview"></iframe>
+          </div>
           <span slot="title">Password Generator</span>
           <span slot="description">Password generator with strength meter and 5 parameters.</span>
           <span slot="caption">restate + reflectx</span>
         </base-card>
 
-        <base-card img-src="/__src/img/demos-thumbs/weather-report.png" class="grid-item --sans-serif-title --top-center" link="/demos/weather-report" accent-color-hsl="172 100% 45%" reveal>
+        <base-card img-src="" class="grid-item --sans-serif-title --top-center --demo-thumb" link="/demos/weather-report" accent-color-hsl="172 100% 45%" reveal>
+          <div slot="logo" class="demo-thumb-wrap">
+            <iframe src="/demos/weather-report" loading="lazy" tabindex="-1" title="Weather Report demo preview"></iframe>
+          </div>
           <span slot="title">Weather Report</span>
           <span slot="description">Weather station with live data, local time, and city selector.</span>
           <span slot="caption">restate + reflectx</span>
         </base-card>
 
-        <base-card img-src="/__src/img/demos-thumbs/radio-tuner.png" class="grid-item --sans-serif-title --top-center" link="/demos/radio-tuner" accent-color-hsl="350 100% 63%" reveal>
+        <base-card img-src="" class="grid-item --sans-serif-title --top-center --demo-thumb" link="/demos/radio-tuner" accent-color-hsl="350 100% 63%" reveal>
+          <div slot="logo" class="demo-thumb-wrap">
+            <iframe src="/demos/radio-tuner" loading="lazy" tabindex="-1" title="Radio Tuner demo preview"></iframe>
+          </div>
           <span slot="title">Radio Tuner</span>
           <span slot="description">Internet radio tuner with 30,000+ stations, genre presets, and live streaming.</span>
           <span slot="caption">restate + reflectx</span>
         </base-card>
 
-        <base-card img-src="/__src/img/demos-thumbs/breaking-news.png" class="grid-item --sans-serif-title --top-center" link="/demos/breaking-news" accent-color-hsl="220 100% 50%" reveal>
+        <base-card img-src="" class="grid-item --sans-serif-title --top-center --demo-thumb" link="/demos/breaking-news" accent-color-hsl="220 100% 50%" reveal>
+          <div slot="logo" class="demo-thumb-wrap">
+            <iframe src="/demos/breaking-news" loading="lazy" tabindex="-1" title="Breaking News demo preview"></iframe>
+          </div>
           <span slot="title">Breaking News</span>
           <span slot="description">News fetching terminal with topic filters.</span>
           <span slot="caption">restate + reflectx + scramblePlugin</span>
         </base-card>
 
-        <base-card img-src="/__src/img/demos-thumbs/stock-market.png"
-        class="grid-item --sans-serif-title --top-center" link="/demos/stock-market" accent-color-hsl="240 100% 50%" reveal>
+        <base-card img-src="" class="grid-item --sans-serif-title --top-center --demo-thumb" link="/demos/stock-market" accent-color-hsl="240 100% 50%" reveal>
+          <div slot="logo" class="demo-thumb-wrap">
+            <iframe src="/demos/stock-market" loading="lazy" tabindex="-1" title="Stock Market demo preview"></iframe>
+          </div>
           <span slot="title">Stock Market</span>
           <span slot="description">Live stock & crypto tracker with charts, favorites, and persistent watchlist.</span>
           <span slot="caption">restate + reflectx + async + persistence</span>

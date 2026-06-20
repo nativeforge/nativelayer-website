@@ -26,7 +26,7 @@ class nxRadioTuner extends HTMLElement {
           --accent: #ff4466;
           --accent-light: #ff6688;
           --accent-dark: #cc3355;
-          --accent-dim:#ff446644;
+          --accent-dim:#e995a46b;
           --accent-dim-dark:#cc335544;
           --accent-dim-darker:#99224422;
           --accent-glow:#ff446655;
@@ -125,10 +125,15 @@ class nxRadioTuner extends HTMLElement {
           -webkit-tap-highlight-color: transparent;
         }
         .genre-btn:hover {
-          color: var(--screen-bg) !important; 
+          color: white;
           background: var(--accent); 
         }
-        :host-context(html[theme-mode="light"]) .genre-btn {
+        .genre-btn.--active {
+          background: var(--accent);
+          color: var(--white);
+        }
+        :host-context(html[theme-mode="light"]) .genre-btn:not(.--active) {
+          background: hsla(22, 8%, 59%,  0.6);
           color: var(--surface);
         }
 
@@ -143,10 +148,24 @@ class nxRadioTuner extends HTMLElement {
           align-items: center;
           position: relative;
           overflow: hidden;
-          border-top:    4px solid var(--accent-dim-darker);
+          border-top:    3px solid var(--accent-dim-darker);
           border-bottom: 3px solid var(--accent-dim-dark);
-          border-left:   4px solid var(--accent-dim-darker);
-          border-right:  1px solid var(--accent-dim);
+          border-left:   3px solid var(--accent-dim-darker);
+          border-right:  3px solid var(--accent-dim-darker);
+        }
+
+        :host-context(html[theme-mode="light"]) .display {
+          background: hsl(190 80% 88%);
+          border-top-color: hsla(355 80% 50% / 0.12);
+          border-bottom-color: hsla(355 80% 50% / 0.28);
+          border-left-color: hsla(355 80% 50% / 0.12);
+          border-right-color: hsla(355 80% 50% / 0.2);
+          --accent-scanline: rgba(255, 68, 102, 0.05);
+        }
+
+        :host-context(html[theme-mode="light"]) .station-name {
+          color: hsl(225 15% 22%);
+          text-shadow: none;
         }
 
         .display::after {
@@ -241,7 +260,6 @@ class nxRadioTuner extends HTMLElement {
           display: none;
           flex-direction: column;
           gap: 1px;
-          background: var(--screen-bg);
           max-height: 200px;
           overflow-y: auto;
           scrollbar-width: thin;
@@ -266,6 +284,9 @@ class nxRadioTuner extends HTMLElement {
         .station-item:hover      { background: var(--over-surface-button); color: var(--accent); }
         .station-item.--playing  { background: var(--accent); color: var(--white); }
         .station-item.--playing:hover { color: var(--white); }
+
+        :host-context(html[theme-mode="light"]) .station-item {
+          background: var(--accent-dim-darker);
 
         /* ── Favorites ── */
         .favorites-strip { display: flex; gap: 0.5rem; overflow-x: auto; padding: 0.25rem 0; scrollbar-width: none; }
@@ -295,16 +316,16 @@ class nxRadioTuner extends HTMLElement {
         </div>
 
         <div class="genres">
-          <button class="genre-btn" @click="searchTag('pop')">Pop</button>
-          <button class="genre-btn" @click="searchTag('rock')">Rock</button>
-          <button class="genre-btn" @click="searchTag('jazz')">Jazz</button>
-          <button class="genre-btn" @click="searchTag('electronic')">Electronic</button>
-          <button class="genre-btn" @click="searchTag('classical')">Classical</button>
-          <button class="genre-btn" @click="searchTag('news')">News</button>
-          <button class="genre-btn" @click="searchTag('hiphop')">Hip-Hop</button>
-          <button class="genre-btn" @click="searchTag('latin')">Latin</button>
-          <button class="genre-btn" @click="searchTag('ambient')">Ambient</button>
-          <button class="genre-btn" @click="searchTag('metal')">Metal</button>
+          <button class="genre-btn" x-class="(--active, activeTag === 'pop')" @click="searchTag('pop')">Pop</button>
+          <button class="genre-btn" x-class="(--active, activeTag === 'rock')" @click="searchTag('rock')">Rock</button>
+          <button class="genre-btn" x-class="(--active, activeTag === 'jazz')" @click="searchTag('jazz')">Jazz</button>
+          <button class="genre-btn" x-class="(--active, activeTag === 'electronic')" @click="searchTag('electronic')">Electronic</button>
+          <button class="genre-btn" x-class="(--active, activeTag === 'classical')" @click="searchTag('classical')">Classical</button>
+          <button class="genre-btn" x-class="(--active, activeTag === 'news')" @click="searchTag('news')">News</button>
+          <button class="genre-btn" x-class="(--active, activeTag === 'hiphop')" @click="searchTag('hiphop')">Hip-Hop</button>
+          <button class="genre-btn" x-class="(--active, activeTag === 'latin')" @click="searchTag('latin')">Latin</button>
+          <button class="genre-btn" x-class="(--active, activeTag === 'ambient')" @click="searchTag('ambient')">Ambient</button>
+          <button class="genre-btn" x-class="(--active, activeTag === 'metal')" @click="searchTag('metal')">Metal</button>
         </div>
 
         <div class="display">
@@ -353,9 +374,6 @@ class nxRadioTuner extends HTMLElement {
           </template>
         </div>
 
-        <div class="panel-footer">
-          <p>Powered by restate + reflectx</p>
-        </div>
       </div>
     `
 
@@ -412,6 +430,7 @@ class nxRadioTuner extends HTMLElement {
     }
 
     async function searchByTag(tag) {
+      state.activeTag = tag
       state.searchLoading = true
       searchInput.value = ''
       try { applyResults(await fetchStations({ tag })) }
@@ -443,6 +462,7 @@ class nxRadioTuner extends HTMLElement {
 
     // ── State ────────────────────────────────────────────────────────────────
     const state = restate({
+      activeTag: 'jazz',
       stationLabels: [], searchLoading: false,
       stationName: '', stationCountry: '', stationTags: '', stationBitrate: 0, stationCodec: '', stationUrl: '',
       playing: false, buffering: false, error: false, errorMsg: '',
@@ -524,6 +544,8 @@ class nxRadioTuner extends HTMLElement {
     }
     state.$onChange(() => render())
     render()
+
+    searchByTag('jazz')
   }
 
   disconnectedCallback() {

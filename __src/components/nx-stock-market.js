@@ -66,7 +66,7 @@ class nxStockMarket extends HTMLElement {
         }
 
         :host-context(html[theme-mode="light"]) {
-          --surface: #afb5c1;
+          --surface: #c4cbd9;
         }
 
         /* ── Panel ── */
