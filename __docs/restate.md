@@ -4,65 +4,26 @@
 
 # restate
 
-version `0.2.1`
+::div{style="display: inline-flex; gap: calc(var(--space-unit)*1);"}
+![npm version](https://img.shields.io/npm/v/@nativelayer.dev/restate)
+![bundle size](https://img.shields.io/bundlephobia/minzip/@nativelayer.dev/restate)
+![license](https://img.shields.io/github/license/ynck-chrl/restate)
+![last commit](https://img.shields.io/github/last-commit/ynck-chrl/restate)
+::
 
 A minimal, framework-agnostic reactive state management library built on ES6 proxies. `restate` provides:
 
 - A tiny footprint (~2.8 KB gzipped), zero dependencies.
-- A simple core API: `$onChange`, `$watch`, `$set`, `$destroy`, plus built-in `$computed` and `$methods`.
+- A simple core API: `$onChange`, `$watch`, `$set`, `$computed`, `$methods` and `$destroy`.
 - Chainable plugin system to add persistence, history, immutability, async handling, and validation.
 - Both CommonJS and ES module builds for universal compatibility.
 - No boilerplate: read and write state directly on a proxy.
 
-**Bundle size (minified + gzipped): ~2.8 KB** — includes built-in `$computed()` and `$methods()`.
+**Bundle size (minified + gzipped): ~2.8 KB**
 
 ## Installation
 
-Published on npm as [**`@nativelayer.dev/restate`**](https://www.npmjs.com/package/@nativelayer.dev/restate).
-
-### Package managers
-
-```bash
-npm install @nativelayer.dev/restate
-yarn add @nativelayer.dev/restate
-bun add @nativelayer.dev/restate
-```
-
-After installing, import from the package name:
-
-```js
-// ESM (recommended)
-import { restate } from '@nativelayer.dev/restate';
-
-// CommonJS (Node.js)
-const { restate } = require('@nativelayer.dev/restate');
-```
-
-### CDN (browser, Deno, or plain ESM without a bundler)
-
-Prefer a **pinned** version in production (replace `0.2.1` with the release you ship).
-To always follow **latest**, use the “latest” URL for each CDN (builds can change without warning):
-
-```js
-// esm.sh — pinned
-import { restate } from 'https://esm.sh/@nativelayer.dev/restate@0.2.1';
-// esm.sh — latest (no version suffix)
-import { restate } from 'https://esm.sh/@nativelayer.dev/restate';
-
-// unpkg — pinned
-import { restate } from 'https://unpkg.com/@nativelayer.dev/restate@0.2.1/dist/restate.esm.min.js';
-// unpkg — latest
-import { restate } from 'https://unpkg.com/@nativelayer.dev/restate@latest/dist/restate.esm.min.js';
-
-// Skypack — pinned
-import { restate } from 'https://cdn.skypack.dev/@nativelayer.dev/restate@0.2.1';
-// Skypack — latest (omit the version)
-import { restate } from 'https://cdn.skypack.dev/@nativelayer.dev/restate';
-```
-
-### Vendored `dist` files (clone / download)
-
-If you ship the library files next to your app:
+Import directly in a browser or module bundler:
 
 ```js
 // ESM (recommended)
@@ -76,11 +37,9 @@ const { restate } = require('./dist/restate.cjs.min.js');
 
 | Your setup | Use this |
 |------------|----------|
-| npm, Yarn, or Bun project | `@nativelayer.dev/restate` after install |
-| Vite, esbuild, modern bundler | Package import or `dist/restate.esm.min.js` (vendored) |
-| Node.js with `require()` | Package `require` or `dist/restate.cjs.min.js` |
-| Node.js with `"type": "module"` | Package import or `dist/restate.esm.min.js` |
-| No install (CDN) | esm.sh, unpkg, or Skypack URLs above |
+| Vite, esbuild, modern bundler | `dist/restate.esm.min.js` (recommended) |
+| Node.js with `require()` | `dist/restate.cjs.min.js` |
+| Node.js with `"type": "module"` | `dist/restate.esm.min.js` |
 
 ## Basic Usage
 
@@ -102,10 +61,42 @@ const state = restate({
 Read and write properties directly on the reactive proxy:
 
 ```js
+const state = restate({
+  count: 0,
+  label: 'hello',
+  user: { name: 'Alice', age: 30 },
+  tags: ['a', 'b', 'c'],
+  matrix: [[1, 2], [3, 4]]
+});
+
+// Primitives
 console.log(state.count); // 0
-// Straight forward syntax for mutations
-state.count = 5; // mutates 'count'  
-// and triggers change notifications
+state.count = 5;          // triggers change notification
+state.label = 'world';
+
+// Nested object properties
+state.user.name = 'Bob';  // deep mutation, triggers notification
+state.user.age = 25;
+
+// Replace entire nested object
+state.user = { name: 'Carol', age: 40 };
+
+// Add a new property dynamically
+state.user.email = 'carol@example.com';
+
+// Arrays — index assignment
+state.tags[0] = 'x';     // triggers notification
+
+// Arrays — mutating methods (push, pop, splice, etc.)
+state.tags.push('d');
+state.tags.splice(1, 1);
+state.tags.pop();
+
+// Replace entire array
+state.tags = ['x', 'y', 'z'];
+
+// Nested arrays
+state.matrix[0][1] = 99;
 ```
 
 ## Core Reactivity API
@@ -506,9 +497,98 @@ const state3 = restate({ count: 5 })
 
 ---
 
+## Name Collision
+
+`restate` enforces strict name collision rules to keep the plugin system safe and predictable.
+
+### Reserved core methods
+
+The following method names are permanently reserved and cannot be overridden by plugins or user-defined methods:
+
+```
+$onChange  $watch  $unwatch  $set  $computed
+$dependencies  $methods  $destroy  $registry  use
+```
+
+Any attempt to define or override one of these will throw immediately:
+
+```js
+state.$methods({
+  $set: () => {} // throws: Cannot define method '$set' - it's a reserved core method
+});
+```
+
+### Reserved prefix `_`
+
+Any method name starting with `_` is reserved for internal use. Plugins and user methods cannot define names with this prefix:
+
+```js
+state.$methods({
+  _internal: () => {} // throws: names starting with '_' are reserved
+});
+```
+
+### Plugin-vs-plugin collision
+
+If two plugins define a method with the same name, `restate` throws with a detailed message identifying which plugin defined it first and which one caused the conflict:
+
+```
+Method collision: '$reset'
+  - First defined by: plugin 'HistoryPlugin' (loaded #1)
+  - Attempted by: plugin 'ResetPlugin' (loaded #2)
+  Consider renaming the method or using 'overrides: ["$reset"]' in the plugin definition.
+```
+
+To explicitly allow a plugin to override a method from a previously loaded plugin, declare it in `overrides`:
+
+```js
+const ResetPlugin = {
+  name: 'ResetPlugin',
+  overrides: ['$reset'], // declares intent to override
+  methods: {
+    $reset() { /* new implementation */ }
+  }
+};
+```
+
+The overridden method must have been marked as `configurable` by the plugin that originally defined it, otherwise the override is still rejected.
+
+### Duplicate plugin registration
+
+Registering the same plugin twice throws:
+
+```js
+state.use(PersistencePlugin).use(PersistencePlugin);
+// throws: Plugin 'PersistencePlugin' is already registered
+```
+
+### Computed key collision
+
+`restate` skips any computed key that collides with a reserved core method name and logs a warning:
+
+```js
+state.$computed({
+  $set: (s) => s.a + s.b // skipped with warning: Skipping reserved computed key '$set'
+});
+```
+
+### Summary
+
+| Scenario | Behavior |
+|---|---|
+| Plugin overrides core method | throws |
+| Plugin uses `_` prefix | throws |
+| Two plugins define same method | throws (unless `overrides` declared) |
+| Plugin overrides non-configurable method | throws |
+| Same plugin registered twice | throws |
+| Computed key matches core method | skipped with warning |
+| User method overrides another user method | allowed |
+
+---
+
 ## Built-in Plugins
 
-> **Note:** Built-in Plugins are audited and approuved by NativeWebDev team before being published. Always check and audit the code of Plugins you use with `restate` if they are not built-in plugins.
+> **Security notice:** Built-in plugins are audited by the nativelayer team before publishing. For any third-party plugin — or any plugin you did not write yourself — you must read and audit its source code before using it. Plugins run inside your state instance and have full access to all state values, watchers, computed properties, and lifecycle hooks. A malicious or poorly written plugin can silently corrupt state, leak data, or intercept all mutations. Never use a plugin you have not personally reviewed.
 
 ### PersistencePlugin
 
@@ -785,7 +865,7 @@ await state.$async('todos', () => fetchTodos(), {
 });
 ```
 
-**Basic loading & error handling**
+#### Basic loading & error handling**
 
 ```js
 // Basic loading and error state
@@ -797,7 +877,7 @@ console.log(state.loading); // false
 console.log(state.error);   // undefined
 ```
 
-**Optimistic update**
+#### ptimistic update**
 
 ```js
 // Provide an optimistic initial value
@@ -808,7 +888,7 @@ await state.$async('count', () => api.getCount(), {
 console.log(state.count); // 0 then actual value
 ```
 
-**Retry logic**
+#### Retry logic**
 
 ```js
 // Retry on failure up to 3 times
@@ -820,7 +900,7 @@ await state.$async('fetchUser', () => fetchUser(), {
 });
 ```
 
-**Dedupe concurrent calls**
+** Dedupe concurrent calls**
 
 ```js
 // Dedupe concurrent invocations
@@ -829,14 +909,14 @@ const p2 = state.$async('todos', () => fetchTodosNew(), { dedupe: true });
 console.log(p1 === p2); // true
 ```
 
-**Manual cache clear**
+** Manual cache clear**
 
 ```js
 // Manually clear cached data
 state.$clearCache('todos');
 ```
 
-**Loading state check**
+#### Loading state check**
 
 ```js
 // Check if async task is in progress
@@ -869,7 +949,7 @@ Methods:
 |----------------------------|-------------------------------------|----------------|---------------------------------------|
 | `$validators(newValidators)` | `object` mapping path→validator      | reactive proxy | Add or update validators at runtime   |
 
-**Primitive validation**
+#### Primitive validation**
 
 ```js
 // initial setup
@@ -881,7 +961,7 @@ state.age = 10;  // valid
 state.age = -5;  // throws TypeError
 ```
 
-**Runtime validators**
+#### Runtime validators**
 
 ```js
 state.$validators({
@@ -892,7 +972,7 @@ state.name = 'Alice'; // valid
 state.name = '';      // throws TypeError
 ```
 
-**Nested property validation**
+#### Nested property validation**
 
 ```js
 const userState = restate({ user: { email: '' } })
@@ -904,7 +984,7 @@ userState.user.email = 'bob@example.com';  // valid
 userState.user.email = 'invalid-email';    // throws TypeError
 ```
 
-**Boolean validation**
+#### Boolean validation**
 
 ```js
 const boolState = restate({ isAdmin: false })
@@ -916,7 +996,7 @@ boolState.isAdmin = true;  // valid
 boolState.isAdmin = 'yes'; // throws TypeError
 ```
 
-**Object validation**
+#### Object validation**
 
 ```js
 const configState = restate({ config: {} })
@@ -929,7 +1009,7 @@ configState.config = { mode: 'dark' }; // valid
 configState.config = { version: 1 };   // throws TypeError
 ```
 
-**Array validation**
+#### Array validation**
 
 ```js
 const listState = restate({ items: [] })
@@ -940,7 +1020,6 @@ const listState = restate({ items: [] })
 listState.items = [1,2,3];       // valid
 listState.items = ['a','b','c']; // throws TypeError
 ```
-
 
 ## Snippets
 
@@ -1061,7 +1140,7 @@ state.use(AsyncPlugin({
 
 **Fixes implemented:**
 
-**1. Built-in AES-GCM encryption** — No more plain text storage:
+#### 1. Built-in AES-GCM encryption — No more plain text storage:
 
 ```javascript
 // Simple: just provide a password
@@ -1072,7 +1151,7 @@ const state = restate({ secrets: {} })
   }));
 ```
 
-**2. HMAC-SHA256 integrity checking** — Detect tampering:
+#### HMAC-SHA256 integrity checking — Detect tampering:
 
 ```javascript
 const state = restate({ data: {} })
@@ -1084,7 +1163,7 @@ const state = restate({ data: {} })
 // If localStorage is modified, loadState() returns false
 ```
 
-**3. Schema validation before migrations** — Validate before executing user code:
+#### Schema validation before migrations — Validate before executing user code:
 
 ```javascript
 const state = restate({ user: { id: '', name: '' } })
@@ -1110,9 +1189,9 @@ const state = restate({ user: { id: '', name: '' } })
 | Value in error message | Low | ✅ Fixed | `JSON.stringify(value)` could expose secrets |
 | Nested proxy overhead | Low | ✅ Fixed | Old implementation wrapped proxies with more proxies |
 
-**1. Values are now safely redacted** in error messages to prevent sensitive data exposure:
+#### Values are now safely redacted in error messages to prevent sensitive data exposure:
 
-**2. Now uses `beforeSet` hook** instead of monkey-patching `_wrap()` and creating nested proxies:
+#### Now uses `beforeSet` hook instead of monkey-patching `_wrap()` and creating nested proxies
 
 ```javascript
 // Old approach (problematic):
@@ -1211,26 +1290,26 @@ The following table lists all JavaScript operations that can bypass restate's Pr
 
 | Operation | Bypasses Proxy? | Risk Level | Description | Safe Alternative |
 |-----------|-----------------|------------|-------------|------------------|
-| `{ ...obj }` (spread) | ✅ Yes | High | Creates plain object copy, no proxy traps | Use `state.$set()` or sanitize input |
-| `Object.assign(target, src)` | ✅ Yes | High | Copies properties directly to target | Sanitize source before assigning |
-| `JSON.parse(JSON.stringify(obj))` | ✅ Yes | High | Deep clone creates plain object | Use for serialization only, not mutation |
-| `structuredClone(obj)` | ✅ Yes | High | Deep clone bypasses proxy entirely | Use for cloning only, not mutation |
-| `Object.fromEntries(Object.entries(obj))` | ✅ Yes | Medium | Converts to/from entries, loses proxy | Avoid for state manipulation |
-| `_.cloneDeep(obj)` (Lodash) | ✅ Yes | High | Library clones create plain objects | Use native proxy-aware methods |
-| `Array.from(arr)` / `[...arr]` | ✅ Yes | Medium | Array spread creates plain array | Use `state.$set()` for array updates |
+| `{ ...obj }` (spread) | ❌ Yes | High | Creates plain object copy, no proxy traps | Use `state.$set()` or sanitize input |
+| `Object.assign(target, src)` | ❌ Yes | High | Copies properties directly to target | Sanitize source before assigning |
+| `JSON.parse(JSON.stringify(obj))` | ❌ Yes | High | Deep clone creates plain object | Use for serialization only, not mutation |
+| `structuredClone(obj)` | ❌ Yes | High | Deep clone bypasses proxy entirely | Use for cloning only, not mutation |
+| `Object.fromEntries(Object.entries(obj))` | ❌ Yes | Medium | Converts to/from entries, loses proxy | Avoid for state manipulation |
+| `_.cloneDeep(obj)` (Lodash) | ❌ Yes | High | Library clones create plain objects | Use native proxy-aware methods |
+| `Array.from(arr)` / `[...arr]` | ❌ Yes | Medium | Array spread creates plain array | Use `state.$set()` for array updates |
 | `.map()`, `.filter()`, `.slice()` | ⚠️ Partial | Low | Returns new plain array (reads are proxied) | Assign result back via `$set()` |
-| `Object.keys()` / `.values()` / `.entries()` | ❌ No | Low | Reads through proxy (safe for reading) | Safe to use |
-| `for...in` / `for...of` | ❌ No | Low | Iteration triggers proxy traps | Safe to use |
+| `Object.keys()` / `.values()` / `.entries()` | ✅ No | Low | Reads through proxy (safe for reading) | Safe to use |
+| `for...in` / `for...of` | ✅ No | Low | Iteration triggers proxy traps | Safe to use |
 | Destructuring `const { a } = state` | ⚠️ Partial | Low | Read is proxied, but `a` is now a plain value | Safe for reading, not for nested mutation |
 | `Object.getOwnPropertyDescriptor()` | ⚠️ Partial | Low | Can access descriptors directly | Avoid for untrusted keys |
-| `Reflect.get()` / `Reflect.set()` | ❌ No | Low | Works with proxy traps | Safe to use |
-| `delete obj.prop` | ❌ No | Low | Triggers proxy `deleteProperty` trap | Safe to use |
-| `'prop' in obj` | ❌ No | Low | Triggers proxy `has` trap | Safe to use |
+| `Reflect.get()` / `Reflect.set()` | ✅ No | Low | Works with proxy traps | Safe to use |
+| `delete obj.prop` | ✅ No | Low | Triggers proxy `deleteProperty` trap | Safe to use |
+| `'prop' in obj` | ✅ No | Low | Triggers proxy `has` trap | Safe to use |
 
 **Legend:**
-- ✅ Yes = Completely bypasses proxy, creates unprotected data
+- ❌ Yes = Completely bypasses proxy, creates unprotected data
 - ⚠️ Partial = Some operations are proxied, but result may not be
-- ❌ No = Works correctly with proxy traps
+- ✅ No = Works correctly with proxy traps
 
 ```javascript
 // Examples of bypassing operations
@@ -1375,6 +1454,8 @@ A **commercial license** is required for:
 - Custom licensing terms for enterprise needs
 
 ### Licensing Inquiries
+
+[View restate licensing & pricing](https://nativelayer.dev/licenses)
 
 **For commercial licensing, pricing, or questions:**
 - **Email:** info@nativelayer.dev

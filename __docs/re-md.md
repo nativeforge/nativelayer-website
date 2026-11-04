@@ -160,13 +160,15 @@ Map markdown elements to custom HTML elements:
 | `transform` | string | — | Rules mapping markdown elements to HTML elements (see Transform rules) |
 | `chapter-mode` | boolean | false | Split content into sections by `h2`; only the active section is visible |
 | `syntax-css` | string | built-in | Comma-separated URLs for code block syntax theme CSS |
+| `accent-color` | string | inherited | Per-instance accent: any CSS color (`hsl(210 85% 58%)`, `#336699`, `var(--token)`) or HSL triplet (`210 85% 58%`) |
+| `accent-color-hsl` | string | — | Alias for `accent-color` when passing an HSL triplet only |
 | `line-focus` | string | — | Comma-separated line numbers to visually highlight in code blocks |
 | `logs` | boolean | false | Enable verbose debug logging to the console |
 | `hljs-src` | string | `https://esm.sh/highlight.js` | URL to load `highlight.js` from. Only fetched when the markdown contains at least one code block. Override with a local or pinned URL for offline use. |
 
 ### Observed attributes
 
-`re-md` re-renders automatically when `src` or `transform` change. All other attributes are read once at render time.
+`re-md` re-renders automatically when `src`, `transform`, `accent-color`, or `accent-color-hsl` change. All other attributes are read once at render time.
 
 ### DOM structure after render
 
@@ -516,11 +518,29 @@ This logs heading ID generation, transform rule parsing, fetch operations, and S
 
 | Variable | Fallback | Used on |
 |---|---|---|
-| `--accent-color-hsl` | `--fcolor-hsl` | Code block backgrounds, borders, blockquote border |
+| `--re-md-accent` | `hsl(var(--accent-color-hsl, var(--fcolor-hsl)))` | Tables, inline code, blockquotes, code block chrome |
+| `--re-md-accent-foreground` | `hsl(var(--over-accent-color-hsl, 250 5% 92%))` | Table header text on accent background |
+| `--re-md-accent-adjusted-hard` | `--re-md-accent` | Inline code / code blocks when accent is very light (light mode) |
+| `--accent-color-hsl` | `--fcolor-hsl` | Legacy triplet for external syntax CSS themes |
+| `--over-accent-color-hsl` | `250 5% 92%` | Legacy triplet for table header text |
 | `--fcolor-hsl` | `0 0% 0%` | Final fallback for foreground color |
-| `--bcolor-hsl` | `0 0% 100%` | Table header background, copy button background |
-| `--over-accent-color-hsl` | `0 0% 100%` | Table header text color |
-| `--accent-color-hsl-adjusted-hard` | `--accent-color-hsl` → `--fcolor-hsl` → `0 0% 0%` | Code blocks in light mode with a light accent color |
+| `--bcolor-hsl` | `0 0% 100%` | Table header column separators, copy button background |
+
+Set `accent-color` on the element to override per instance (full CSS colors and `var()` references work):
+
+```html
+<re-md src="/articles/post.md" accent-color="var(--brand-accent)"></re-md>
+<re-md src="/docs/guide.md" accent-color="255 75% 55%"></re-md>
+```
+
+Or override on a parent / `:root`:
+
+```css
+re-md {
+  --re-md-accent: hsl(255 75% 55%);
+  --re-md-accent-foreground: hsl(250 5% 92%);
+}
+```
 
 ### Opacity / transparency
 
@@ -543,14 +563,12 @@ This logs heading ID generation, transform rule parsing, fetch operations, and S
 | `--space-unit` | `0.5rem` | All internal spacing, padding, margins |
 | `--size-unit` | `0.5rem` | Border-radius calculations |
 
-Override any of these on `:root` or a parent element to theme `re-md` without touching its source:
+Override any spacing or opacity variable on `:root` or a parent element to theme `re-md` without touching its source:
 
 ```css
 :root {
   --codeblock-font-size: 0.8rem;
   --blockquote-font-size: 1em;
-  --accent-color-hsl: 255 75% 55%;
-  --over-accent-color-hsl: 0 0% 100%;
   --inline-code-bg-opacity: 0.08;
 }
 ```
@@ -579,6 +597,43 @@ Override any of these on `:root` or a parent element to theme `re-md` without to
 
 ## License
 
-MIT License. Copyright (c) 2026 ynck-chrl.
+`re-md` is licensed under the **PolyForm Noncommercial License 1.0.0** for non-commercial use, with a commercial license option available.
 
-See [LICENSE](../LICENSE) for the full text.
+### Non-Commercial Use
+
+`re-md` is free under the **PolyForm Noncommercial License** for:
+
+- ✓ Open-source projects (OSI-approved licenses)
+- ✓ Personal projects and non-revenue generating applications
+- ✓ Educational purposes and academic research
+- ✓ Non-profit organizations
+- ✓ Internal company tools (non-revenue generating)
+- ✓ Prototypes and MVPs
+
+See [LICENSE](./LICENSE) for full details.
+
+### Commercial Use
+
+A **commercial license** is required for:
+
+- Proprietary software and closed-source commercial applications
+- SaaS products and revenue-generating applications
+- Enterprise deployments and large-scale corporate use
+- White-label products sold or licensed to third parties
+
+**Commercial licenses include:**
+
+- Legal protection and indemnification
+- Priority support
+- Updates and bug fixes during license term
+- Custom licensing terms for enterprise needs
+
+### Licensing Inquiries
+
+**For commercial licensing, pricing, or questions:**
+
+::base-button {class="--light" target="_blank" href="/licenses#re-md" style="padding: calc(var(--space-unit)* 3) 0"}
+View re-md licensing & pricing
+::
+
+- **Email:** info@nativelayer.dev

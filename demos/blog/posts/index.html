@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
+  <meta name="color-scheme" content="dark light">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Posts — nullsignal</title>
+
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#0d0f14">
+
+  <link rel="stylesheet" href="/__src/css/reset.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/fonts.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/global-styles.css" blocking="render">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inconsolata:wght@300;400;600&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" blocking="render">
+  <link rel="stylesheet" href="/demos/blog/blog.css" blocking="render">
+
+  <style>
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: calc(var(--space-unit) * 2);
+      align-items: center;
+      margin-bottom: calc(var(--space-unit) * 8);
+    }
+
+    .filter-label {
+      font-family: var(--ff-3, 'JetBrains Mono', monospace);
+      font-size: var(--f-size-t);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: hsl(var(--fcolor-hsl) / 0.4);
+      margin-right: calc(var(--space-unit) * 1);
+    }
+
+    .filter-bar + .filter-bar {
+      margin-top: calc(var(--space-unit) * -4);
+    }
+
+    .post-count {
+      font-family: var(--ff-3, monospace);
+      font-size: var(--f-size-t);
+      letter-spacing: 0.1em;
+      color: hsl(var(--fcolor-hsl) / 0.3);
+      margin-left: auto;
+    }
+
+    .posts-header {
+      display: flex;
+      align-items: baseline;
+      gap: calc(var(--space-unit) * 3);
+      margin-bottom: calc(var(--space-unit) * 6);
+    }
+  </style>
+
+  <script type="module">
+    import { makeReady }    from '/__src/libs/makeReady/index.js';
+    import monitorLoading   from '/__src/components/monitor-loading/index.js';
+    import blogTopBar       from '/__src/components/blog-top-bar.js';
+    import postCard         from '/__src/components/post-card.js';
+    import pageContainer    from '/__src/components/page-container.js';
+    import gridContainer    from '/__src/components/grid-container.js';
+    import flexContainer    from '/__src/components/flex-container.js';
+    import pillBase         from '/__src/components/pill-base.js';
+
+    [blogTopBar, postCard, pageContainer, gridContainer, flexContainer, pillBase]
+      .forEach(Cls => makeReady(Cls));
+
+    customElements.define('monitor-loading', monitorLoading);
+    customElements.define('blog-top-bar',   blogTopBar);
+    customElements.define('post-card',      postCard);
+    customElements.define('page-container', pageContainer);
+    customElements.define('grid-container', gridContainer);
+    customElements.define('flex-container', flexContainer);
+    customElements.define('pill-base',      pillBase);
+  </script>
+
+</head>
+
+<body style="opacity: 0; transform: translateY(16px);">
+  
+  <monitor-loading target="body" path="/__src/components/" brand="nullsignal" show-duration="300"></monitor-loading>
+  
+  <blog-top-bar reveal></blog-top-bar>
+
+  <page-container style="gap: calc(var(--space-unit) * 10); padding-block-end: calc(var(--space-unit) * 20);" reveal>
+
+    <header style="padding-block-start: calc(var(--space-unit) * 8); padding-block-end: calc(var(--space-unit) * 4); border-bottom: 1px solid hsl(var(--blog-accent) / 0.15);">
+      <span style="font-family: var(--ff-3, monospace); font-size: var(--f-size-s); letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--blog-accent)); text-shadow: 0 0 calc(var(--space-unit)*2) hsl(var(--blog-accent)/0.6);">–– BROADCAST</span>
+      <h1 class="blog-section-title" style="font-size: var(--f-size-2xl); margin-top: calc(var(--space-unit) * 2);">All <span class="accent">Posts</span></h1>
+    </header>
+
+    <section>
+      <div class="filter-bar" id="signal-filter-bar">
+        <span class="filter-label">Signal:</span>
+      </div>
+
+      <div class="filter-bar" id="topic-filter-bar">
+        <span class="filter-label">Topic:</span>
+      </div>
+
+      <div class="posts-header">
+        <div class="blog-divider" style="flex: 1;"></div>
+        <span class="post-count" id="post-count"></span>
+      </div>
+
+      <grid-container
+        id="posts-grid"
+        grid-template-columns="repeat(auto-fill, minmax(min(100%, 22rem), 1fr))"
+        gap="calc(var(--space-unit) * 4)">
+      </grid-container>
+    </section>
+
+  </page-container>
+
+  <script type="module">
+    import {
+      signals,
+      signalLabels,
+      signalAccent,
+      topics,
+      topicLabels,
+      filterPosts,
+      getPostAccent,
+      getPostSignalLabel,
+      formatTopicsAttr,
+    } from '/demos/blog/posts-data.js';
+    import { restate } from '/__src/libs/restate/restate.esm.min.js';
+    import { startBlogRouter, onBlogRoute, router, buildPostsUrl } from '/demos/blog/router.js';
+
+    const state = restate({
+      activeSignal: null,
+      activeTopic: null,
+    });
+
+    const grid = document.getElementById('posts-grid');
+    const signalFilterBar = document.getElementById('signal-filter-bar');
+    const topicFilterBar = document.getElementById('topic-filter-bar');
+    const countEl = document.getElementById('post-count');
+
+    function syncFromQuery(query = {}) {
+      const nextSignal = query.signal && signals.includes(query.signal) ? query.signal : null;
+      const nextTopic = query.topic && topics.includes(query.topic) ? query.topic : null;
+      if (state.activeSignal !== nextSignal) state.activeSignal = nextSignal;
+      if (state.activeTopic !== nextTopic) state.activeTopic = nextTopic;
+    }
+
+    onBlogRoute('posts', syncFromQuery);
+
+    function addFilterPill(bar, { label, value, datasetKey, variant, accent }) {
+      const pill = document.createElement('pill-base');
+      pill.setAttribute('variant', variant);
+      if (accent) pill.setAttribute('accent', accent);
+      pill.dataset[datasetKey] = value;
+      pill.textContent = label;
+      pill.addEventListener('click', () => {
+        if (datasetKey === 'signal') state.activeSignal = value || null;
+        if (datasetKey === 'topic') state.activeTopic = value || null;
+      });
+      bar.appendChild(pill);
+    }
+
+    addFilterPill(signalFilterBar, { label: 'All', value: '', datasetKey: 'signal', variant: 'neutral' });
+    signals.forEach(sig => {
+      addFilterPill(signalFilterBar, {
+        label: signalLabels[sig],
+        value: sig,
+        datasetKey: 'signal',
+        variant: 'signal',
+        accent: signalAccent[sig],
+      });
+    });
+
+    addFilterPill(topicFilterBar, { label: 'All', value: '', datasetKey: 'topic', variant: 'neutral' });
+    topics.forEach(topic => {
+      addFilterPill(topicFilterBar, {
+        label: topicLabels[topic],
+        value: topic,
+        datasetKey: 'topic',
+        variant: 'topic',
+      });
+    });
+
+    function syncFilterBarPills(bar, { datasetKey, activeValue, defaultVariant, getAccent, muteWhenAllSelected = false }) {
+      bar.querySelectorAll('pill-base').forEach(pill => {
+        const pillValue = pill.dataset[datasetKey] ?? '';
+        const isAll = pillValue === '';
+        const isActive = (isAll && activeValue == null) || pillValue === activeValue;
+        const filterActive = activeValue != null;
+
+        pill.toggleAttribute('active', isActive);
+
+        if (isAll) {
+          pill.setAttribute('variant', isActive ? 'topic' : 'neutral');
+          pill.removeAttribute('accent');
+          return;
+        }
+
+        if (filterActive && isActive) {
+          pill.setAttribute('variant', defaultVariant);
+          const accent = getAccent?.(pillValue);
+          if (accent) pill.setAttribute('accent', accent);
+          else pill.removeAttribute('accent');
+          return;
+        }
+
+        if (!filterActive && !muteWhenAllSelected) {
+          pill.setAttribute('variant', defaultVariant);
+          const accent = getAccent?.(pillValue);
+          if (accent) pill.setAttribute('accent', accent);
+          else pill.removeAttribute('accent');
+          return;
+        }
+
+        pill.setAttribute('variant', 'neutral');
+        pill.removeAttribute('accent');
+      });
+    }
+
+    function renderPosts(activeSignal, activeTopic) {
+      const filtered = filterPosts({ signal: activeSignal, topic: activeTopic });
+      grid.innerHTML = '';
+      filtered.forEach(post => {
+        const card = document.createElement('post-card');
+        card.setAttribute('slug',       post.slug);
+        card.setAttribute('title',      post.title);
+        card.setAttribute('excerpt',    post.excerpt);
+        card.setAttribute('signal',     getPostSignalLabel(post));
+        card.setAttribute('topics',     formatTopicsAttr(post));
+        card.setAttribute('date',       post.date);
+        card.setAttribute('read-time',  post.readTime);
+        card.setAttribute('accent',     getPostAccent(post));
+        card.style.display = 'flex';
+        card.style.flexDirection = 'column';
+        grid.appendChild(card);
+      });
+      countEl.textContent = `${filtered.length} post${filtered.length !== 1 ? 's' : ''}`;
+
+      syncFilterBarPills(signalFilterBar, {
+        datasetKey: 'signal',
+        activeValue: activeSignal,
+        defaultVariant: 'signal',
+        getAccent: (value) => signalAccent[value],
+        muteWhenAllSelected: true,
+      });
+
+      syncFilterBarPills(topicFilterBar, {
+        datasetKey: 'topic',
+        activeValue: activeTopic,
+        defaultVariant: 'topic',
+        muteWhenAllSelected: true,
+      });
+
+      router.replace(buildPostsUrl({ signal: activeSignal, topic: activeTopic }));
+    }
+
+    function refresh() {
+      renderPosts(state.activeSignal, state.activeTopic);
+    }
+
+    state.$watch('activeSignal', refresh);
+    state.$watch('activeTopic', refresh);
+
+    startBlogRouter('posts', { preventSameLinkNavigation: true });
+    refresh();
+  </script>
+
+</body>
+</html>

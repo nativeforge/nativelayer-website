@@ -1,0 +1,12 @@
+/**
+ * nx-widget fonts — single source of truth for all demo widgets.
+ * Imported via @import inside each nx-* widget shadow <style> block.
+ * Edit the @import and --nx-font-* variables here only.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap');
+
+:host {
+  --nx-font-body: 'Share Tech Mono', monospace;
+  --nx-font-display: 'Orbitron', sans-serif;
+}

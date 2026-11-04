@@ -14,8 +14,8 @@ class nxStockMarket extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.innerHTML = `
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap">
       <style>
+        @import url('/__src/css/nx-widget-fonts.css');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :host {
@@ -51,6 +51,8 @@ class nxStockMarket extends HTMLElement {
           --negative: hsl(355 80% 50%);
           --negative-dim: hsl(355 65% 42%);
           --negative-glow: hsla(355 78% 50% / 0.3);
+          --over-screen-main: hsla(225 28% 88% / 0.8);
+          --over-screen-prim: hsla(225 28% 88% / 0.8);
 
           --cut: 12px;
           --cut-sm: 8px;
@@ -62,11 +64,31 @@ class nxStockMarket extends HTMLElement {
           padding: 1rem;
           min-height: 100vh;
           color: var(--text);
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
         }
 
-        :host-context(html[theme-mode="light"]) {
-          --surface: #c4cbd9;
+        :host([theme-mode="light"]) {
+          --accent: var(--accent-dark);
+          --accent-dark: #7885a1;
+          --accent-darker: #4a5e87;
+          --accent-light: var(--accent-darker);
+          --accent-scanline: hsla(220 100% 60% / 0.2);
+          --negative: hsl(19 68% 63%);
+          --negative-dim: #c38d69;
+          --over-screen-prim: var(--accent-darker);
+          --positive: #005f61;
+          --positive-dim: #267344;
+          --positive-glow: #28e2c399;
+          --screen-bg: #b8f1ff;
+          --surface: #d3d6df;
+          --surface-button: #c2f8ff;
+          --surface-emboss-bottom: hsla(220 70% 65% / 0.3);
+          --surface-emboss-left: hsla(220 70% 65% / 0.25);
+          --surface-emboss-right: hsla(220 70% 65% / 0.3);
+          --surface-emboss-top: hsla(220 70% 65% / 0.2);
+          --surface-light: #b1c1d3;
+          --text: var(--accent-darker);
+          --text-dim: var(--accent-darker);
         }
 
         /* ── Panel ── */
@@ -94,7 +116,7 @@ class nxStockMarket extends HTMLElement {
         }
 
         .panel-header .brand {
-          font-family: 'Orbitron', sans-serif;
+          font-family: var(--nx-font-display, 'Orbitron', sans-serif);
           font-size: 0.7rem;
           letter-spacing: 0.2em;
           text-transform: uppercase;
@@ -113,12 +135,12 @@ class nxStockMarket extends HTMLElement {
 
         .search-input {
           width: 100%;
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
           font-size: 0.8rem;
           padding: 0.6rem 0.75rem;
-          background: var(--surface-light);
-          border: 1px solid var(--accent-darker);
-          color: var(--text);
+          background: var(--scanline);
+          border: 1px solid var(--accent);
+          color: var(--screen-bg);
           outline: none;
           clip-path: polygon(
             var(--cut-sm) 0%, 100% 0%,
@@ -234,20 +256,20 @@ class nxStockMarket extends HTMLElement {
         }
 
         .screen-ticker {
-          font-family: 'Orbitron', sans-serif;
+          font-family: var(--nx-font-display, 'Orbitron', sans-serif);
           font-size: 0.75rem;
           font-weight: 700;
-          color: var(--accent-light);
+          color: var(--over-screen-prim);
           letter-spacing: 0.15em;
         }
 
         .screen-price-group { display: flex; align-items: baseline; gap: 0.6rem; }
 
         .screen-price {
-          font-family: 'Orbitron', sans-serif;
+          font-family: var(--nx-font-display, 'Orbitron', sans-serif);
           font-size: 1rem;
           font-weight: 700;
-          color: var(--white);
+          color: var(--over-screen-prim);
         }
 
         .screen-change { font-size: 0.7rem; letter-spacing: 0.05em; }
@@ -275,7 +297,7 @@ class nxStockMarket extends HTMLElement {
         }
 
         .chart-loading {
-          font-family: 'Orbitron', sans-serif;
+          font-family: var(--nx-font-display, 'Orbitron', sans-serif);
           font-size: 0.65rem;
           color: var(--accent-light);
           letter-spacing: 0.2em;
@@ -291,7 +313,7 @@ class nxStockMarket extends HTMLElement {
         .timeframes { display: flex; gap: 4px; padding: 0.35rem 0.75rem 0.55rem; }
 
         .tf-btn {
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
           font-size: 0.6rem;
           border: none;
           cursor: pointer;
@@ -332,7 +354,7 @@ class nxStockMarket extends HTMLElement {
         }
 
         .info-value {
-          font-family: 'Orbitron', sans-serif;
+          font-family: var(--nx-font-display, 'Orbitron', sans-serif);
           font-size: 0.65rem;
           font-weight: 700;
           color: var(--text);
@@ -342,7 +364,7 @@ class nxStockMarket extends HTMLElement {
         .actions { display: flex; gap: var(--gap); }
 
         .btn {
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
           font-size: 0.8rem;
           border: none;
           cursor: pointer;
@@ -366,27 +388,11 @@ class nxStockMarket extends HTMLElement {
         .btn.--add    { background: var(--accent-dark); color: var(--white); font-weight: 700; letter-spacing: 0.08em; }
         .btn.--add:hover { background: var(--accent); }
 
-        .btn.--remove { background: var(--negative-dim); color: hsl(355 80% 80%); font-weight: 700; letter-spacing: 0.08em; }
+        .btn.--remove { background: var(--negative-dim); color: hsl(355 100% 92%); font-weight: 700; letter-spacing: 0.08em; }
         .btn.--remove:hover { background: var(--negative); color: var(--white); }
 
         .btn.--refresh { font-weight: 700; letter-spacing: 0.08em; }
         .btn.--refresh:hover { background: var(--over-surface-button); }
-
-        /* ── Footer ── */
-        .panel-footer {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.15rem;
-          padding-top: 0.15rem;
-        }
-
-        .panel-footer p {
-          font-size: 0.8rem;
-          color: var(--text-dim);
-        }
-
-        .panel-footer a { color: var(--accent-light); text-decoration: none; opacity: 0.5; }
 
         .error-msg {
           font-size: 0.7rem;
@@ -399,8 +405,8 @@ class nxStockMarket extends HTMLElement {
 
       <div class="panel">
         <div class="panel-header">
-          <span class="brand">nativelayer</span>
-          <span class="model">NX-MARKET v1.0</span>
+          <span class="brand">nativeforge</span>
+          <span class="model">NX-STOCK-MARKET v1.0</span>
         </div>
 
         <div class="search-section">
@@ -470,9 +476,6 @@ class nxStockMarket extends HTMLElement {
           <button class="btn --refresh" @click="refresh()">REFRESH</button>
         </div>
 
-        <div class="panel-footer">
-          <p>Powered by restate + reflectx</p>
-        </div>
       </div>
     `
 

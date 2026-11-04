@@ -3,8 +3,8 @@ const packages = [
     name: 'routerx',
     size: '3.4 KB',
     description: {
-      headline: 'Router library for Multi-Page Application (MPA) or Single-Page Application (SPA',
-      paragraph: 'Router library for both traditional multi-page websites (MPA), single page applications (SPA), or static hosting environments. It provides comprehensive routing capabilities including dynamic path parameters, query parsing, hash fragment support, route guards, lazy loading, event hooks, and navigation management—all without hijacking link clicks or requiring complex framework setup.',
+      headline: 'Client-side Router library for MPA or SPA in static hosting environments.',
+      paragraph: 'Routerx is a client-side router library for both traditional multi-page websites (MPA), single page applications (SPA), or static hosting environments. It provides comprehensive routing capabilities including dynamic path parameters, query parsing, hash fragment support, route guards, lazy loading, event hooks, and navigation management.',
     },
     accentColorHslArry: [348, 100, 50], //numbers
     externalUrl: {
@@ -24,8 +24,8 @@ const packages = [
     name: 'restate',
     size: '2.8 KB',
     description: {
-      short: 'A minimal, framework-agnostic reactive state management library built on ES6 proxies.',
-      paragraph: 'Reactive state management library built on ES6 proxies with a clear and simple API. It provides a tiny footprint (~2.8 KB gzipped), zero dependencies, a simple core API: $onChange, $watch, $set, $destroy, plus built-in $computed and $methods, a chainable plugin system to add persistence, history, immutability, async handling, and validation, both CommonJS and ES module builds for universal compatibility, and no boilerplate: read and write state directly on a proxy.',
+      short: 'A minimal framework-agnostic reactive state management library built on ES6 proxies.',
+      paragraph: 'Reactive state management library built on ES6 proxies with a clear and simple API. It provides a tiny footprint (~2.8 KB gzipped), zero dependencies, a simple core API ( $onChange, $watch, $set, $computed, $methods and $destroy), a chainable plugin system to add persistence, history, immutability, async handling, and validation, both CommonJS and ES module builds for universal compatibility, and no boilerplate: read and write state directly on a proxy.',
     },
     accentColorHslArry: [220, 100, 50], //numbers
     externalUrl: {
@@ -43,7 +43,7 @@ const packages = [
   },
   {
     name: 'reflectx',
-    size: '1.2 KB',
+    size: '5.4 KB',
     description: {
       short: 'A templating and Data / DOM biding library for HTML and Custom Elements (Web components).',
       paragraph: 'A lightweight, zero-dependency declarative templating and Data / DOM biding library for HTML and Custom Elements (Web components). Inspired by Vue and Alpine, it proviides a simple and easy to use API for binding data to the DOM and for creating dynamic components.',
@@ -66,13 +66,13 @@ const packages = [
     name: 'remd',
     size: '3.6 KB',
     description: {
-      short: 'A minimal, zero-dependency markdown transformation library.',
-      paragraph: 'Markdown transformation library with a clear and simple API.',
+      short: 'A minimal, zero-dependency markdown transformation library with lots of options and features.',
+      paragraph: 'Markdown transformation library with a clear and simple API. It provides a tiny footprint (~3.6 KB gzipped), zero dependencies, a simple core API (transform attribute), a chainable plugin system to add syntax highlighting, code blocks, tables, lists, and more, both CommonJS and ES module builds for universal compatibility, and no boilerplate: transform markdown content into custom HTML elements based on the transform attribute specification.',
     },
     accentColorHslArry: [255, 75, 50], //numbers
     externalUrl: {
-      github: 'https://github.com/native-forge/remd',
-      npm: 'https://www.npmjs.com/package/remd',
+      github: 'https://github.com/ynck-chrl/remd',
+      npm: 'https://www.npmjs.com/package/@nativelayer.dev/remd',
     },
     localUrl: {
       docs: '/docs/remd',

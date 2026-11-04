@@ -2261,4 +2261,9 @@ A **commercial license** is required for:
 ### Licensing Inquiries
 
 **For commercial licensing, pricing, or questions:**
+
+::base-button {class="--light" target="_blank" href="/licenses#routerx" style="padding: calc(var(--space-unit)* 3) 0"}
+View routerx licensing & pricing
+::
+
 - **Email:** info@nativelayer.dev

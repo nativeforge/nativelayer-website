@@ -1,0 +1,135 @@
+/*
+  Theme: cold-red
+  Author: Ynck Chrl (http://github.com/ynck-chrl)
+  License: MIT
+  Maintainer: ynck.dev
+  Version: 2025.12.16
+*/
+
+
+
+pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: calc(var(--space-unit, 0.5rem) * 2);
+}
+
+code.hljs {
+  padding: var(--space-unit, 0.5rem);
+}
+
+.hljs::selection {
+  background-color: hsla(var(--acc-hsl, 60 100% 50%) / .99);
+  color: hsla(from hsl(var(--fcolor-hsl, 0 0% 0%)) h s l / 0.99);
+}
+
+.hljs-comment {
+  color: hsla(245, 20%, 64%, 0.628)
+}
+
+.hljs-template-tag,
+.hljs-tag {
+  color: hsla(var(--accent-color-hsl) / 0.6);
+}
+:is([theme-mode="light"].--accent-is-light, [theme-mode="light"] .--accent-is-light) :is( .hljs-template-tag, .hljs-tag) {
+  color: hsl(var(--accent-color-hsl-adjusted-hard));
+}
+
+.hljs-operator,
+.hljs-punctuation,
+.hljs-subst {
+  color: var(--blog-accent);
+}
+[theme-mode="light"] :where(.hljs-operator, .hljs-punctuation, .hljs-subst){
+  color: var(--blog-signal-pipeline);
+}
+
+.hljs-operator {
+  opacity: 1
+}
+
+.hljs-bullet,
+.hljs-deletion,
+.hljs-name,
+.hljs-selector-tag,
+.hljs-template-variable,
+.hljs-variable {
+  color: var(--blog-signal-live);
+}
+[theme-mode="light"] :where(.hljs-bullet, .hljs-deletion, .hljs-name, .hljs-selector-tag, .hljs-template-variable, .hljs-variable){
+  color: var(--blog-accent-darken2);
+}
+
+.hljs-attr,
+.hljs-link,
+.hljs-literal,
+.hljs-number,
+.hljs-symbol,
+.hljs-variable.constant_ {
+  color: var(--blog-signal-field);
+}
+
+.hljs-class .hljs-title,
+.hljs-title,
+.hljs-title.class_ {
+  color: var(--blog-signal-live);
+}
+[theme-mode="light"] :is(.hljs-class .hljs-title, .hljs-title, .hljs-title.class_){
+  color: var(--blog-signal-field);
+}
+
+.hljs-strong {
+  font-weight: 700;
+  color: var(--blog-signal-field);
+}
+
+.hljs-addition,
+.hljs-code,
+.hljs-string,
+.hljs-title.class_.inherited__ {
+  color: var(--blog-signal-alert);
+}
+[theme-mode="light"] :is(.hljs-addition, .hljs-code, .hljs-string, .hljs-title.class_.inherited__){
+  color: var(--blog-signal-alert);
+}
+
+.hljs-built_in,
+.hljs-doctag,
+.hljs-keyword.hljs-atrule,
+.hljs-quote,
+.hljs-regexp {
+  color: var(--blog-signal-meta);
+}
+
+.hljs-attribute,
+.hljs-function .hljs-title,
+.hljs-section,
+.hljs-title.function_,
+.ruby .hljs-property {
+  color: var(--blog-signal-live);
+}
+[theme-mode="light"] :is(.hljs-attribute, .hljs-function .hljs-title, .hljs-section, .hljs-title.function_, .ruby .hljs-property){
+  color: var(--blog-signal-pipeline);
+}
+
+.diff .hljs-meta,
+.hljs-keyword,
+.hljs-type {
+  color: var(--blog-signal-meta);
+}
+
+.hljs-emphasis {
+  color: var(--blog-signal-field);
+  font-style: italic
+}
+
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-meta .hljs-string {
+  color: var(--blog-signal-pipeline);
+}
+
+.hljs-meta .hljs-keyword,
+.hljs-meta-keyword {
+  font-weight: 700
+}

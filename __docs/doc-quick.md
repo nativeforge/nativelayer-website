@@ -198,6 +198,43 @@ No direct manipulation of `<doc-aside>`, `<doc-body>`, or `<re-md>` is needed in
 
 ## License
 
-MIT License. Copyright (c) 2026 ynck-chrl.
+`doc-quick` is licensed under the **PolyForm Noncommercial License 1.0.0** for non-commercial use, with a commercial license option available.
 
-See [LICENSE](../LICENSE) for the full text.
+### Non-Commercial Use
+
+`doc-quick` is free under the **PolyForm Noncommercial License** for:
+
+- ✓ Open-source projects (OSI-approved licenses)
+- ✓ Personal projects and non-revenue generating applications
+- ✓ Educational purposes and academic research
+- ✓ Non-profit organizations
+- ✓ Internal company tools (non-revenue generating)
+- ✓ Prototypes and MVPs
+
+See [LICENSE](./LICENSE) for full details.
+
+### Commercial Use
+
+A **commercial license** is required for:
+
+- Proprietary software and closed-source commercial applications
+- SaaS products and revenue-generating applications
+- Enterprise deployments and large-scale corporate use
+- White-label products sold or licensed to third parties
+
+**Commercial licenses include:**
+
+- Legal protection and indemnification
+- Priority support
+- Updates and bug fixes during license term
+- Custom licensing terms for enterprise needs
+
+### Licensing Inquiries
+
+**For commercial licensing, pricing, or questions:**
+
+::base-button {class="--light" target="_blank" href="/licenses#doc-quick" style="padding: calc(var(--space-unit)* 3) 0"}
+View doc-quick licensing & pricing
+::
+
+- **Email:** info@nativelayer.dev

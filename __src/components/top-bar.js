@@ -1,5 +1,5 @@
 import { html } from "/__src/js/html.js";
-import svgInsert from '/__src/components/svg-insert/index.js'
+// import svgInsert from '/__src/components/svg-insert/index.js'
 // customElements.define('svg-insert', svgInsert)
 
 class topBar extends HTMLElement {
@@ -36,6 +36,20 @@ class topBar extends HTMLElement {
       }
     });
   }
+
+  // initLangSelect() {
+  //   const select = this.querySelector('#lang-select');
+  //   const root = document.documentElement;
+  //   const saved = localStorage.getItem('lang') || 'en';
+  //
+  //   select.value = saved;
+  //   root.setAttribute('lang', saved);
+  //
+  //   select.addEventListener('change', () => {
+  //     root.setAttribute('lang', select.value);
+  //     localStorage.setItem('lang', select.value);
+  //   });
+  // }
 
   get HTML() {
     return html`
@@ -81,7 +95,7 @@ class topBar extends HTMLElement {
         align-items: center;
         justify-content: center;
         height: 100%;
-        column-gap: var(--space-unit, 0.5rem);
+        column-gap: calc(var(--space-unit, 0.5rem) * 3);
         color: inherit;
       }
       .top-bar-title {
@@ -173,6 +187,47 @@ class topBar extends HTMLElement {
       .theme-mode-input:checked + .theme-mode-track .sun { opacity: 0; }
       .theme-mode-input:checked + .theme-mode-track .moon { opacity: 1; }
 
+      /* Language select */
+      /*
+      .lang-select {
+        display: flex;
+        align-items: center;
+        column-gap: calc(var(--space-unit, 0.5rem) * 0.75);
+        height: 100%;
+      }
+      .lang-select-icon {
+        width: calc(var(--space-unit, 0.5rem) * 3);
+        height: calc(var(--space-unit, 0.5rem) * 3);
+        flex-shrink: 0;
+        color: hsl(var(--fcolor-hsl));
+        opacity: 0.85;
+      }
+      .lang-select-input {
+        appearance: none;
+        background-color: hsla(var(--fcolor-hsl) / 0.06);
+        border: 1px solid hsla(var(--fcolor-hsl) / 0.18);
+        border-radius: calc(var(--size-unit, 0.5rem) * 0.25);
+        color: hsl(var(--fcolor-hsl));
+        font-family: inherit;
+        font-size: var(--f-size-t, 0.75rem);
+        font-weight: 300;
+        line-height: 1;
+        padding: calc(var(--space-unit, 0.5rem) * 0.75) calc(var(--space-unit, 0.5rem) * 2)
+          calc(var(--space-unit, 0.5rem) * 0.75) calc(var(--space-unit, 0.5rem) * 1);
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.25' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right calc(var(--space-unit, 0.5rem) * 0.75) center;
+        transition: border-color 0.2s ease, background-color 0.2s ease;
+      }
+      .lang-select-input:hover,
+      .lang-select-input:focus-visible {
+        border-color: hsla(var(--fcolor-hsl) / 0.35);
+        background-color: hsla(var(--fcolor-hsl) / 0.1);
+        outline: none;
+      }
+      */
+
       /* Desktop nav */
       .top-bar-container-center {
         display: flex;
@@ -248,16 +303,14 @@ class topBar extends HTMLElement {
 
       /* Mobile drawer */
       .top-bar-drawer {
-        display: none;
+        display: flex;
         flex-direction: column;
         background-color: hsla(var(--bcolor-hsl) / 0.97);
         -webkit-backdrop-filter: blur(12px);
         backdrop-filter: blur(12px);
-        border-top: 1px solid hsla(var(--fcolor-hsl) / 0.1);
-        padding-block: calc(var(--space-unit, 0.5rem) * 2);
         overflow: hidden;
         max-height: 0;
-        transition: max-height 0.3s ease, padding-block 0.3s ease;
+        transition: max-height 0.35s ease;
       }
       .top-bar-drawer-nav-list {
         list-style: none;
@@ -288,17 +341,28 @@ class topBar extends HTMLElement {
 
       /* Open state */
       .top-bar.--open .top-bar-drawer {
-        display: flex;
         max-height: 20rem;
+        border-top: 1px solid hsla(var(--fcolor-hsl) / 0.1);
       }
 
       /* Container queries */
+      @container top-bar (max-width: 22.5rem) {
+        .top-bar-title { display: none; }
+      }
+      @container top-bar (max-width: 30rem) {
+        .top-bar-container-right {
+          column-gap: calc(var(--space-unit, 0.5rem) * 1);
+        }
+      }
       @container top-bar (max-width: 43.5rem) {
         .top-bar-container-center { display: none; }
         .top-bar-burger { display: flex; }
       }
       @container top-bar (min-width: 43.5rem) {
-        .top-bar-drawer { display: none !important; }
+        .top-bar-drawer {
+          display: none !important;
+          max-height: 0 !important;
+        }
       }
     </style>
 
@@ -320,13 +384,26 @@ class topBar extends HTMLElement {
             <ul class="top-bar-nav-list">
               <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/packages">Packages</a></li>
               <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/demos">Demos</a></li>
-              <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/examples">Examples</a></li>
+              <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/licenses">Licenses</a></li>
               <li class="top-bar-nav-item"><a class="top-bar-nav-item-link" href="/about">About</a></li>
             </ul>
           </nav>
         </div>
 
         <div class="top-bar-container-right">
+          <!--
+          <div class="lang-select">
+            <svg class="lang-select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M3 12h18"/>
+              <path d="M12 3c2.5 2.5 4 5.5 4 9s-1.5 6.5-4 9"/>
+              <path d="M12 3c-2.5 2.5-4 5.5-4 9s1.5 6.5 4 9"/>
+            </svg>
+            <select class="lang-select-input" id="lang-select" aria-label="Language">
+              <option value="en">EN — English</option>
+            </select>
+          </div>
+          -->
           <label class="theme-mode">
             <input type="checkbox" class="theme-mode-input" id="theme-mode">
             <span class="theme-mode-track">
@@ -355,7 +432,7 @@ class topBar extends HTMLElement {
           <ul class="top-bar-drawer-nav-list">
             <li><a class="top-bar-drawer-nav-item-link" href="/packages">Packages</a></li>
             <li><a class="top-bar-drawer-nav-item-link" href="/demos">Demos</a></li>
-            <li><a class="top-bar-drawer-nav-item-link" href="/tutos">Tutos</a></li>
+            <li><a class="top-bar-drawer-nav-item-link" href="/licenses">Licenses</a></li>
             <li><a class="top-bar-drawer-nav-item-link" href="/about">About</a></li>
           </ul>
         </nav>
@@ -367,6 +444,7 @@ class topBar extends HTMLElement {
   connectedCallback() {
     this.innerHTML = this.HTML;
     this.initThemeToggle();
+    // this.initLangSelect();
     this.setActiveNavItem();
     this.initBurger();
   }

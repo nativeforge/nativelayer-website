@@ -1,0 +1,285 @@
+/*
+  Blog-specific CSS overrides.
+  Loaded after global-styles.css on all blog pages.
+  All blog colors are valid CSS color strings; derivatives use relative color syntax (from).
+*/
+
+:root {
+  /* Font overrides — Syncopate / Inconsolata / JetBrains Mono */
+  --font-1: 'Syncopate';
+  --font-2: 'Inconsolata';
+  --font-3: 'JetBrains Mono';
+
+  /* ── Brand palette ── */
+  --blog-accent-darken3:   hsl(175, 100%, 20%);
+  --blog-accent-darken2:   hsl(175, 100%, 30%);
+  --blog-accent-darken:   hsl(175, 100%, 40%);
+  --blog-accent-lighten:   hsl(175, 100%, 80%);
+  --blog-accent:           hsl(175 100% 50%);
+  --blog-accent-secondary: hsl(300 80% 60%);
+  --blog-accent-amber:     hsl(45 100% 55%);
+
+  /* ── Signal lane colors ── */
+  --blog-signal-live:       hsl(175 100% 50%);
+  --blog-signal-field:      hsl(210 85% 58%);
+  --blog-signal-alert:      hsl(15 100% 55%);
+  --blog-signal-pipeline:   hsl(48 100% 55%);
+  --blog-signal-landscape:  hsl(340 100% 60%);
+  --blog-signal-meta:       hsl(265 100% 65%);
+
+  --blog-darkester2: hsl(220 29% 6%);
+  --blog-darkester: hsl(220 29% 10%);
+  --blog-darkest: hsl(220 29% 14%);
+  --blog-darker: hsl(220 29% 18%);
+  --blog-dark: hsl(222, 25%, 36%);
+  --blog-light: hsl(210 30% 90%);
+  --blog-lighter: hsl(210 40% 95%);
+  --blog-lightest: hsl(210 40% 99%);
+  /* Bridge from global triplet tokens (until global-styles migrates) */
+  --blog-color-bg: var(--blog-darkest);
+  --blog-color-fg: var(--blog-lightest);
+
+  /* ── Foreground derivatives ── */
+  --blog-fg-body:     hsl(from var(--blog-color-fg) h s l / 0.82);
+  --blog-fg-soft:     hsl(from var(--blog-color-fg) h s l / 0.75);
+  --blog-fg-muted:    hsl(from var(--blog-color-fg) h s l / 0.65);
+  --blog-fg-nav:      hsl(from var(--blog-color-fg) h s l / 0.6);
+  --blog-fg-dim:      hsl(from var(--blog-color-fg) h s l / 0.55);
+  --blog-fg-subtle:   hsl(from var(--blog-color-fg) h s l / 0.4);
+  --blog-fg-faint:    hsl(from var(--blog-color-fg) h s l / 0.35);
+  --blog-fg-ghost:    hsl(from var(--blog-color-fg) h s l / 0.3);
+  --blog-fg-whisper:  hsl(from var(--blog-color-fg) h s l / 0.2);
+  --blog-fg-hairline: hsl(from var(--blog-color-fg) h s l / 0.08);
+  --blog-fg-border:   hsl(from var(--blog-color-fg) h s l / 0.1);
+  --blog-fg-surface:  hsl(from var(--blog-color-fg) h s l / 0.04);
+  --blog-fg-grid:     hsl(from var(--blog-color-fg) h s l / 0.02);
+  --blog-fg-scanline: hsl(from var(--blog-color-fg) h s l / 0.015);
+
+  /* ── Background derivatives ── */
+  --blog-bg-panel: hsl(from var(--blog-color-bg) h s l / 0.4);
+  --blog-bg-code:  hsl(from var(--blog-color-bg) h s l / 0.6);
+  --blog-bg-bar:   hsl(from var(--blog-color-bg) h s l / 0.2);
+
+  /* ── Accent derivatives ── */
+  --blog-accent-glow-lg:           hsl(from var(--blog-accent) h s l / 0.3);
+  --blog-accent-glow-md:           hsl(from var(--blog-accent) h s l / 0.4);
+  --blog-accent-glow-sm:           hsl(from var(--blog-accent) h s l / 0.5);
+  --blog-accent-glow-text:         hsl(from var(--blog-accent) h s l / 0.6);
+  --blog-accent-glow-strong:       hsl(from var(--blog-accent) h s l / 0.7);
+  --blog-accent-border-strong:     hsl(from var(--blog-accent) h s l / 0.8);
+  --blog-accent-border:            hsl(from var(--blog-accent) h s l / 0.5);
+  --blog-accent-border-soft:       hsl(from var(--blog-accent) h s l / 0.25);
+  --blog-accent-border-faint:      hsl(from var(--blog-accent) h s l / 0.15);
+  --blog-accent-border-toggle:     hsl(from var(--blog-accent) h s l / 0.3);
+  --blog-accent-bg-hover:          hsl(from var(--blog-accent) h s l / 0.14);
+  --blog-accent-bg:                hsl(from var(--blog-accent) h s l / 0.06);
+  --blog-accent-wash:              hsl(from var(--blog-accent) h s l / 0.08);
+  --blog-accent-grid:              hsl(from var(--blog-accent) h s l / 0.06);
+  --blog-accent-radar:             hsl(from var(--blog-accent) h s l / 0.2);
+  --blog-accent-faint:             hsl(from var(--blog-accent) h s l / 0.05);
+  --blog-accent-separator:         hsl(from var(--blog-accent) h s l / 0.35);
+  --blog-accent-toggle:            hsl(from var(--blog-accent) h s l / 0.15);
+  --blog-accent-toggle-border:     hsl(from var(--blog-accent) h s l / 0.6);
+  --blog-accent-error:             hsl(from var(--blog-accent) h s l / 0.2);
+
+  /* ── Glow shadows ── */
+  --blog-glow-sm: 0 0 calc(var(--space-unit) * 2) var(--blog-accent-glow-sm);
+  --blog-glow-md: 0 0 calc(var(--space-unit) * 4) var(--blog-accent-glow-md);
+  --blog-glow-lg: 0 0 calc(var(--space-unit) * 8) var(--blog-accent-glow-lg);
+
+  /* ── Semantic aliases ── */
+  --blog-color-divider-start: var(--blog-accent-glow-sm);
+  --blog-color-divider-mid:   var(--blog-accent-border-faint);
+
+  --blog-section-gap: calc(var(--space-unit) * 10);
+
+  /* re-md code block wrapper bg — blog posts only (.post-article); docs keep re-md defaults */
+  --blog-code-block-bg: hsl(from var(--blog-darker) h s l / 0.2);
+}
+
+:root[theme-mode="dark"] {
+  --bcolor-hsl: 220, 29%, 10%;
+}
+:root[theme-mode="light"] {
+  --bcolor-hsl: 210, 30%, 96%;
+}
+
+[theme-mode="light"] {
+  
+  /* ── Brand palette ── */
+  --blog-accent-secondary: hsl(300 80% 60%);
+  --blog-accent-amber:     hsl(45 100% 55%);
+
+  /* ── Signal lane colors ── */
+  --blog-signal-live:       hsl(175, 67%, 26%);
+  --blog-signal-field:      hsl(210, 88%, 43%);
+  --blog-signal-alert:      hsl(15, 90%, 43%);
+  --blog-signal-pipeline:   hsl(48, 100%, 29%);
+  --blog-signal-landscape:  hsl(340 100% 60%);
+  --blog-signal-meta:       hsl(265 100% 65%);
+
+  --blog-color-fg: var(--blog-dark);
+  --blog-color-bg: var(--blog-accent-lighten);
+
+  --blog-code-block-bg: hsl(from var(--blog-lightest) h s l / 0.92);
+
+  --blog-accent-grid: hsl(from var(--blog-darkest) h s l / 0.12);
+}
+
+/* Blog component reveal animations — matches global-styles.css pattern */
+:is(blog-top-bar, blog-hero, post-card)[reveal]:not([ready]) {
+  opacity: 0;
+  transform: translateY(16px);
+  transition-property: opacity, transform;
+  transition-duration: var(--page-transition-time);
+  transition-delay: var(--show-duration-delay, 0ms);
+  transition-timing-function: ease-in;
+}
+
+:is(blog-top-bar, blog-hero, post-card)[reveal][ready] {
+  opacity: 1;
+  transform: translateY(0);
+  transition-property: opacity, transform;
+  transition-duration: var(--page-transition-time);
+  transition-delay: var(--show-duration-delay, 0ms);
+  transition-timing-function: ease-out;
+}
+
+@starting-style {
+  :is(blog-top-bar, blog-hero, post-card)[reveal][ready] {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* Body baseline */
+body {
+  /* background: var(--blog-color-bg); */
+  color: var(--blog-color-fg);
+  font-family: var(--ff-2, 'Inconsolata', monospace);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* View transitions — cross-document */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: 320ms ease-in both blog-fade-out;
+}
+
+::view-transition-new(root) {
+  animation: 320ms ease-out both blog-fade-in;
+}
+
+@keyframes blog-fade-out {
+  to { opacity: 0; transform: translateY(calc(var(--space-unit) * -2)); }
+}
+
+@keyframes blog-fade-in {
+  from { opacity: 0; transform: translateY(calc(var(--space-unit) * 2)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
+
+/* Section heading style */
+.blog-section-title {
+  font-family: var(--ff-1, 'Syncopate', sans-serif);
+  font-size: var(--f-size-xl);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--blog-color-fg);
+}
+[theme-mode="light"] .blog-section-title,
+[theme-mode="light"] .blog-section-title .accent {
+  color: var(--blog-dark);
+  text-shadow: none;
+}
+
+.blog-section-title .accent {
+  color: var(--blog-accent);
+  text-shadow: var(--blog-glow-sm);
+}
+
+/* Accent divider */
+.blog-divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    var(--blog-color-divider-start),
+    var(--blog-color-divider-mid),
+    transparent
+  );
+  margin-block: calc(var(--space-unit) * 2);
+}
+
+[theme-mode="light"] .blog-divider {
+  background: linear-gradient(
+    to right,
+    var(--blog-dark),
+    var(--blog-dark),
+    transparent
+  );
+}
+/* CTA / pill button */
+.blog-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--space-unit) * 1.5);
+  padding: calc(var(--space-unit) * 1.5) calc(var(--space-unit) * 4);
+  font-family: var(--ff-3, 'JetBrains Mono', monospace);
+  font-size: var(--f-size-s);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--blog-accent);
+  border: 1px solid var(--blog-accent-border);
+  border-radius: calc(var(--size-unit) * 0.25);
+  background: var(--blog-accent-bg);
+  box-shadow: var(--blog-glow-sm);
+  transition: background 0.32s, box-shadow 0.32s, border-color 0.32s;
+  cursor: pointer;
+}
+[theme-mode="light"] .blog-btn {
+  color: var(--blog-dark);
+  border-color: var(--blog-dark);
+  background: var(--blog-lightest);
+  border: 1px solid hsla(from white h s l / 0.6);
+  box-shadow:  0 0 calc(var(--space-unit) * 2) hsla(from white h s l / 1);
+}
+
+.blog-btn:hover {
+  background: var(--blog-accent-bg-hover);
+  box-shadow: var(--blog-glow-md);
+  border-color: var(--blog-accent-border-strong);
+}
+[theme-mode="light"] .blog-btn:hover {
+  color: var(--blog-dark);
+  border-color: var(--blog-dark);
+  background: var(--blog-lightest);
+  box-shadow: none;
+}
+
+.blog-btn::after {
+  content: '→';
+}
+
+/* re-md fenced code blocks inside blog posts — overrides per-block injected CSS */
+
+[theme-mode="light"] .post-article re-md .code-block .wrapper {
+  background-color: hsl(from var(--blog-lightest) h s l / 0.6);
+  box-shadow: inset 0 0 0 1px hsl(from var(--re-md-accent) h s l / 0.2);
+}
+
+.post-article re-md .code-block .wrapper {
+  background-color: hsla(from var(--blog-darkester2) h s l / 0.8);
+  box-shadow: inset 0 0 0 1px transparent;
+  background-blend-mode: darken;
+}

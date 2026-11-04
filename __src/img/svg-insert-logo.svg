@@ -2,7 +2,7 @@
   <defs>
     <style>
       .svg-insert-logo {
-        fill: hsl(var(--fcolor-hsl));
+        fill: hsl(var(--accent-color-hsl, var(--brand-color-svg-insert)));
       }
     </style>
   </defs>

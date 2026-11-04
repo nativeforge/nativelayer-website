@@ -548,5 +548,3 @@ If `observe: true` is set and no `signal` is provided, the `MutationObserver` ru
 ## License
 
 MIT License. Copyright (c) 2026 ynck-chrl.
-
-See [LICENSE](../LICENSE) for the full text.

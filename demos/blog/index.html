@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
+  <meta name="color-scheme" content="dark light">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nullsignal — Classified dispatches from the web platform</title>
+
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#0d0f14">
+
+  <!-- Global styles -->
+  <link rel="stylesheet" href="/__src/css/reset.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/fonts.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/global-styles.css" blocking="render">
+
+  <!-- Blog fonts (Syncopate, Inconsolata, JetBrains Mono) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inconsolata:wght@300;400;600&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" blocking="render">
+
+  <!-- Blog theme overrides -->
+  <link rel="stylesheet" href="/demos/blog/blog.css" blocking="render">
+
+  <script type="module">
+    import { makeReady }    from '/__src/libs/makeReady/index.js';
+    import monitorLoading   from '/__src/components/monitor-loading/index.js';
+    import blogTopBar       from '/__src/components/blog-top-bar.js';
+    import blogHero         from '/__src/components/blog-hero.js';
+    import postCard         from '/__src/components/post-card.js';
+    import pageContainer    from '/__src/components/page-container.js';
+    import gridContainer    from '/__src/components/grid-container.js';
+    import flexContainer    from '/__src/components/flex-container.js';
+    import pillBase         from '/__src/components/pill-base.js';
+
+    [blogTopBar, blogHero, postCard, pageContainer, gridContainer, flexContainer, pillBase]
+      .forEach(Cls => makeReady(Cls));
+
+    customElements.define('monitor-loading', monitorLoading);
+    customElements.define('blog-top-bar',  blogTopBar);
+    customElements.define('blog-hero',     blogHero);
+    customElements.define('post-card',     postCard);
+    customElements.define('page-container', pageContainer);
+    customElements.define('grid-container', gridContainer);
+    customElements.define('flex-container', flexContainer);
+    customElements.define('pill-base',      pillBase);
+  </script>
+
+</head>
+
+<body style="opacity: 0; transform: translateY(16px);">
+  
+  <monitor-loading target="body" path="/__src/components/" brand="nullsignal" show-duration="300"></monitor-loading>
+  
+  <blog-top-bar reveal></blog-top-bar>
+
+  <blog-hero reveal>
+    <span slot="eyebrow-text" id="hero-broadcast">–– BROADCAST</span>
+  </blog-hero>
+
+  <page-container style="gap: var(--blog-section-gap); padding-block-start: 0; padding-block-end: calc(var(--space-unit) * 20);" reveal>
+
+    <!-- Featured posts (last 3) -->
+    <section>
+      <div style="display: flex; align-items: baseline; flex-wrap: wrap; gap: calc(var(--space-unit) * 3); padding-top: calc(var(--space-unit) * 10); padding-bottom: calc(var(--space-unit) * 10);">
+        <h2 class="blog-section-title">Latest <span class="accent">Dispatches</span></h2>
+        <div class="blog-divider" style="flex: 1;"></div>
+        <a href="/demos/blog/posts/" class="blog-btn">All posts</a>
+      </div>
+
+      <grid-container
+        id="featured-grid"
+        grid-template-columns="repeat(auto-fill, minmax(min(100%, 22rem), 1fr))"
+        gap="calc(var(--space-unit) * 4)">
+      </grid-container>
+    </section>
+
+    <!-- Signal filter row -->
+    <section>
+      <h2 class="blog-section-title" style="margin-bottom: calc(var(--space-unit) * 6);">
+        Browse by <span class="accent">Signal</span>
+      </h2>
+      <flex-container id="signal-list" direction="row" style="flex-wrap: wrap; gap: calc(var(--space-unit) * 2);"></flex-container>
+    </section>
+
+    <!-- Topic filter row -->
+    <section>
+      <h2 class="blog-section-title" style="margin-bottom: calc(var(--space-unit) * 6);">
+        Browse by <span class="accent">Topic</span>
+      </h2>
+      <flex-container id="topic-list" direction="row" style="flex-wrap: wrap; gap: calc(var(--space-unit) * 2);"></flex-container>
+    </section>
+
+  </page-container>
+
+  <script type="module">
+    import {
+      signals,
+      signalLabels,
+      signalAccent,
+      topics,
+      topicLabels,
+      getLatestPosts,
+      getBroadcastLabel,
+      getPostAccent,
+      getPostSignalLabel,
+      formatTopicsAttr,
+    } from '/demos/blog/posts-data.js';
+    import { startBlogRouter } from '/demos/blog/router.js';
+
+    document.getElementById('hero-broadcast').textContent =
+      `–– BROADCAST : ${getBroadcastLabel()}`;
+
+    // Render latest 3 posts (by date)
+    const grid = document.getElementById('featured-grid');
+    getLatestPosts(3).forEach(post => {
+      const card = document.createElement('post-card');
+      card.setAttribute('slug',       post.slug);
+      card.setAttribute('title',      post.title);
+      card.setAttribute('excerpt',    post.excerpt);
+      card.setAttribute('signal',     getPostSignalLabel(post));
+      card.setAttribute('topics',     formatTopicsAttr(post));
+      card.setAttribute('date',       post.date);
+      card.setAttribute('read-time',  post.readTime);
+      card.setAttribute('accent',     getPostAccent(post));
+      card.style.display = 'flex';
+      card.style.flexDirection = 'column';
+      grid.appendChild(card);
+    });
+
+    // Render signal pills
+    const signalList = document.getElementById('signal-list');
+    signals.forEach(sig => {
+      const pill = document.createElement('pill-base');
+      pill.setAttribute('variant', 'signal');
+      pill.setAttribute('accent', signalAccent[sig]);
+      pill.setAttribute('href', `/demos/blog/posts/?signal=${encodeURIComponent(sig)}`);
+      pill.setAttribute('arrow', '');
+      pill.textContent = signalLabels[sig];
+      signalList.appendChild(pill);
+    });
+
+    // Render topic pills
+    const topicList = document.getElementById('topic-list');
+    topics.forEach(topic => {
+      const pill = document.createElement('pill-base');
+      pill.setAttribute('variant', 'topic');
+      pill.setAttribute('href', `/demos/blog/posts/?topic=${encodeURIComponent(topic)}`);
+      pill.setAttribute('arrow', '');
+      pill.textContent = topicLabels[topic];
+      topicList.appendChild(pill);
+    });
+
+    startBlogRouter('home', { preventSameLinkNavigation: true });
+  </script>
+
+</body>
+</html>

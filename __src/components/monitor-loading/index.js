@@ -15,6 +15,8 @@ customElements.define('svg-insert', svgInsert)
 //   reveal-attribute  — attribute set on the target when ready        (default: 'ready')
 //   path              — components path passed to autoDefine          (default: '/__src/components/')
 //   case-convention   — naming convention for autoDefine              (default: 'kebab')
+//   include           — space-separated tags or prefix* passed to autoDefine
+//   exclude           — space-separated tags or prefix* passed to autoDefine
 //   brand             — brand name shown in the overlay               (default: '@nativelayer.dev')
 //   svg-icon-url      — path to SVG file for the brand icon
 //   show-duration     — ms to keep overlay visible after done         (default: 800 / 0)
@@ -33,7 +35,7 @@ customElements.define('svg-insert', svgInsert)
 class monitorLoading extends HTMLElement {
   static get observedAttributes() {
     return [
-      'target', 'path', 'case-convention', 'brand', 'svg-icon-url',
+      'target', 'path', 'case-convention', 'include', 'exclude', 'brand', 'svg-icon-url',
       'reveal-attribute', 'show-duration', 'step-duration',
       'overlay-fade', 'monitor',
     ]
@@ -45,6 +47,9 @@ class monitorLoading extends HTMLElement {
     const targetSel      = this.getAttribute('target')           || 'body'
     const path           = this.getAttribute('path')             || '/__src/components/'
     const caseConvention = this.getAttribute('case-convention')  || 'kebab'
+    const include        = parsePatternList(this.getAttribute('include'))
+    const exclude        = parsePatternList(this.getAttribute('exclude'))
+    const isSelected     = createTagSelector(include, exclude)
     const brand         = this.getAttribute('brand')            || '@nativelayer.dev'
     const svgIconURL    = this.getAttribute('svg-icon-url')     || '/__src/img/native-lines-logo.svg'
     const revealAttr    = this.getAttribute('reveal-attribute') || 'ready'
@@ -72,19 +77,19 @@ class monitorLoading extends HTMLElement {
     const tags = [...new Set(
       [...targetElement.querySelectorAll('*')]
         .map(el => el.tagName.toLowerCase())
-        .filter(tag => tag.includes('-') && tag !== selfTag)
+        .filter(tag => tag.includes('-') && tag !== selfTag && isSelected(tag))
     )]
 
     if (isMonitor) {
-      await this._runMonitorMode({ targetElement, tags, start, brand, svgIconURL, revealAttr, showDuration, overlayFadeMs, path, caseConvention })
+      await this._runMonitorMode({ targetElement, tags, start, brand, svgIconURL, revealAttr, showDuration, overlayFadeMs, path, caseConvention, include, exclude, isSelected })
     } else {
-      await this._runLoaderMode({ targetElement, tags, start, brand, svgIconURL, revealAttr, showDuration, stepDuration, overlayFadeMs, path, caseConvention })
+      await this._runLoaderMode({ targetElement, tags, start, brand, svgIconURL, revealAttr, showDuration, stepDuration, overlayFadeMs, path, caseConvention, include, exclude, isSelected })
     }
   }
 
   // ── Progress-bar mode (loader-element behaviour) ──────────────────────────
 
-  async _runLoaderMode({ targetElement, tags, start, brand, svgIconURL, revealAttr, showDuration, stepDuration, overlayFadeMs, path, caseConvention }) {
+  async _runLoaderMode({ targetElement, tags, start, brand, svgIconURL, revealAttr, showDuration, stepDuration, overlayFadeMs, path, caseConvention, include, exclude, isSelected }) {
     const total = tags.length
     let readyCount = 0
 
@@ -109,10 +114,10 @@ class monitorLoading extends HTMLElement {
       origDefine(tag, Ctor, options)
     }
 
-    await autoDefine({ root: targetElement, path, caseConvention })
+    await autoDefine({ root: targetElement, path, caseConvention, include, exclude })
     customElements.define = origDefine
 
-    await waitForElementsReady(targetElement, { observeMutations: false })
+    await waitWithUnselectedParked(targetElement, this, isSelected)
 
     setProgress(100)
     targetElement.setAttribute(revealAttr, '')
@@ -132,7 +137,7 @@ class monitorLoading extends HTMLElement {
 
   // ── Monitor mode (monitor-make-ready behaviour) ───────────────────────────
 
-  async _runMonitorMode({ targetElement, tags, start, brand, svgIconURL, revealAttr, showDuration, overlayFadeMs, path, caseConvention }) {
+  async _runMonitorMode({ targetElement, tags, start, brand, svgIconURL, revealAttr, showDuration, overlayFadeMs, path, caseConvention, include, exclude, isSelected }) {
     const { restate }        = await import('/__src/libs/restate/restate.esm.min.js')
     const { reflectx, html } = await import('/__src/libs/reflectx/reflectx.esm.min.js')
 
@@ -188,11 +193,11 @@ class monitorLoading extends HTMLElement {
       })
     }
 
-    await autoDefine({ root: targetElement, path, caseConvention })
+    await autoDefine({ root: targetElement, path, caseConvention, include, exclude })
     customElements.define = origDefine
 
     state.$set({ footer: 'Waiting for components to be ready…' })
-    await waitForElementsReady(targetElement, { observeMutations: false })
+    await waitWithUnselectedParked(targetElement, this, isSelected)
 
     setProgress(100)
     targetElement.setAttribute(revealAttr, '')
@@ -258,13 +263,14 @@ const hostCSS = (overlayFadeMs) => `
   }
 
   .brand-icon-svg svg {
-    height: 1.5rem;
+    height: 1.25rem;
     width: auto;
   }
 
   .brand-name {
-    font-size: var(--f-size-2);
-    font-weight: 700;
+    font-family: var(--ff-1);
+    font-size: var(--f-size-4);
+    font-weight: 600;
     letter-spacing: -0.02rem;
   }
 `
@@ -277,7 +283,7 @@ function buildLoaderTemplate({ brand, svgIconURL, stepDuration, overlayFadeMs })
       ${hostCSS(overlayFadeMs)}
 
       .inner {
-        width: min(320px, 90vw);
+        width: min(280px, 90vw);
         text-align: center;
       }
 
@@ -450,6 +456,116 @@ function buildMonitorTemplate({ brand, svgIconURL, overlayFadeMs }) {
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+/** @param {string | null} value */
+function parsePatternList(value) {
+  if (value == null) return undefined
+  return value.trim().split(/\s+/).filter(Boolean)
+}
+
+/**
+ * Same include/exclude rules as autoDefine: exact tag, or a prefix ending in `*`.
+ * @param {string[] | undefined} include
+ * @param {string[] | undefined} exclude
+ */
+function createTagSelector(include, exclude) {
+  const includeMatchers = compileTagPatterns(include, 'include')
+  const excludeMatchers = compileTagPatterns(exclude, 'exclude')
+  return (tag) => {
+    if (includeMatchers && !includeMatchers.some((match) => match(tag))) return false
+    if (excludeMatchers && excludeMatchers.some((match) => match(tag))) return false
+    return true
+  }
+}
+
+/**
+ * @param {string[] | undefined} patterns
+ * @param {'include' | 'exclude'} optionName
+ * @returns {Array<(tag: string) => boolean> | null}
+ */
+function compileTagPatterns(patterns, optionName) {
+  if (patterns == null) return null
+
+  return patterns.map((pattern) => {
+    const normalized = pattern.trim().toLowerCase()
+
+    if (!normalized) {
+      throw new Error(`[monitor-loading] ${optionName} contains an empty pattern`)
+    }
+
+    const star = normalized.indexOf('*')
+
+    if (star !== -1) {
+      if (star !== normalized.length - 1) {
+        throw new Error(`[monitor-loading] ${optionName} pattern "${pattern}" must be an exact tag name or end with a single *`)
+      }
+
+      const prefix = normalized.slice(0, -1)
+
+      if (!prefix) {
+        throw new Error(`[monitor-loading] ${optionName} pattern "*" is too broad — use a prefix such as "native-*"`)
+      }
+
+      return (tag) => tag.startsWith(prefix)
+    }
+
+    if (!normalized.includes('-')) {
+      throw new Error(`[monitor-loading] ${optionName} pattern "${pattern}" must be a custom element tag name`)
+    }
+
+    return (tag) => tag === normalized
+  })
+}
+
+/**
+ * waitForElementsReady has no include/exclude. Move skipped custom elements
+ * out of the target for the wait, then put them back. The host stays put.
+ * Ancestors of a selected element stay put so that element remains in the tree.
+ */
+async function waitWithUnselectedParked(root, host, isSelected) {
+  const parked = parkUnselected(root, host, isSelected)
+  try {
+    await waitForElementsReady(root, { observeMutations: false })
+  } finally {
+    restoreParked(parked)
+  }
+}
+
+function parkUnselected(root, host, isSelected) {
+  const custom = [...root.querySelectorAll('*')].filter((el) => el.tagName.includes('-') && el !== host)
+  const candidates = custom.filter((el) => {
+    if (isSelected(el.tagName.toLowerCase())) return false
+    return ![...el.querySelectorAll('*')].some((desc) =>
+      desc.tagName.includes('-') && isSelected(desc.tagName.toLowerCase())
+    )
+  })
+
+  const candidateSet = new Set(candidates)
+  const outermost = candidates.filter((el) => {
+    let parent = el.parentElement
+    while (parent) {
+      if (candidateSet.has(parent)) return false
+      if (parent === root) break
+      parent = parent.parentElement
+    }
+    return true
+  })
+
+  const parked = []
+  for (const el of outermost) {
+    parked.push({ el, parent: el.parentNode, next: el.nextSibling })
+    el.remove()
+  }
+  return parked
+}
+
+function restoreParked(parked) {
+  for (let i = parked.length - 1; i >= 0; i--) {
+    const { el, parent, next } = parked[i]
+    if (next && next.parentNode === parent) parent.insertBefore(el, next)
+    else parent.appendChild(el)
+  }
 }
 
 // ── Export ───────────────────────────────────────────────────────────────────

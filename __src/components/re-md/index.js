@@ -2,6 +2,7 @@
 let hljs = null
 
 import { readyElement } from '/__src/libs/readyElement/index.js';
+import { luminanceHSL, adjustedHSL } from '/__src/js/luminance.js';
 
 /**
  * remd Custom Element
@@ -79,8 +80,124 @@ class remd extends readyElement {
     }
   }
 
+  // Normalize accent-color input: HSL triplet or any valid CSS color (hsl(), var(), etc.)
+  parseAccentInput(raw) {
+    const value = (raw || '').trim();
+    if (!value) return { full: null, triplet: null };
+
+    if (/^\d+(?:\.\d+)?\s+\d+(?:\.\d+)?%?\s+\d+(?:\.\d+)?%?$/.test(value)) {
+      const triplet = /\d+%/.test(value)
+        ? value
+        : value.replace(
+            /^(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)$/,
+            '$1 $2% $3%'
+          );
+      return { full: `hsl(${triplet})`, triplet };
+    }
+
+    return { full: value, triplet: null };
+  }
+
+  rgbToHslTriplet(r, g, b) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h = 0;
+    let s = 0;
+    const l = (max + min) / 2;
+
+    if (max !== min) {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        default: h = (r - g) / d + 4;
+      }
+      h /= 6;
+    }
+
+    return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+  }
+
+  resolveTripletFromColor(color) {
+    const probe = document.createElement('span');
+    probe.style.color = color;
+    document.documentElement.appendChild(probe);
+    const rgb = getComputedStyle(probe).color;
+    probe.remove();
+
+    const match = rgb.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+    if (!match) return null;
+
+    return this.rgbToHslTriplet(+match[1], +match[2], +match[3]);
+  }
+
+  clearAccentInlineTokens() {
+    for (const prop of [
+      '--re-md-accent',
+      '--re-md-accent-adjusted',
+      '--re-md-accent-adjusted-hard',
+      '--re-md-accent-foreground',
+      '--accent-color-hsl',
+      '--accent-color-hsl-adjusted',
+      '--accent-color-hsl-adjusted-hard',
+      '--over-accent-color-hsl',
+    ]) {
+      this.style.removeProperty(prop);
+    }
+    this.classList.remove('--accent-is-light', '--accent-is-dark');
+  }
+
+  applyAccentTokens() {
+    const raw = this.getAttribute('accent-color') || this.getAttribute('accent-color-hsl');
+    if (!raw) {
+      this.clearAccentInlineTokens();
+      return;
+    }
+
+    const { full, triplet } = this.parseAccentInput(raw);
+    if (!full) return;
+
+    const resolvedTriplet = triplet || this.resolveTripletFromColor(full);
+    if (!resolvedTriplet) {
+      this.style.setProperty('--re-md-accent', full);
+      return;
+    }
+
+    const parts = resolvedTriplet.replaceAll('%', '').split(' ').map(Number);
+    const lum = luminanceHSL(...parts);
+    const isLight = lum > 0.6;
+    const adjustedSoft = adjustedHSL(resolvedTriplet, {
+      min: 30, max: 58, strength: 1, maxShift: 30,
+    });
+    const adjustedHard = isLight
+      ? adjustedHSL(resolvedTriplet, { min: 25, max: 40, strength: 0.2, maxShift: 65 })
+      : adjustedSoft;
+    const foregroundTriplet = lum > 0.55 ? '230 20% 10%' : '250 5% 92%';
+
+    this.style.setProperty('--re-md-accent', full);
+    this.style.setProperty('--re-md-accent-adjusted', `hsl(${adjustedSoft})`);
+    this.style.setProperty('--re-md-accent-adjusted-hard', `hsl(${adjustedHard})`);
+    this.style.setProperty('--re-md-accent-foreground', `hsl(${foregroundTriplet})`);
+
+    // Legacy HSL triplets for external syntax themes (code-syntax.css)
+    this.style.setProperty('--accent-color-hsl', resolvedTriplet);
+    this.style.setProperty('--accent-color-hsl-adjusted', adjustedSoft);
+    this.style.setProperty('--accent-color-hsl-adjusted-hard', adjustedHard);
+    this.style.setProperty('--over-accent-color-hsl', foregroundTriplet);
+
+    this.classList.toggle('--accent-is-light', isLight);
+    this.classList.toggle('--accent-is-dark', lum < 0.1);
+    if (!isLight && lum >= 0.1) {
+      this.classList.remove('--accent-is-light', '--accent-is-dark');
+    }
+  }
+
   static get observedAttributes() {
-    return ['src', 'transform'];
+    return ['src', 'transform', 'accent-color', 'accent-color-hsl'];
   }
 
   connectedCallback() {
@@ -198,7 +315,14 @@ class remd extends readyElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue !== newValue && !this.isProcessing) {
+    if (oldValue === newValue) return;
+
+    if (name === 'accent-color' || name === 'accent-color-hsl') {
+      this.applyAccentTokens();
+      return;
+    }
+
+    if (!this.isProcessing) {
       this.processMarkdown();
     }
   }
@@ -208,6 +332,7 @@ class remd extends readyElement {
     const src = this.getAttribute('src');
     const transform = this.getAttribute('transform');
 
+    this.applyAccentTokens();
     this.isProcessing = true;
     
     // Hide content during processing with smooth transition
@@ -287,6 +412,10 @@ class remd extends readyElement {
       re-md {
         box-sizing: border-box;
         font-family: var(--ff-2, sans-serif);
+        --re-md-accent: hsl(var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)));
+        --re-md-accent-adjusted: var(--re-md-accent);
+        --re-md-accent-adjusted-hard: var(--re-md-accent);
+        --re-md-accent-foreground: hsl(var(--over-accent-color-hsl, 250 5% 92%));
       }
 
       re-md * {
@@ -326,18 +455,19 @@ class remd extends readyElement {
         margin: 0;
         padding: calc(var(--space-unit, 0.5rem) * 2) calc(var(--space-unit, 0.5rem) * 2);
         margin-block: calc(var(--space-unit, 0.5rem) * 3) calc(var(--space-unit, 0.5rem) * 6);
-        background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / var(--blockquote-bg-opacity, 0.04));
+        background-color: hsl(from var(--re-md-accent) h s l / var(--blockquote-bg-opacity, 0.04));
         border-radius: calc(var(--size-unit, 0.5rem) * 0.25);
-        border-left: 4px solid hsla( var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / var(--blockquote-border-opacity, 0.4));
+        border-left: 4px solid hsl(from var(--re-md-accent) h s l / var(--blockquote-border-opacity, 0.4));
       }
 
       re-md code {
+        --inline-code-border-opacity: 0.3;
         font-size: var(--codeblock-font-size, 0.875em);
         padding: calc(var(--space-unit, 0.5rem) * 1/3) var(--space-unit, 0.5rem);
         margin-inline: calc(var(--space-unit, 0.5rem) * 1/2);
-        background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl)) / var(--inline-code-bg-opacity, 0.06));
-        box-shadow: 0 0 0 1px hsla(var(--accent-color-hsl, var(--fcolor-hsl)) / var(--inline-code-border-opacity, 0.2));
+        background-color: hsl(from var(--re-md-accent) h s l / var(--inline-code-bg-opacity, 0.06));
         border-radius: calc(var(--size-unit, 0.5rem) * 1/2);
+        box-shadow: 0 0 0 1px hsl(from var(--re-md-accent) h s l / var(--inline-code-border-opacity, 0.2)) inset;
       }
 
       re-md code-block {
@@ -346,13 +476,8 @@ class remd extends readyElement {
         border-radius: calc(var(--size-unit, 0.5rem) * 0.25);
       }
 
-      :is([theme-mode="light"].--accent-is-light code-block, [theme-mode="light"].--accent-is-light code) {
-        --accent-color-hsl: var(--accent-color-hsl-adjusted-hard, var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)));
-      }
-
-      re-md code-block .copy-btn {
-        font-size: var(--codeblock-font-size, 0.875em);
-        box-shadow: 0 0 0 1px hsla(var(--accent-color-hsl, var(--fcolor-hsl)) / var(--inline-code-border-opacity, 0.2)) inset;
+      :is([theme-mode="light"] re-md.--accent-is-light) :is(code-block, code) {
+        --re-md-accent: var(--re-md-accent-adjusted-hard);
       }
     `;
   }
@@ -383,14 +508,14 @@ class remd extends readyElement {
       }
 
       re-md .re-md-table thead {
-        background-color: hsla(var(--accent-color-hsl, var(--bcolor-hsl, 0 0% 100%)) / var(--table-thead-bg-opacity, 0.8));
+        background-color: hsl(from var(--re-md-accent) h s l / var(--table-thead-bg-opacity, 0.8));
       }
 
       re-md .re-md-table th {
         padding: calc(var(--space-unit, 0.5rem) * 2) calc(var(--space-unit, 0.5rem) * 3);
         font-weight: 500;
         text-align: left;
-        color: hsla(var(--over-accent-color-hsl, 0 0% 100%) / var(--table-thead-color-opacity, 1));
+        color: hsl(from var(--re-md-accent-foreground) h s l / var(--table-thead-color-opacity, 1));
       }
 
       re-md .re-md-table th:not(:first-child) {
@@ -402,7 +527,7 @@ class remd extends readyElement {
       }
 
       re-md .re-md-table tbody tr:nth-child(even) {
-        background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / var(--table-tr-even-bg-opacity, 0.08));
+        background-color: hsl(from var(--re-md-accent) h s l / var(--table-tr-even-bg-opacity, 0.08));
       }
 
       re-md .re-md-table td {
@@ -1602,8 +1727,10 @@ class remd extends readyElement {
       })
       .join('');
     
-    // Get background color from attributes or use default
-    const bgHslAttr = attributes['bg-hsl'] || 'var(--accent-color-hsl)';
+    // Get background color from attributes or use default accent
+    const blockAccent = attributes['bg-hsl']
+      ? `hsl(${attributes['bg-hsl']})`
+      : 'var(--re-md-accent)';
     
     // Generate unique ID for this code block
     const uniqueId = Math.random().toString(36).substr(2, 9);
@@ -1622,7 +1749,7 @@ class remd extends readyElement {
       ${themeCSS}
       
       .code-block {
-        --codeblock-font-size: var(--f-size-p, 0.8rem);
+        --codeblock-font-size: var(--f-size-p, 0.875rem);
         display: flex;
         width: 100%;
         margin-top: calc(var(--space-unit, 0.5rem)*2);
@@ -1635,14 +1762,18 @@ class remd extends readyElement {
         width: 100%;
         font-family: var(--ff-3, monospace);
         line-height: 1.42;
-        background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl, ${bgHslAttr})) / var(--code-block-bg-opacity,0.04));
+        background-color: hsl(from ${blockAccent} h s l / var(--code-block-bg-opacity, 0.08));
         column-gap: calc(var(--space-unit, 0.5rem)*2);
         padding: calc(var(--space-unit, 0.5rem)*2);
         overflow: hidden;
         border-radius: calc(var(--size-unit, 0.5rem) * 0.5);
-        box-shadow: 0 0 0 1px hsla(var(--accent-color-hsl, var(--fcolor-hsl)) / var(--inline-code-border-opacity, 0.4)) inset;
+        box-shadow: 0 0 0 1px hsl(from var(--re-md-accent) h s l / var(--code-block-border-opacity, 0.12)) inset;
       }
       
+      [theme-mode="light"] .code-block .wrapper {
+        background-color: hsl(from ${blockAccent} h s l / var(--code-block-bg-opacity-light, 0.06));
+        box-shadow: 0 0 0 1px hsl(from var(--re-md-accent) h s l / var(--code-block-border-opacity-light, 0.1)) inset;
+      }
       .code-block .line-numbers {
         user-select: none;
         text-align: right;
@@ -1673,22 +1804,27 @@ class remd extends readyElement {
       }
       
       .code-block .focus {
-        background: hsla(var(--acc-hsl, 180 100% 50%) / var(--code-block-focus-opacity, 0.2));
+        background: hsl(from var(--re-md-accent) h s l / var(--code-block-focus-opacity, 0.2));
       }
       
       .code-block button.copy-btn {
         position: absolute;
-        top: calc(var(--space-unit, 0.5rem)*2);
-        right: calc(var(--space-unit, 0.5rem)*2);
-        background: hsla(var(--bcolor-hsl, 0 0% 100%) / 1);
-        color: hsla(var(--fcolor-hsl, 0 0% 0%) / 1);
+        top: calc(var(--space-unit, 0.5rem)* 1.25);
+        right: calc(var(--space-unit, 0.5rem)* 1.25);
+        color: hsla(from hsl(var(--fcolor-hsl)) h s l / 1);
         border: none;
-        padding: calc(var(--space-unit, 0.5rem) * 1/2) calc(var(--space-unit, 0.5rem) * 2);
+        padding: calc(var(--space-unit, 0.5rem) * 0.25) calc(var(--space-unit, 0.5rem) * 2) calc(var(--space-unit, 0.5rem) * 0.5);
         border-radius: calc(var(--size-unit, 0.5rem) * 0.5);
         cursor: pointer;
-        font-size: var(--codeblock-font-size, 0.875em);
+        font-size: calc(var(--codeblock-font-size, 0.875em) * 0.8);
         font-family: var(--ff-3, monospace);
-        box-shadow: 0 0 0 1px hsla(var(--accent-color-hsl, var(--fcolor-hsl)) / var(--inline-code-border-opacity, 0.2)) inset;
+        box-shadow: 0 0 0 1px hsl(from var(--re-md-accent) h s l / 0.15) inset;
+        background-color: hsl(from hsl(var(--bcolor-hsl)) h s calc(l * 2) / 0.8);
+      }
+      [theme-mode="light"] .code-block button.copy-btn {
+        color: hsla(from hsl(var(--fcolor-hsl) ) h s l / 1);
+        box-shadow: 0 0 0 1px hsl(from var(--re-md-accent) h s l / 0) inset;
+        background-color: hsl(from hsl(var(--bcolor-hsl)) h s calc(l * 2) / 0.8);
       }
     `;
     

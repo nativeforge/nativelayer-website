@@ -3,7 +3,7 @@
   <defs>
     <style>
       .c {
-        fill: hsl(var(--accent-color-hsl, 348 100% 50%));
+        fill: hsl(var(--accent-color-hsl, var(--brand-color-routerx)));
       }
     </style>
   </defs>

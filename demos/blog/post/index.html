@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
+  <meta name="color-scheme" content="dark light">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post — nullsignal</title>
+
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#0d0f14">
+
+  <link rel="stylesheet" href="/__src/css/reset.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/fonts.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/global-styles.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/code-syntax.css" blocking="render">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inconsolata:wght@300;400;600&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" blocking="render">
+  <link rel="stylesheet" href="/demos/blog/blog.css" blocking="render">
+
+  <style>
+
+    .post-wrap {
+      --post-color: var(--post-accent, var(--blog-accent));
+      display: grid;
+      grid-template-columns: 1fr min(100%, 48rem) 1fr;
+      gap: 0;
+    }
+
+    .post-wrap > * {
+      grid-column: 2;
+    }
+
+    .post-header {
+      padding-block: calc(var(--space-unit) * 8);
+      border-bottom: 1px solid hsl(from var(--post-color) h s l / 0.2);
+      margin-bottom: calc(var(--space-unit) * 8);
+    }
+
+    .post-category {
+      display: inline-flex;
+      align-items: center;
+      gap: calc(var(--space-unit) * 1);
+      font-family: var(--ff-3, 'JetBrains Mono', monospace);
+      font-size: var(--f-size-t);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--post-color);
+      text-shadow: 0 0 calc(var(--space-unit) * 2) hsl(from var(--post-color) h s l / 0.5);
+      margin-bottom: calc(var(--space-unit) * 4);
+    }
+
+    .post-category::before { content: '> '; opacity: 0.5; }
+
+    .post-topics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: calc(var(--space-unit) * 1.5);
+      margin-bottom: calc(var(--space-unit) * 4);
+    }
+
+    .post-title {
+      font-family: var(--ff-1, 'Syncopate', sans-serif);
+      font-size: var(--f-size-2xl);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      line-height: 1.15;
+      color: var(--blog-color-fg);
+      margin-bottom: calc(var(--space-unit) * 5);
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: calc(var(--space-unit) * 4);
+      font-family: var(--ff-3, 'JetBrains Mono', monospace);
+      font-size: var(--f-size-t);
+      letter-spacing: 0.1em;
+      color: var(--blog-fg-subtle);
+    }
+
+    .post-meta-sep {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: hsl(from var(--post-color) h s l / 0.5);
+    }
+
+    /* re-md article styles */
+    .post-article re-md,
+    .post-article {
+      font-family: var(--ff-2, 'Inconsolata', monospace);
+      font-size: var(--f-size-p);
+      line-height: 1.75;
+      color: var(--blog-fg-body);
+    }
+
+    .post-article :where(h1, h2, h3, h4) {
+      font-family: var(--ff-1, 'Syncopate', sans-serif);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--blog-color-fg);
+      margin-top: calc(var(--space-unit) * 8);
+      margin-bottom: calc(var(--space-unit) * 3);
+      line-height: 1.25;
+    }
+
+    .post-article h2 {
+      font-size: var(--f-size-2);
+      padding-bottom: calc(var(--space-unit) * 2);
+      border-bottom: 1px solid hsl(from var(--post-color) h s l / 0.15);
+    }
+
+    .post-article h3 {
+      font-size: var(--f-size-3);
+      color: var(--post-color);
+    }
+
+    .post-article p {
+      margin-bottom: calc(var(--space-unit) * 4);
+    }
+
+    .post-article :where(ul, ol) {
+      padding-left: calc(var(--space-unit) * 6);
+      margin-bottom: calc(var(--space-unit) * 4);
+    }
+
+    .post-article li {
+      margin-bottom: calc(var(--space-unit) * 2);
+    }
+
+    .post-article code {
+      font-family: var(--ff-3, 'JetBrains Mono', monospace);
+      font-size: 0.88em;
+      color: var(--post-color);
+      background: hsl(from var(--post-color) h s l / 0.08);
+      box-shadow: 0 0 0 1px hsl(from var(--post-color) h s l / 0.2);
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+    }
+
+    .post-article pre {
+      background: var(--blog-bg-code);
+      border: 1px solid hsl(from var(--post-color) h s l / 0.15);
+      border-left: 2px solid hsl(from var(--post-color) h s l / 0.5);
+      border-radius: 0 calc(var(--size-unit) * 0.5) calc(var(--size-unit) * 0.5) 0;
+      padding: calc(var(--space-unit) * 4);
+      overflow-x: auto;
+      margin-bottom: calc(var(--space-unit) * 4);
+    }
+
+    .post-article pre code {
+      background: none;
+      box-shadow: none;
+      padding: 0;
+      font-size: var(--f-size-s);
+      color: hsl(from var(--blog-color-fg) h s l / 0.85);
+    }
+
+    .post-article table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: calc(var(--space-unit) * 4);
+      font-size: var(--f-size-s);
+    }
+
+    .post-article :where(th, td) {
+      padding: calc(var(--space-unit) * 2) calc(var(--space-unit) * 3);
+      text-align: left;
+      border-bottom: 1px solid var(--blog-fg-hairline);
+    }
+
+    /* re-md tables: subtle accent wash, not the default 80% solid thead bar */
+    .post-article re-md {
+      --table-thead-bg-opacity: 0.05;
+    }
+
+    .post-article re-md .re-md-table th {
+      font-family: var(--ff-3, monospace);
+      font-size: var(--f-size-t);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: hsl(from var(--re-md-accent) h s l / 0.8);
+      background: transparent;
+    }
+
+    .post-article re-md .re-md-table th:not(:first-child) {
+      border-left-color: hsl(from var(--re-md-accent) h s l / 0.12);
+    }
+
+    .post-article blockquote {
+      margin: 0 0 calc(var(--space-unit) * 4) 0;
+      padding: calc(var(--space-unit) * 3) calc(var(--space-unit) * 5);
+      border-left: 3px solid hsl(from var(--post-color) h s l / 0.5);
+      background: hsl(from var(--post-color) h s l / 0.04);
+      font-style: italic;
+      color: var(--blog-fg-nav);
+    }
+
+    .post-article re-md hr {
+      border: none;
+      height: calc(var(--space-unit) * 4);
+      padding: 0;
+      background: linear-gradient(
+        to right,
+        hsl(from var(--post-color) h s l / 0.4),
+        transparent
+      );
+      margin-block: calc(var(--space-unit) * 8);
+    }
+
+    .post-article strong {
+      font-weight: 600;
+      color: var(--blog-color-fg);
+    }
+
+    .post-footer {
+      margin-top: calc(var(--space-unit) * 12);
+      padding-top: calc(var(--space-unit) * 8);
+      border-top: 1px solid hsl(from var(--post-color) h s l / 0.15);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: calc(var(--space-unit) * 2);
+    }
+
+    .post-error {
+      padding-block: calc(var(--space-unit) * 12);
+      text-align: center;
+    }
+
+    .post-error-code {
+      font-family: var(--ff-3, monospace);
+      font-size: var(--f-size-4xl);
+      font-weight: 700;
+      color: var(--blog-accent-error);
+      display: block;
+      margin-bottom: calc(var(--space-unit) * 3);
+    }
+
+    .post-error-msg {
+      font-family: var(--ff-3, monospace);
+      color: var(--blog-fg-subtle);
+      letter-spacing: 0.1em;
+    }
+  </style>
+
+  <script type="module">
+    import { makeReady }    from '/__src/libs/makeReady/index.js';
+    import monitorLoading   from '/__src/components/monitor-loading/index.js';
+    import blogTopBar       from '/__src/components/blog-top-bar.js';
+    import pageContainer    from '/__src/components/page-container.js';
+    import remd             from '/__src/components/re-md/index.js';
+    import pillBase         from '/__src/components/pill-base.js';
+
+    [blogTopBar, pageContainer, remd, pillBase].forEach(Cls => makeReady(Cls));
+
+    customElements.define('monitor-loading', monitorLoading);
+    customElements.define('blog-top-bar',   blogTopBar);
+    customElements.define('page-container', pageContainer);
+    customElements.define('re-md',          remd);
+    customElements.define('pill-base',      pillBase);
+  </script>
+
+</head>
+
+<body style="opacity: 0; transform: translateY(16px);">
+  
+  <monitor-loading target="body" path="/__src/components/" brand="nullsignal" show-duration="300"></monitor-loading>
+  
+  <blog-top-bar reveal></blog-top-bar>
+
+  <page-container id="post-container" style="padding-block-end: calc(var(--space-unit) * 20);" reveal></page-container>
+
+  <script type="module">
+    import { getPost, getPostAccent, getPostSignalLabel, getArticleFile, topicLabels } from '/demos/blog/posts-data.js';
+    import { startBlogRouter, onBlogRoute } from '/demos/blog/router.js';
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    const container = document.getElementById('post-container');
+
+    function renderPost(query = {}) {
+      const slug = query.slug;
+      const post = slug ? getPost(slug) : null;
+
+      if (!post) {
+        document.title = 'Post — nullsignal';
+        document.documentElement.style.removeProperty('--post-accent');
+        container.innerHTML = `
+          <div class="post-error">
+            <span class="post-error-code">404</span>
+            <p class="post-error-msg">POST NOT FOUND</p>
+            <a href="/demos/blog/posts/" class="blog-btn" style="margin-top: calc(var(--space-unit)*4); display: inline-flex;">← Back to posts</a>
+          </div>
+        `;
+        return;
+      }
+
+      document.title = `${post.title} — nullsignal.dev`;
+      document.documentElement.style.setProperty('--post-accent', getPostAccent(post));
+
+      const date = new Date(post.date).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+
+      const topicsHtml = post.topics.map(topic =>
+        `<pill-base variant="topic" href="/demos/blog/posts/?topic=${encodeURIComponent(topic)}">${escapeHtml(topicLabels[topic])}</pill-base>`
+      ).join('');
+
+      const footerTopicsHtml = post.topics.map(topic =>
+        `<pill-base variant="topic" href="/demos/blog/posts/?topic=${encodeURIComponent(topic)}">${escapeHtml(topicLabels[topic])}</pill-base>`
+      ).join('');
+
+      container.innerHTML = `
+        <div class="post-wrap">
+          <article>
+            <header class="post-header">
+              <div class="post-category">${escapeHtml(getPostSignalLabel(post))}</div>
+              <div class="post-topics">${topicsHtml}</div>
+              <h1 class="post-title">${escapeHtml(post.title)}</h1>
+              <div class="post-meta">
+                <span>${date}</span>
+                <span class="post-meta-sep"></span>
+                <span>${post.readTime} min read</span>
+              </div>
+            </header>
+
+            <div class="post-article" id="article-body">
+              <re-md
+                src="/__articles/${getArticleFile(post)}"
+                accent-color="${getPostAccent(post)}"
+                logs syntax-css="/demos/blog/blog-code-syntax.css">
+              </re-md>
+            </div>
+
+            <footer class="post-footer">
+              <pill-base variant="neutral" href="/demos/blog/posts/">All posts</pill-base>
+              <pill-base variant="signal" accent="${getPostAccent(post)}" href="/demos/blog/posts/?signal=${encodeURIComponent(post.signal)}">${escapeHtml(getPostSignalLabel(post))}</pill-base>
+              ${footerTopicsHtml}
+            </footer>
+          </article>
+        </div>
+      `;
+    }
+
+    onBlogRoute('post', renderPost);
+    startBlogRouter('post', { preventSameLinkNavigation: true });
+  </script>
+
+</body>
+</html>

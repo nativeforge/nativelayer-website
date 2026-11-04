@@ -32,27 +32,31 @@ export default class baseBackTo extends HTMLElement {
         flex-direction: row;
         align-items: center;
         justify-content: flex-start;
-        gap: var(--space-unit);
+        gap: calc(var(--space-unit) * 0.5);
       }
       .back-to-button-arrow {
         font-size: var(--f-size-p);
       }
       .back-to-button-logo {
-        width: calc(var(--space-unit) * 5);
-        height: calc(var(--space-unit) * 5);
+        width: calc(var(--space-unit) * 4);
+        height: calc(var(--space-unit) * 4);
         color: hsl(var(--fcolor-hsl));
       }
       .back-to-button-link {
         text-decoration: none;
         color: inherit;
-
+        font-size: var(--f-size-p);
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: flex-start;
         gap: calc( var(--space-unit) * 2);
         width: 100%; height: 100%;
-        padding-inline: calc(var(--space-unit) * 4);
+        padding-inline: calc(var(--space-unit) * 2);
+        padding-block: calc(var(--space-unit) * 0);
+      }
+      .back-to-button-text {
+        font-size: var(--f-size-s);
       }
 
     </style>
@@ -62,7 +66,7 @@ export default class baseBackTo extends HTMLElement {
           <span class="back-to-button-arrow">←</span>
           <svg-insert svg-class="back-to-button-logo" src="/__src/img/native-lines-logo.svg" svg-style="color: hsl(var(--fcolor-hsl))">
           </svg-insert>
-          <p slot="text">Back to /demos</p>
+          <p slot="text" class="back-to-button-text">Back to /demos</p>
         </a>
       </base-button>
     </div>

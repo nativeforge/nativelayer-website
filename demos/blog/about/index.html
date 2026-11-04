@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
+  <meta name="color-scheme" content="dark light">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — nullsignal</title>
+
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#0d0f14">
+
+  <link rel="stylesheet" href="/__src/css/reset.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/fonts.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/global-styles.css" blocking="render">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inconsolata:wght@300;400;600&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" blocking="render">
+  <link rel="stylesheet" href="/demos/blog/blog.css" blocking="render">
+
+  <style>
+    .about-body {
+      max-width: 48rem;
+      display: flex;
+      flex-direction: column;
+      padding-block-start: calc(var(--space-unit) * 8);
+      gap: calc(var(--space-unit) * 8);
+    }
+
+    .about-body p,
+    .about-body li {
+      font-family: var(--ff-2, 'Inconsolata', monospace);
+      font-size: var(--f-size-p);
+      line-height: 1.75;
+      color: hsl(var(--fcolor-hsl) / 0.75);
+    }
+
+    .about-body h3 {
+      font-family: var(--ff-1, 'Syncopate', sans-serif);
+      font-size: var(--f-size-3);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--blog-color-fg);
+      margin-bottom: calc(var(--space-unit) * 3);
+    }
+
+    [theme-mode="light"] .about-body h3 {
+      color: var(--blog-dark);
+    }
+
+    .about-body code {
+      font-family: var(--ff-3, 'JetBrains Mono', monospace);
+      font-size: 0.9em;
+      color: hsl(var(--blog-accent));
+      background: hsl(var(--blog-accent) / 0.08);
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+      gap: calc(var(--space-unit) * 3);
+    }
+
+    .stat {
+      --stat-accent: var(--blog-accent);
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--space-unit) * 1);
+      padding: calc(var(--space-unit) * 3);
+      border: 1px solid hsl(from var(--stat-accent) h s l / 0.15);
+      border-bottom: 2px solid var(--stat-accent);
+      border-radius: calc(var(--size-unit) * 0.5);
+      background: hsl(from var(--stat-accent) h s l / 0.04);
+    }
+    [theme-mode="light"] .stat {
+      --stat-accent: var(--blog-dark);
+    }
+
+    .stat-value {
+      font-family: var(--ff-3, 'JetBrains Mono', monospace);
+      font-size: var(--f-size-2);
+      font-weight: 700;
+      color: var(--stat-accent);
+      text-shadow: 0 0 calc(var(--space-unit) * 2) hsl(from var(--stat-accent) h s l / 0.5);
+    }
+
+    .stat-label {
+      font-family: var(--ff-3, monospace);
+      font-size: var(--f-size-t);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--blog-fg-subtle);
+    }
+
+    .topic-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: calc(var(--space-unit) * 2);
+    }
+
+    .topic-tag {
+      display: inline-block;
+      padding: calc(var(--space-unit) * 1) calc(var(--space-unit) * 2.5);
+      font-family: var(--ff-3, monospace);
+      font-size: var(--f-size-t);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid hsl(var(--tag-accent, var(--blog-accent)) / 0.35);
+      border-radius: 2px;
+      color: hsl(var(--tag-accent, var(--blog-accent)));
+      background: hsl(var(--tag-accent, var(--blog-accent)) / 0.06);
+    }
+  </style>
+
+  <script type="module">
+    import { makeReady }    from '/__src/libs/makeReady/index.js';
+    import monitorLoading   from '/__src/components/monitor-loading/index.js';
+    import blogTopBar       from '/__src/components/blog-top-bar.js';
+    import pageContainer    from '/__src/components/page-container.js';
+
+    [blogTopBar, pageContainer].forEach(Cls => makeReady(Cls));
+
+    customElements.define('monitor-loading', monitorLoading);
+    customElements.define('blog-top-bar',   blogTopBar);
+    customElements.define('page-container', pageContainer);
+  </script>
+
+</head>
+
+<body style="opacity: 0; transform: translateY(16px);">
+
+  <monitor-loading target="body" path="/__src/components/" brand="nullsignal" show-duration="300"></monitor-loading>
+
+  <blog-top-bar reveal></blog-top-bar>
+
+  <page-container style="padding-block-end: calc(var(--space-unit) * 20);" reveal>
+
+    <header style="padding-block-start: calc(var(--space-unit) * 8); padding-block-end: calc(var(--space-unit) * 8); border-bottom: 1px solid hsl(var(--blog-accent) / 0.15);">
+      <span style="font-family: var(--ff-3, monospace); font-size: var(--f-size-s); letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--blog-accent)); text-shadow: 0 0 calc(var(--space-unit)*2) hsl(var(--blog-accent)/0.6);">–– ABOUT</span>
+      <h1 class="blog-section-title" style="font-size: var(--f-size-2xl); margin-top: calc(var(--space-unit) * 2);">About <span class="accent">nullsignal</span></h1>
+    </header>
+
+    <div class="about-body">
+
+      <section>
+        <p>
+          <strong style="color: hsl(var(--fcolor-hsl));">nullsignal</strong> is a technical blog about the web platform curated by <a href="https://github.com/ynck-chrl" style="color: hsl(var(--blog-accent)); text-decoration: underline;">@ynck-chrl</a>.
+          The focus is on what's actually happening in browsers, specifications, and developer tooling.
+        </p>
+        <p style="margin-top: calc(var(--space-unit) * 3);">
+          Articles cover <code>CSS</code>, <code>JavaScript</code>, <code>HTML</code>, browser internals,
+          and the hardware and systems that run underneath. If it's in a spec, shipping in a browser,
+          or relevant to how code executes on real machines, it belongs here.
+        </p>
+      </section>
+
+      <section>
+        <h3>By the numbers</h3>
+        <div class="stat-row">
+          <div class="stat">
+            <span class="stat-value" data-stat="articles">—</span>
+            <span class="stat-label">Articles</span>
+          </div>
+          <div class="stat" style="--stat-accent: var(--blog-accent-secondary);">
+            <span class="stat-value" data-stat="signals">—</span>
+            <span class="stat-label">Signals</span>
+          </div>
+          <div class="stat" style="--stat-accent: var(--blog-signal-meta);">
+            <span class="stat-value" data-stat="topics">—</span>
+            <span class="stat-label">Topics</span>
+          </div>
+          <div class="stat" style="--stat-accent: var(--blog-accent-amber);">
+            <span class="stat-value">2026</span>
+            <span class="stat-label">Founded</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h3>Built with</h3>
+        <p>
+          This blog is a demo built on the <a href="/packages" style="color: hsl(var(--blog-accent)); text-decoration: underline;">nativelayer</a>
+          Web Components stack: no framework, no bundler, no transpiler.
+          Custom Elements, ES modules, and CSS custom properties all the way down.
+        </p>
+        <p style="margin-top: calc(var(--space-unit) * 3);">
+          Powered by <code>reflectx</code>, <code>restate</code>, <code>routerx</code>, <code>re-md</code>, and <code>monitor-loading</code>.
+        </p>
+      </section>
+
+    </div>
+
+  </page-container>
+
+  <script type="module">
+    import { posts, signals, topics } from '/demos/blog/posts-data.js';
+    import { startBlogRouter } from '/demos/blog/router.js';
+
+    for (const [key, value] of Object.entries({
+      articles: posts.length,
+      signals:  signals.length,
+      topics:   topics.length,
+    })) {
+      const el = document.querySelector(`[data-stat="${key}"]`);
+      if (el) el.textContent = value;
+    }
+
+    startBlogRouter('about', { preventSameLinkNavigation: true });
+  </script>
+
+</body>
+</html>

@@ -2,7 +2,7 @@
   <defs>
     <style>
       .readyElement-logo {
-        fill: hsl(var(--fcolor-hsl));
+        fill: hsl(var(--accent-color-hsl, var(--brand-color-ready-element)));
       }
     </style>
   </defs>

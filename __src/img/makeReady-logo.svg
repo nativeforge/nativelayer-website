@@ -2,7 +2,7 @@
   <defs>
     <style>
       .makeReady-logo {
-        fill: hsl(var(--fcolor-hsl));
+        fill: hsl(var(--accent-color-hsl, var(--brand-color-make-ready)));
       }
     </style>
   </defs>

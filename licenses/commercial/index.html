@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
+  <meta name="color-scheme" content="dark light">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nativelayer.dev: Commercial License Agreement</title>
+
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+
+  <link rel="stylesheet" href="/__src/css/reset.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/fonts.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/global-styles.css" blocking="render">
+
+  <script type="module">
+    import { router } from "/__src/js/router.js";
+    router.start();
+  </script>
+
+  <script type="module">
+    import monitorLoading from "/__src/components/monitor-loading/index.js"
+    customElements.define('monitor-loading', monitorLoading)
+  </script>
+
+  <monitor-loading target="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400"></monitor-loading>
+
+</head>
+
+<body style="opacity: 0; transform: translateY(16px);">
+  <top-bar reveal></top-bar>
+
+  <page-container style="gap: calc(var(--space-unit) * 12); padding-block-start: 0; padding-block-end: calc(var(--space-unit) * 24);" reveal>
+
+    <base-hero style="align-items: flex-start; border-bottom: 1px dotted hsla(var(--fcolor-hsl) / 0.6); padding-block: calc(var(--space-unit) * 8);" reveal>
+      <h1 slot="title" style="font-size: var(--f-size-2xl)">Commercial License Agreement</h1>
+      <p slot="description" style="font-size: var(--f-size-p); max-width: 40rem;">
+        nativelayer Software Commercial License — effective upon payment confirmation.
+        Please read this agreement carefully before purchasing.
+      </p>
+    </base-hero>
+
+    <style>
+      .legal-body {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--space-unit) * 6);
+        width: 100%;
+        max-width: 52rem;
+      }
+      .legal-section {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--space-unit) * 2);
+      }
+      .legal-section h2 {
+        font-family: var(--ff-1);
+        font-size: var(--f-size-l, 1.15rem);
+        color: hsl(var(--fcolor-hsl));
+        display: flex;
+        gap: calc(var(--space-unit) * 2);
+        align-items: baseline;
+      }
+      .legal-section h2 .section-num {
+        font-family: var(--ff-3, monospace);
+        font-size: 0.65rem;
+        color: hsla(var(--fcolor-hsl) / 0.4);
+        letter-spacing: 0.06em;
+      }
+      .legal-section p,
+      .legal-section li {
+        font-family: var(--ff-2);
+        font-size: var(--f-size-p);
+        font-weight: 400;
+        line-height: 1.7;
+        color: hsla(var(--fcolor-hsl) / 0.8);
+      }
+      .legal-section ul,
+      .legal-section ol {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--space-unit) * 1.5);
+        padding-left: calc(var(--space-unit) * 3);
+      }
+      .legal-section a {
+        color: hsl(var(--fcolor-hsl));
+        text-underline-offset: 0.15em;
+      }
+      .legal-meta {
+        font-family: var(--ff-3, monospace);
+        font-size: 0.65rem;
+        color: hsla(var(--fcolor-hsl) / 0.4);
+        letter-spacing: 0.06em;
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--space-unit) * 1);
+      }
+      .legal-highlight {
+        padding: calc(var(--space-unit) * 3) calc(var(--space-unit) * 4);
+        border-left: 2px solid hsla(var(--fcolor-hsl) / 0.3);
+        background: hsla(var(--fcolor-hsl) / 0.03);
+      }
+      .legal-highlight p {
+        margin: 0;
+      }
+      hr.legal-divider {
+        border: none;
+        border-top: 1px dotted hsla(var(--fcolor-hsl) / 0.2);
+        width: 100%;
+      }
+      .legal-contact {
+        padding: calc(var(--space-unit) * 4);
+        border: 1px dotted hsla(var(--fcolor-hsl) / 0.35);
+        border-radius: calc(var(--size-unit, 0.5rem) * 1);
+        background: hsla(var(--fcolor-hsl) / 0.03);
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--space-unit) * 1.5);
+      }
+      .legal-contact p { margin: 0; }
+      code {
+        font-family: var(--ff-3, monospace);
+        font-size: 0.85em;
+        background: hsla(var(--fcolor-hsl) / 0.06);
+        padding: 0.1em 0.35em;
+        border-radius: 2px;
+      }
+    </style>
+
+    <div class="legal-body">
+
+      <div class="legal-meta">
+        <span>NATIVELAYER SOFTWARE COMMERCIAL LICENSE AGREEMENT</span>
+        <span>Version 1.0 — effective date: June 2026</span>
+        <span>Licensor: nativelayer / nativeforge — info@nativelayer.dev</span>
+      </div>
+
+      <div class="legal-highlight">
+        <p>
+          This agreement ("Agreement") is between <strong>nativelayer / nativeforge</strong> ("Licensor")
+          and the individual or legal entity completing a purchase ("Licensee").
+          By purchasing, downloading, or using the software under a commercial license, Licensee agrees to be bound by this Agreement.
+        </p>
+      </div>
+
+      <hr class="legal-divider">
+
+      <div class="legal-section">
+        <h2><span class="section-num">01</span> Definitions</h2>
+        <ul>
+          <li><strong>"Software"</strong> means the nativelayer packages covered by this license, including but not limited to <code>reflectx</code>, <code>restate</code>, <code>routerx</code>, <code>re-md</code>, and <code>doc-quick</code>, as specified at the time of purchase.</li>
+          <li><strong>"License Tier"</strong> means the specific tier purchased (Individual, Core Bundle, Team, or Enterprise), each with distinct scope as defined in Section 3.</li>
+          <li><strong>"Licensee"</strong> means the purchasing individual or legal entity.</li>
+          <li><strong>"Authorized Developer"</strong> means an individual who uses the Software under this license on behalf of Licensee.</li>
+          <li><strong>"Application"</strong> means any software product or service created by Licensee that incorporates the Software.</li>
+          <li><strong>"License Term"</strong> means the period for which the license is valid, as specified at purchase (typically one year for subscription tiers).</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2><span class="section-num">02</span> Grant of license</h2>
+        <p>Subject to payment and the terms of this Agreement, Licensor grants Licensee a non-exclusive, non-transferable, worldwide license to:</p>
+        <ul>
+          <li>Use, copy, and modify the Software for the purpose of building Applications.</li>
+          <li>Distribute the Software as part of compiled or bundled Applications, provided that the Software is not separately distributed as a standalone library or component.</li>
+          <li>Use the Software in production environments and commercial deployments.</li>
+        </ul>
+        <p>This license does not include the right to sublicense, sell, or otherwise transfer the Software itself to third parties as a development tool, library, or product.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2><span class="section-num">03</span> License tiers and scope</h2>
+        <ul>
+          <li>
+            <strong>Individual</strong> — one (1) Authorized Developer, unlimited Applications, single legal entity.
+            Covers one package (e.g. <code>reflectx</code> only) as specified at purchase.
+          </li>
+          <li>
+            <strong>Core Bundle</strong> — one (1) Authorized Developer, unlimited Applications, single legal entity.
+            Covers <code>reflectx</code>, <code>restate</code>, and <code>routerx</code> together.
+          </li>
+          <li>
+            <strong>Team</strong> — up to five (5) Authorized Developers within the same legal entity, unlimited Applications.
+            Covers all core packages.
+          </li>
+          <li>
+            <strong>Enterprise</strong> — custom developer count and scope.
+            Terms are established separately in writing between Licensor and Licensee.
+          </li>
+        </ul>
+        <p>If you need additional developers beyond your tier, you must purchase additional seats or upgrade to a higher tier.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2><span class="section-num">04</span> Term and renewal</h2>
+        <p>The license is valid for one (1) year from the date of purchase unless otherwise specified. Upon expiration:</p>
+        <ul>
+          <li>Licensee may continue using the version of the Software released prior to the expiration date in existing Applications.</li>
+          <li>To receive updates, bug fixes, or use newer versions, Licensee must renew the license.</li>
+          <li>Renewal pricing is the same as the current published price at the time of renewal.</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2><span class="section-num">05</span> Restrictions</h2>
+        <p>Licensee may not:</p>
+        <ul>
+          <li>Redistribute the Software as a standalone package, library, or development tool.</li>
+          <li>White-label, resell, or relicense the Software to third parties as a product or service.</li>
+          <li>Use the Software to build a product whose primary purpose is to compete with the Software itself.</li>
+          <li>Remove or alter any copyright, license, or attribution notices contained in the Software.</li>
+          <li>Transfer this license to another individual or entity without prior written consent from Licensor.</li>
+          <li>Exceed the number of Authorized Developers specified in the purchased License Tier.</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2><span class="section-num">06</span> What is included</h2>
+        <p>A valid commercial license includes:</p>
+        <ul>
+          <li>The right to use the Software in commercial and proprietary applications as specified in the License Tier.</li>
+          <li>Access to updates and bug fixes released during the License Term.</li>
+          <li>Priority email support at <a href="mailto:info@nativelayer.dev">info@nativelayer.dev</a> for the duration of the License Term.</li>
+          <li>A license certificate confirming the terms of use.</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2><span class="section-num">07</span> Intellectual property</h2>
+        <p>
+          The Software and all associated intellectual property rights remain the exclusive property of Licensor.
+          This Agreement grants a license to use the Software; it does not convey ownership.
+          Licensee retains full ownership of Applications built using the Software, provided they do not constitute a redistribution of the Software itself.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2><span class="section-num">08</span> Attribution</h2>
+        <p>
+          Attribution is not required in production Applications.
+          If Licensee chooses to include attribution, the recommended form is:
+        </p>
+        <div class="legal-highlight">
+          <p>Powered by <a href="https://nativelayer.dev" target="_blank" rel="noopener">nativelayer</a></p>
+        </div>
+      </div>
+
+      <div class="legal-section">
+        <h2><span class="section-num">09</span> Warranty disclaimer</h2>
+        <p>
+          THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+          INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+          AND NON-INFRINGEMENT. LICENSOR DOES NOT WARRANT THAT THE SOFTWARE WILL MEET LICENSEE'S REQUIREMENTS
+          OR THAT OPERATION WILL BE UNINTERRUPTED OR ERROR-FREE.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2><span class="section-num">10</span> Limitation of liability</h2>
+        <p>
+          TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL LICENSOR BE LIABLE FOR
+          ANY INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING LOSS OF PROFITS,
+          DATA, BUSINESS, OR GOODWILL) ARISING OUT OF OR RELATED TO THIS AGREEMENT OR THE USE OF THE SOFTWARE,
+          EVEN IF LICENSOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+          LICENSOR'S TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNT PAID BY LICENSEE IN THE TWELVE (12) MONTHS
+          PRECEDING THE CLAIM.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2><span class="section-num">11</span> Refund policy</h2>
+        <p>
+          Licensee may request a full refund within fourteen (14) days of purchase if the Software does not function
+          as documented and the issue cannot be resolved by Licensor within a reasonable time.
+          Refund requests must be submitted by email to <a href="mailto:info@nativelayer.dev">info@nativelayer.dev</a>
+          with the order reference and a description of the issue.
+        </p>
+        <p>
+          Refunds are not available after 14 days or if the Software has been used in a deployed production application.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2><span class="section-num">12</span> Termination</h2>
+        <p>
+          This Agreement and the license granted herein will terminate automatically if Licensee breaches any of its terms.
+          Upon termination, Licensee must cease all use of the Software in new Applications and destroy any copies not
+          embedded in already-shipped Applications.
+          Licensor may reinstate the license at its discretion upon written confirmation that the breach has been remedied.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2><span class="section-num">13</span> Governing law</h2>
+        <p>
+          This Agreement is governed by the laws of France, without regard to its conflict of laws provisions.
+          Any disputes arising from this Agreement shall be subject to the exclusive jurisdiction of the competent
+          courts of France, unless otherwise agreed in writing for Enterprise tiers.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2><span class="section-num">14</span> Entire agreement</h2>
+        <p>
+          This Agreement constitutes the entire agreement between the parties regarding the subject matter herein
+          and supersedes all prior negotiations, representations, or agreements.
+          Any modifications must be agreed in writing by both parties.
+          The PolyForm Noncommercial License continues to govern non-commercial use of the Software independently of this Agreement.
+        </p>
+      </div>
+
+      <hr class="legal-divider">
+
+      <div class="legal-contact">
+        <p><strong>Questions or licensing inquiries</strong></p>
+        <p>
+          <a href="mailto:info@nativelayer.dev">info@nativelayer.dev</a>
+        </p>
+        <p style="font-size: var(--f-size-s); color: hsla(var(--fcolor-hsl) / 0.55);">
+          For Enterprise tier quotes, custom terms, or any question about whether your use case is covered,
+          contact us before purchasing.
+        </p>
+      </div>
+
+      <div class="legal-meta" style="padding-top: calc(var(--space-unit) * 2);">
+        <span>← <a href="/licenses" style="color: inherit;">Back to Licenses</a></span>
+        <span>nativelayer / nativeforge — nativelayer.dev</span>
+        <span>Last updated: June 2026</span>
+      </div>
+
+    </div>
+
+  </page-container>
+
+    <base-footer reveal></base-footer>
+
+</body>
+</html>

@@ -9,8 +9,8 @@ class nxCalculator extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.innerHTML = `
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap">
       <style>
+        @import url('/__src/css/nx-widget-fonts.css');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :host {
           --space-unit: 0.5rem;
@@ -61,10 +61,10 @@ class nxCalculator extends HTMLElement {
           min-height: 100vh;
           background: inherit;
           color: var(--text);
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
         }
 
-        :host-context(html[theme-mode="light"]) {
+        :host([theme-mode="light"]) {
           --danger-bg: hsl(355, 50%, 72%);
         }
 
@@ -85,19 +85,19 @@ class nxCalculator extends HTMLElement {
           position: relative;
           background: var(--surface);
         }
-        :host-context(html[theme-mode="light"]) .calc {
+        :host([theme-mode="light"]) .calc {
           --surface: #afb5c1;
         }
 
-        :host-context(html[theme-mode="light"]) .calc-header .brand {
+        :host([theme-mode="light"]) .calc-header .brand {
           color: hsl(225 20% 11%);
         }
 
-        :host-context(html[theme-mode="light"]) .calc-header .model {
+        :host([theme-mode="light"]) .calc-header .model {
           color: hsl(218 13% 42%);
         }
 
-        :host-context(html[theme-mode="light"]) .display {
+        :host([theme-mode="light"]) .display {
           background: hsl(225 18% 86%);
           border-top-color: hsla(173 100% 45% / 0.12);
           border-bottom-color: hsla(173 100% 45% / 0.32);
@@ -107,11 +107,11 @@ class nxCalculator extends HTMLElement {
 
         }
 
-        :host-context(html[theme-mode="light"]) .display-operation {
+        :host([theme-mode="light"]) .display-operation {
           color: hsl(218 13% 42%);
         }
 
-        :host-context(html[theme-mode="light"]) .display-value {
+        :host([theme-mode="light"]) .display-value {
           color: hsl(225 15% 22%);
           text-shadow: none;
         }
@@ -124,7 +124,7 @@ class nxCalculator extends HTMLElement {
         }
         
         .calc-header .brand {
-          font-family: 'Orbitron', sans-serif;
+          font-family: var(--nx-font-display, 'Orbitron', sans-serif);
           font-size: 0.7rem;
           letter-spacing: 0.2em;
           text-transform: uppercase;
@@ -175,7 +175,7 @@ class nxCalculator extends HTMLElement {
         }
 
         .display-value {
-          font-family: 'Orbitron', sans-serif;
+          font-family: var(--nx-font-display, 'Orbitron', sans-serif);
           font-size: 2.2rem;
           font-weight: 700;
           color: var(--accent);
@@ -198,7 +198,7 @@ class nxCalculator extends HTMLElement {
         }
 
         .btn {
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
           font-size: 1.1rem;
           border: none;
           cursor: pointer;
@@ -232,10 +232,10 @@ class nxCalculator extends HTMLElement {
         .btn.--op:hover { color: var(--operator-text-hover); }
         .btn.--op:hover::before { background: linear-gradient(0deg, transparent -10%, var(--operator-hover) 150%); }
 
-        :host-context(html[theme-mode="light"]) .btn.--op:hover {
+        :host([theme-mode="light"]) .btn.--op:hover {
           color: var(--operator);
         }
-        :host-context(html[theme-mode="light"]) .btn.--op:hover::before { 
+        :host([theme-mode="light"]) .btn.--op:hover::before { 
           background: transparent;
         }
 
@@ -244,7 +244,7 @@ class nxCalculator extends HTMLElement {
 
         .btn:active { transform: translateY(1px) scale(0.97); }
 
-        .btn.--num { font-family: 'Orbitron', sans-serif; font-weight: 400; }
+        .btn.--num { font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-weight: 400; }
         .btn.--num:hover { color: var(--accent); }
 
         .btn.--fn.--sign { font-size: 1.6rem; }
@@ -255,7 +255,7 @@ class nxCalculator extends HTMLElement {
           font-size: 1.6rem;
           font-weight: 700; 
         }
-        :host-context(html[theme-mode="light"]) .btn.--op {
+        :host([theme-mode="light"]) .btn.--op {
           background: hsl(24, 8%, 81%);
           color: var(--operator);
         }
@@ -263,7 +263,7 @@ class nxCalculator extends HTMLElement {
           background: var(--operator-hover);
           color: var(--operator-text-hover);
         }
-        :host-context(html[theme-mode="light"]) .btn.--op.--active {
+        :host([theme-mode="light"]) .btn.--op.--active {
           background: var(--operator-hover);
           color: var(--operator-text-hover);
         }
@@ -278,7 +278,7 @@ class nxCalculator extends HTMLElement {
           grid-column: span 2;
           background: var(--accent);
           color: var(--screen-bg);
-          font-family: 'Orbitron', sans-serif;
+          font-family: var(--nx-font-display, 'Orbitron', sans-serif);
           font-size: 1.4rem;
           font-weight: 700;
           padding: 1rem 0;
@@ -288,7 +288,7 @@ class nxCalculator extends HTMLElement {
         .btn.--dot  { font-size: 1.6rem; font-weight: 700; }
         .btn.--bksp { font-size: 1.5rem; letter-spacing: 0.05em; }
 
-        :host-context(html[theme-mode="light"]) :is( .btn.--bksp, .btn.--fn, .btn.--sign) {
+        :host([theme-mode="light"]) :is( .btn.--bksp, .btn.--fn, .btn.--sign) {
           color: var(--text);
         }
 

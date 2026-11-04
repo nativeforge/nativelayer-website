@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
+  <meta name="color-scheme" content="dark light">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>nativelayer.dev - system for the web platform</title>
+  <title>nativelayer.dev - Superpowers in a basic stack</title>
 
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
@@ -27,7 +28,14 @@
     customElements.define('monitor-loading', monitorLoading)
   </script>
 
-  <monitor-loading target="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400"></monitor-loading>
+  <monitor-loading 
+  target="body" 
+  path="/__src/components/" 
+  brand="nativelayer.dev" 
+  show-duration="400"
+  overlay-fade="400"
+  include="base-* re-md top-bar svg-insert flex-container doc-* grid-container page-container nx-*"
+  ></monitor-loading>
 
   <script type="module" scramble>
     import { scrambleTo } from "/__src/libs/reflectx/plugins/scramble/scramble.esm.min.js";
@@ -47,10 +55,15 @@
     }, { threshold: 0.3 });
 
     document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.grid-item-title').forEach(el => observer.observe(el));
+      document.querySelectorAll('.scramble-text').forEach(el => observer.observe(el));
     });
 
     
+  </script>
+
+  <script type="module" attach-inline-styles>
+    import { processAccentColors } from "/__src/js/luminance.js";
+    processAccentColors();
   </script>
 
 </head>
@@ -64,22 +77,22 @@
         * { box-sizing: border-box; }
       </style>
       
-      <base-hero id="hero" style="align-items: flex-start;" reveal>
+      <base-hero id="hero" mesh-logos style="align-items: flex-start;" reveal>
         <h1 slot="title" style="font-size: var(--f-size-2xl)">
           Superpowers
           <br>
           in a basic stack
         </h1>
         <p slot="description" style="font-size: var(--f-size-1);">
-          Lightweight packages for HTML,
+          Game changing packages for HTML,
           <br>
-          CSS and Javascript.
+          CSS and Javascript projects.
         </p>
       </base-hero>
 
       <base-quote reveal>
         <h2 slot="quote">
-          HTML, CSS, JS &amp; static hosting. That's all you need.
+          Advanced patterns for HTML, CSS, JS &amp; static hosting.
         </h2>
         
         <style>
@@ -105,6 +118,7 @@
       </base-quote>
 
       <flex-container id="sections-main-content" style="padding-block: calc(var(--space-unit) * 8); gap: calc(var(--space-unit) * 8);" reveal>
+
         <style>
           .grid-container {
             display: grid;
@@ -112,7 +126,7 @@
             min-height: min-content;
             max-height: max-content;
             grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-            gap: calc(var(--space-unit) * 4);
+            gap: calc(var(--space-unit) * 6);
             counter-reset: item;
           }
           .grid-item {
@@ -141,6 +155,23 @@
             flex-direction: column;
             gap: calc(var(--space-unit) * 3);
           }
+          .grid-item-title-row {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: calc(var(--space-unit) * 1.5);
+          }
+          .grid-item-title-logos {
+            display: flex;
+            align-items: center;
+            gap: calc(var(--space-unit) * 1);
+          }
+          .grid-item-title-logo,
+          .grid-item-title-logo svg {
+            display: block;
+            width: calc(var(--space-unit) * 4);
+            height: auto;
+          }
           .grid-item-title {
             font-family: var(--ff-3);
             font-weight: 400;
@@ -160,6 +191,16 @@
             font-family: var(--ff-2);
             font-weight: 300;
           }
+          .grid-item-description code {
+            display: inline-flex;
+            align-items: center;
+            font-family: var(--ff-3);
+            font-size: var(--f-size-s);
+            padding: calc(var(--space-unit) * 1/2) calc(var(--space-unit) * 1);
+            border-radius: calc(var(--space-unit) * 0.5);
+            background-color: hsla(var(--fcolor-hsl) / 0.06);
+            box-shadow: 0 0 0 1px hsla(var(--fcolor-hsl) / 0.2);
+          }
           .grid-item-logo-home {
             display: flex; justify-content: center; align-items: center;
             width: 100%;
@@ -172,68 +213,23 @@
           }
         </style>
 
-        
-
-        <flex-container id="core-principles" style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 1); justify-content: center; align-items: center; text-align: center;">
-          <!-- <h2 style="font-size: var(--f-size-xl); font-weight: 600;">
-            Principles
-          </h2>
-          <p style="font-weight: 300;">
-            The core philosophy: Primitives first.
-          </p> -->
+        <!-- <flex-container id="core-principles" style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 1); justify-content: center; align-items: center; text-align: center;">
           <h2 style="font-size: var(--f-size-xl); font-weight: 600;">
             Built-in benefits
           </h2>
           <p style="font-weight: 300;">
             Right out of the box
           </p>
-        </flex-container>
+        </flex-container> -->
 
 
-        <div id="section-core-principles-items" class="grid-container" style="grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); row-gap: calc(var(--space-unit) * 8);">
-          
-          <!-- <div class="grid-item --numbered">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">Platform-based</h3>
-              <p class="grid-item-description">
-                Web native APIs like DOM, URL, History, Fetch, and Events remain first-class.
-              </p>
-            </flex-container>
-          </div>
-          <div class="grid-item --numbered">
-            <flex-container>
-              <flex-container class="grid-item-content">
-                <h3 class="grid-item-title" style="font-family: var(--ff-3);">
-                  Optional tooling
-                </h3>
-                <p class="grid-item-description">
-                  Zero build by default. Tooling is optional, never mandatory.
-                </p>
-              </flex-container>
-            </flex-container>
-          </div>
-          <div class="grid-item --numbered">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">Composable</h3>
-              <p class="grid-item-description">
-                  Each package stands alone. Together, they form a coherent layer.
-              </p>
-            </flex-container>
-          </div>
-          <div class="grid-item --numbered">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">Extensible</h3>
-              <p class="grid-item-description">
-                Built to be extended without rewriting foundations.
-              </p>
-            </flex-container>
-          </div> -->
+        <!-- <div id="section-core-principles-items" class="grid-container" style="grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); row-gap: calc(var(--space-unit) * 8);">
 
           <div class="grid-item --numbered">
             <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">ES Modules</h3>
+              <h3 class="grid-item-title">Code splitting</h3>
               <p class="grid-item-description">
-                Native import and export: the browser resolves your dependencies directly, no bundler required.
+                ES Modules native import and export have the browser resolve your dependencies directly. This let you split your code how you want, no bundler required.
               </p>
             </flex-container>
           </div>
@@ -249,9 +245,9 @@
           </div>
           <div class="grid-item --numbered">
             <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">File-based routing</h3>
+              <h3 class="grid-item-title">File/Folder based routing</h3>
               <p class="grid-item-description">
-                Your folder structure is your routing table. Add a page by adding a file.
+                Routes mirror your folders: add a file, get a URL. No route config to maintain. One file per route. Your folder layout is the routing table.
               </p>
             </flex-container>
           </div>
@@ -266,9 +262,9 @@
           </div>
           <div class="grid-item --numbered">
             <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">Same Origin Fetch</h3>
+              <h3 class="grid-item-title">No-build environment</h3>
               <p class="grid-item-description">
-                Same Origin Fetch allows you to fetch resources from the same origin as the page, over http or https requests.
+                Every packages works without a build tool or bundler. This allows to iterate and ship previews faster. Bundler or build tools can of course be added when needed.
               </p>
             </flex-container>
           </div>
@@ -276,20 +272,265 @@
             <flex-container class="grid-item-content">
               <h3 class="grid-item-title">Responsive components</h3>
               <p class="grid-item-description">
-                Container queries allow components to respond to their container's size and layout, making them truly responsive.
+                Container queries allow components to respond to their container's size and layout, making them truly responsive, independent of the context they are in.
               </p>
             </flex-container>
           </div>
           <div class="grid-item --numbered">
             <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">Page transition API</h3>
+              <h3 class="grid-item-title">Automatic shadow resolution</h3>
               <p class="grid-item-description">
-                The Page Transition API allows you to animate the transition between pages, making it easier to create a smooth user experience in MPAs or SPAs.
+                Compose with <code>&lt;slot&gt;</code> and the browser projects light DOM into the shadow tree for you. No recursive scans to find slotted nodes: the platform resolves nested shadow boundaries natively.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item --numbered">
+            <flex-container class="grid-item-content">
+              <h3 class="grid-item-title">CSS4 advanced features</h3>
+              <p class="grid-item-description">
+                Variables, layers, container queries, newcolor functions, if functions, nesting and more modern features have now baseline support natively, without any processing step.
+              </p>
+            </flex-container>
+          </div>
+
+        </div> -->
+
+        <!-- <base-quote reveal>
+        <h2 slot="quote">Consistent behavior across all major browsers.</h2>
+        <div slot="content" class="quote-logo-container">
+          <svg-insert src="/__src/img/logo-chrome.svg" svg-class="quote-logo"></svg-insert>
+          <svg-insert src="/__src/img/logo-firefox.svg" svg-class="quote-logo"></svg-insert>
+          <svg-insert src="/__src/img/logo-safari.svg" svg-class="quote-logo"></svg-insert>
+          <svg-insert src="/__src/img/logo-edge.svg" svg-class="quote-logo"></svg-insert>
+        </div>
+        </base-quote> -->
+
+
+        <flex-container style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 2); justify-content: center; align-items: center; text-align: center;" id="title-features-being-developed">
+          <h2 style="font-size: var(--f-size-xl); font-weight: 600;">
+            Some features
+          </h2>
+          <p style="font-weight: 300;">
+            We designed extra features for the basic <br>
+            HTML - CSS - Javascript stack
+          </p>
+        </flex-container>
+
+        <div class="grid-container" id="list-features-being-developed">
+
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos" accent-color-hsl="348 100% 50%">
+                  <svg-insert src="/__src/img/routerx-logo.svg" svg-class="grid-item-title-logo --routerx"></svg-insert>
+                </span>
+                <h3 class="grid-item-title">Dynamic route matching</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>routerx</code> parses <code>:id</code>-style path parameters, query strings, and hash fragments automatically, so params arrive ready to use in your route handler.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos">
+                  <span accent-color-hsl="348 100% 50%">
+                    <svg-insert src="/__src/img/routerx-logo.svg" svg-class="grid-item-title-logo --routerx"></svg-insert>
+                  </span>
+                  <span accent-color-hsl="220 100% 50%">
+                    <svg-insert src="/__src/img/restate-logo.svg" svg-class="grid-item-title-logo --restate"></svg-insert>
+                  </span>
+                </span>
+                <h3 class="grid-item-title">Route guards & lifecycle hooks</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>routerx</code> guards block navigation until your check resolves, with hooks. Pair with <code>restate</code> to gate routes on reactive auth state.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos" accent-color-hsl="348 100% 50%">
+                  <svg-insert src="/__src/img/routerx-logo.svg" svg-class="grid-item-title-logo --routerx"></svg-insert>
+                </span>
+                <h3 class="grid-item-title">Lazy-loaded routes</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>routerx</code> <code>lazy()</code> code-splits route handlers behind dynamic imports, so heavy pages load only when visited.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos" accent-color-hsl="348 100% 50%">
+                  <svg-insert src="/__src/img/routerx-logo.svg" svg-class="grid-item-title-logo --routerx"></svg-insert>
+                </span>
+                <h3 class="grid-item-title">Built-in URL sanitization</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>routerx</code> sanitizes paths and parameters against XSS and path traversal automatically, and exposes a method to check links.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos" accent-color-hsl="220 100% 50%">
+                  <svg-insert src="/__src/img/restate-logo.svg" svg-class="grid-item-title-logo --restate"></svg-insert>
+                </span>
+                <h3 class="grid-item-title">State management</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>restate</code> gives you global or scoped reactive state with predictable mutation semantics, built on ES6 proxies.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item" id-"computed-state">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos" accent-color-hsl="220 100% 50%">
+                  <svg-insert src="/__src/img/restate-logo.svg" svg-class="grid-item-title-logo --restate"></svg-insert>
+                </span>
+                <h3 class="grid-item-title">Derived/Computed state</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>restate</code> <code>$computed()</code> lets you declare derived values that recalculate automatically from their dependencies.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos" accent-color-hsl="220 100% 50%">
+                  <svg-insert src="/__src/img/restate-logo.svg" svg-class="grid-item-title-logo --restate"></svg-insert>
+                </span>
+                <h3 class="grid-item-title">Persistence strategy</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>restate</code> PersistencePlugin syncs state to localStorage or IndexedDB with versioning and restore on load.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos" accent-color-hsl="130 100% 50%">
+                  <svg-insert src="/__src/img/reflectx-logo.svg" svg-class="grid-item-title-logo"></svg-insert>
+                </span>
+                <h3 class="grid-item-title">Templating</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>reflectx</code> binds any state object to your HTML with declarative directives—text, attributes, and structure stay in sync.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos">
+                  <span accent-color-hsl="220 100% 50%">
+                    <svg-insert src="/__src/img/restate-logo.svg" svg-class="grid-item-title-logo --restate"></svg-insert>
+                  </span>
+                  <span accent-color-hsl="130 100% 50%">
+                    <svg-insert src="/__src/img/reflectx-logo.svg" svg-class="grid-item-title-logo"></svg-insert>
+                  </span>
+                </span>
+                <h3 class="grid-item-title">Reactivity</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>restate</code> tracks dependencies on your state, and <code>reflectx</code> propagates those changes to the DOM automatically.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos" accent-color-hsl="130 100% 50%">
+                  <svg-insert src="/__src/img/reflectx-logo.svg" svg-class="grid-item-title-logo"></svg-insert>
+                </span>
+                <h3 class="grid-item-title">Declarative conditional rendering</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>reflectx</code> <code>x-if</code> lets you show or hide UI from state without imperative DOM mutations.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos" accent-color-hsl="130 100% 50%">
+                  <svg-insert src="/__src/img/reflectx-logo.svg" svg-class="grid-item-title-logo"></svg-insert>
+                </span>
+                <h3 class="grid-item-title">List diffing and reconciliation</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>reflectx</code> <code>x-for</code> with <code>x-key</code> reconciles lists with minimal DOM updates and preserved item state.
+              </p>
+            </flex-container>
+          </div>
+
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos" accent-color-hsl="220 100% 50%">
+                  <svg-insert src="/__src/img/restate-logo.svg" svg-class="grid-item-title-logo --restate"></svg-insert>
+                </span>
+                <h3 class="grid-item-title">Undo/redo state history</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>restate</code> HistoryPlugin records mutations so you can step backward and forward through state changes.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos" accent-color-hsl="220 100% 50%">
+                  <svg-insert src="/__src/img/restate-logo.svg" svg-class="grid-item-title-logo --restate"></svg-insert>
+                </span>
+                <h3 class="grid-item-title">Immutable state enforcement</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>restate</code> ImmutablePlugin adds a strict mode that blocks direct mutation when you need immutable state discipline.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos" style="--accent-color-hsl: var(--brand-color-monitor-loading)">
+                  <svg-insert src="/__src/img/monitor-loading-logo.svg" svg-class="grid-item-title-logo"></svg-insert>
+                </span>
+                <h3 class="grid-item-title">Loading strategies</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>monitor-loading</code> tracks custom element readiness across your page and coordinates a unified loading experience.
+              </p>
+            </flex-container>
+          </div>
+          <div class="grid-item">
+            <flex-container class="grid-item-content">
+              <div class="grid-item-title-row">
+                <span class="grid-item-title-logos">
+                  <svg class="grid-item-title-logo" viewBox="0 0 36 20" aria-hidden="true">
+                    <circle cx="6" cy="10" r="5" fill="hsl(var(--fcolor-hsl) / 0.35)"/>
+                    <circle cx="18" cy="10" r="5" fill="hsl(var(--fcolor-hsl) / 0.6)"/>
+                    <circle cx="30" cy="10" r="5" fill="hsl(var(--fcolor-hsl))"/>
+                  </svg>
+                </span>
+                <h3 class="grid-item-title">Design system</h3>
+              </div>
+              <p class="grid-item-description">
+                <code>re-theme</code> discovers design tokens from CSS variables and propagates theme colors across your components.
               </p>
             </flex-container>
           </div>
 
         </div>
+
 
         <base-quote reveal>
         <h2 slot="quote">Consistent behavior across all major browsers.</h2>
@@ -301,119 +542,7 @@
         </div>
         </base-quote>
 
-
-        <flex-container style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 2); justify-content: center; align-items: center; text-align: center;" id="title-features-being-developed">
-          <h2 style="font-size: var(--f-size-xl); font-weight: 600;">
-            Added features
-          </h2>
-          <p style="font-weight: 300;">
-            A quick list of the features implemented<br>
-            in our libraries and components
-          </p>
-        </flex-container>
-
-        <div class="grid-container" id="list-features-being-developed">
-
-          <div class="grid-item">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">Routing</h3>
-              <p class="grid-item-description">
-                History API exists, but structured route matching, nested routing, guards, routing hooks are not standardized.
-              </p>
-            </flex-container>
-          </div>
-          <div class="grid-item">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">State management</h3>
-              <p class="grid-item-description">
-                There is no standardized global or scoped state container model with predictable mutation semantics.
-              </p>
-            </flex-container>
-          </div>
-          <div class="grid-item">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">Templating</h3>
-              <p class="grid-item-description">
-                HTML lacks native declarative data binding. It requires imperative DOM manipulation or custom abstractions.
-              </p>
-            </flex-container>
-          </div>
-          <div class="grid-item">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title" style="font-family: var(--ff-3);">Reactivity</h3>
-              <p class="grid-item-description">
-                No built-in dependency tracking system automatically propagates state changes to the DOM.
-              </p>
-            </flex-container>
-          </div>
-          <div class="grid-item">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">Declarative conditional rendering</h3>
-              <p class="grid-item-description">
-                Conditionals require imperative DOM mutation; there is no native structural directive system.
-              </p>
-            </flex-container>
-          </div>
-          <div class="grid-item">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">List diffing and reconciliation</h3>
-              <p class="grid-item-description">
-                The DOM provides mutation primitives but no diffing engine for minimal update reconciliation.
-              </p>
-            </flex-container>
-          </div>
-          <div class="grid-item">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">Derived/Computed state</h3>
-              <p class="grid-item-description">
-                No standardized way to declare computed state that automatically recalculates based on dependencies.
-              </p>
-            </flex-container>
-          </div>
-          <div class="grid-item">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">Persistence strategy</h3>
-              <p class="grid-item-description">
-                No integrated persistence abstraction (localStorage sync, IndexedDB orchestration, versioning).
-              </p>
-            </flex-container>
-          </div>
-          <div class="grid-item">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">Undo/redo state history</h3>
-              <p class="grid-item-description">
-                No built-in mutation history tracking or reversible state model.
-              </p>
-            </flex-container>
-          </div>
-          <div class="grid-item">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">Immutable state enforcement</h3>
-              <p class="grid-item-description">
-                JavaScript allows mutation by default. But no native immutable state discipline layer.
-              </p>
-            </flex-container>
-          </div>
-          <div class="grid-item">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">Loading strategies</h3>
-              <p class="grid-item-description">
-                There is no standardized loading strategies for managing the loading state of your components and pages.
-              </p>
-            </flex-container>
-          </div>
-          <div class="grid-item">
-            <flex-container class="grid-item-content">
-              <h3 class="grid-item-title">Desgin System</h3>
-              <p class="grid-item-description">
-                CSS variables exist, but no structured design token governance and propagation system.
-              </p>
-            </flex-container>
-          </div>
-
-        </div>
-
-        <base-quote>
+        <!-- <base-quote>
           <h2 slot="quote">Compatible with all major frameworks</h2>
           <div slot="content" class="quote-logo-container">
             <svg-insert src="/__src/img/svg/vue-logo.svg" svg-class="quote-logo"></svg-insert>
@@ -423,7 +552,7 @@
             <svg-insert src="/__src/img/svg/nextjs-logo.svg" svg-class="quote-logo"></svg-insert>
             <svg-insert src="/__src/img/svg/nuxt-logo.svg" svg-class="quote-logo"></svg-insert>
           </div>
-        </base-quote>
+        </base-quote> -->
 
         <flex-container style="padding-block: calc(var(--space-unit) * 3); gap: calc(var(--space-unit) * 2); justify-content: center; align-items: center; text-align: center;" id="title-packages">
           <h2 style="font-size: var(--f-size-xl); font-weight: 600;">
@@ -442,24 +571,24 @@
         <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); grid-gap: calc(var(--space-unit) * 3); align-items: stretch; grid-auto-rows: 1fr;" id="list-packages">
 
           <!-- routerx -->
-          <div class="grid-item">
+          <div class="grid-item" accent-color-hsl="348 100% 50%">
 
             <flex-container class="grid-item-content --outline">
 
               <svg id="routerx-logo" class="grid-item-logo-home" xmlns="http://www.w3.org/2000/svg" width="104" height="45" viewBox="0 0 104 45">
                 <defs>
                   <style>
-                    #routerx-logo polygon{
-                      fill: hsl(var(--fcolor-hsl));
+                    .routerx-logo{
+                      fill: hsl(var(--accent-color-hsl, 348 100% 50%));
                     }
                   </style>
                 </defs>
-                <polygon class="c" points="59.429 29.714 89.143 29.714 104 44.571 74.286 44.571 59.429 29.714"/>
-                <polygon class="c" points="0 0 29.714 0 44.571 14.857 14.857 14.857 0 0"/>
-                <polygon class="c" points="0 29.714 29.714 29.714 44.571 44.571 14.857 44.571 0 29.714"/>
-                <polygon class="c" points="14.857 14.857 44.571 14.857 59.429 29.714 29.714 29.714 14.857 14.857"/>
-                <polygon class="c" points="104 14.857 74.286 14.857 59.429 29.714 89.143 29.714 104 14.857"/>
-                <polygon class="c" points="104 14.857 74.286 14.857 59.429 0 89.143 0 104 14.857"/>
+                <polygon class="routerx-logo" points="59.429 29.714 89.143 29.714 104 44.571 74.286 44.571 59.429 29.714"/>
+                <polygon class="routerx-logo" points="0 0 29.714 0 44.571 14.857 14.857 14.857 0 0"/>
+                <polygon class="routerx-logo" points="0 29.714 29.714 29.714 44.571 44.571 14.857 44.571 0 29.714"/>
+                <polygon class="routerx-logo" points="14.857 14.857 44.571 14.857 59.429 29.714 29.714 29.714 14.857 14.857"/>
+                <polygon class="routerx-logo" points="104 14.857 74.286 14.857 59.429 29.714 89.143 29.714 104 14.857"/>
+                <polygon class="routerx-logo" points="104 14.857 74.286 14.857 59.429 0 89.143 0 104 14.857"/>
               </svg>
 
               <h3 class="grid-item-title" style="font-family: var(--ff-3);">routerx</h3>
@@ -471,20 +600,22 @@
           </div>
 
           <!-- restate -->
-          <div class="grid-item">
+          <div class="grid-item" accent-color-hsl="220 100% 50%">
+            
             <flex-container class="grid-item-content --outline">
+              
               <svg id="restate-logo" class="grid-item-logo-home" xmlns="http://www.w3.org/2000/svg" width="64" height="44" viewBox="0 0 64 44">
                 <defs>
                   <style>
-                    #restate-logo polygon{
-                      fill: hsl(var(--fcolor-hsl));
+                    .restate-logo {
+                      fill: hsl(var(--accent-color-hsl, 220 100% 50%));
                     }
                   </style>
                 </defs>
-                <polygon class="c" points="32 11 10.667 11 0 22 21.333 22 32 11"/>
-                <polygon class="c" points="64 22 42.667 22 32 33 53.333 33 64 22"/>
-                <polygon class="c" points="21.333 0 42.667 0 53.333 11 32 11 21.333 0"/>
-                <polygon class="c" points="42.667 44 21.333 44 10.667 33 32 33 42.667 44"/>
+                <polygon class="restate-logo" points="32 11 10.667 11 0 22 21.333 22 32 11"/>
+                <polygon class="restate-logo" points="64 22 42.667 22 32 33 53.333 33 64 22"/>
+                <polygon class="restate-logo" points="21.333 0 42.667 0 53.333 11 32 11 21.333 0"/>
+                <polygon class="restate-logo" points="42.667 44 21.333 44 10.667 33 32 33 42.667 44"/>
               </svg>
               
               <h3 class="grid-item-title" style="font-family: var(--ff-3);">restate</h3>
@@ -496,21 +627,23 @@
           </div>
 
           <!-- reflectx -->
-          <div class="grid-item">
+          <div class="grid-item" accent-color-hsl="130 100% 50%">
+            
             <flex-container class="grid-item-content --outline">
+            
               <svg id="reflectx-logo" class="grid-item-logo-home" xmlns="http://www.w3.org/2000/svg" width="104" height="44.57" viewBox="0 0 104 44.57">
                 <defs>
                   <style>
-                    #reflectx-logo polygon{
-                      fill: hsl(var(--fcolor-hsl));
+                    .reflectx-logo {
+                      fill: hsl(var(--accent-color-hsl, 130 100% 50%));
                     }
                   </style>
                 </defs>
-                <polygon points="44.57 29.71 14.86 29.71 0 44.57 29.71 44.57 44.57 29.71"/>
-                <polygon points="104 14.86 74.29 14.86 59.43 29.71 89.14 29.71 104 14.86"/>
-                <polygon points="59.43 29.71 89.14 29.71 104 44.57 74.29 44.57 59.43 29.71"/>
-                <polygon points="0 0 29.71 0 44.57 14.86 14.86 14.86 0 0"/>
-                <polygon points="29.71 0 59.43 0 74.29 14.86 44.57 14.86 29.71 0"/>
+                <polygon class="reflectx-logo" points="44.57 29.71 14.86 29.71 0 44.57 29.71 44.57 44.57 29.71"/>
+                <polygon class="reflectx-logo" points="104 14.86 74.29 14.86 59.43 29.71 89.14 29.71 104 14.86"/>
+                <polygon class="reflectx-logo" points="59.43 29.71 89.14 29.71 104 44.57 74.29 44.57 59.43 29.71"/>
+                <polygon class="reflectx-logo" points="0 0 29.71 0 44.57 14.86 14.86 14.86 0 0"/>
+                <polygon class="reflectx-logo" points="29.71 0 59.43 0 74.29 14.86 44.57 14.86 29.71 0"/>
               </svg>
               
               <h3 class="grid-item-title" style="font-family: var(--ff-3);">reflectx</h3>
@@ -527,66 +660,7 @@
 
     </page-container>
 
-    <base-footer reveal>
-      <style>
-        base-footer {
-          font-size: var(--f-size-s);
-        }
-        base-footer .footer-column-title {
-          font-size: var(--f-size-s);
-          font-family: var(--ff-2, sans-serif);
-          color: hsla(var(--bcolor-hsl) / 0.9);
-          padding-bottom: calc(var(--space-unit) * 2);
-        }
-        base-footer .footer-column-link {
-          display: flex;
-          align-items: center;
-          font-size: var(--f-size-s);
-          column-gap: var(--space-unit);
-        }
-      </style>
-      <flex-container slot="column-1" style="gap: calc(var(--space-unit) *1.5);">
-        <style>
-          * { box-sizing: border-box; }
-          .footer-logo {
-            max-width: calc(var(--space-unit) * 7);
-            height: calc(var(--space-unit) * 4);
-            --current-stroke-width: 2px;
-          }
-          base-footer a {
-            text-decoration: none;
-            color: inherit;
-            font-size: var(--f-size-p);
-            font-weight: 400;
-            color: hsla(var(--bcolor-hsl) / 0.8);
-            transition: color 0.32s ease;
-          }
-          base-footer a:hover {
-            color: hsla(var(--bcolor-hsl) / 1);
-          }
-        </style>
-        <svg class="footer-logo">
-          <use href="/__src/img/sprite.svg#native-logo"></use>
-        </svg>
-        <p style="font-weight: 400; font-size: var(--f-size-s); color: hsla(var(--bcolor-hsl) / 0.8);"> is a project that aims to improve native web development, building on top of the web plateform primitives.</p>
-      </flex-container>
-      <flex-container slot="column-2" style="gap: calc(var(--space-unit) *2);">
-        <h3 class="footer-column-title">Pages</h3>
-        <a class="footer-column-link" href="/packages">Packages</a>
-        <a class="footer-column-link" href="/docs">Documentation</a>
-        <a class="footer-column-link" href="/demos">Demos</a>
-        <a class="footer-column-link" href="/about">About</a>
-      </flex-container>
-      <flex-container slot="column-3" style="gap: calc(var(--space-unit) *2);">
-        <h3 class="footer-column-title">Find us</h3>
-        <a class="footer-column-link" href="https://github.com/ynck-chrl" target="_blank">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-          </svg>
-          GitHub
-        </a>
-      </flex-container>
-    </base-footer>
+    <base-footer reveal></base-footer>
 
   </body>
 </html>

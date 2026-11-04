@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
+  <meta name="color-scheme" content="dark light">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>nativelayer.dev - stock market</title>
 
@@ -28,11 +29,21 @@
     customElements.define('monitor-loading', monitorLoading)
   </script>
 
-  <monitor-loading target="body" path="/__src/components/" brand="nativelayer.dev" show-duration="400" monitor></monitor-loading>
 
 </head>
 <body style="opacity: 0; transform: translateY(16px);">
-  <re-theme target-element="nx-stock-market"></re-theme>
+
+  <monitor-loading 
+  target="body" 
+  path="/__src/components/" 
+  brand="nativelayer.dev" 
+  show-duration="400"
+  overlay-fade="400"
+  include="base-* re-md top-bar svg-insert flex-container doc-* grid-container page-container nx-*"
+  ></monitor-loading>
+  
+  <!-- <re-theme target-element="nx-stock-market"></re-theme> -->
+
   <base-back-to style="position: fixed; top: calc(var(--space-unit) * 4); left: calc(var(--space-unit) * 4); z-index: 100;" reveal></base-back-to>
 
   <nx-stock-market reveal></nx-stock-market>

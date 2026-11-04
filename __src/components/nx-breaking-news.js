@@ -16,8 +16,8 @@ class breakingNews extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.innerHTML = `
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap">
       <style>
+        @import url('/__src/css/nx-widget-fonts.css');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :host {
@@ -58,13 +58,18 @@ class breakingNews extends HTMLElement {
           --cut-sm: 8px;
           --gap: 6px;
 
+          --surface-emboss-top: hsla(195 50% 45% / 0.2);
+          --surface-emboss-left: hsla(195 70% 65% / 0.25);
+          --surface-emboss-right: hsla(195 70% 65% / 0.3);
+          --surface-emboss-bottom: hsla(195 70% 85% / 0.5);
+
           display: flex;
           align-items: center;
           justify-content: center;
           padding: 1rem;
           background: inherit;
           color: var(--text);
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
           min-height: 100vh;
         }
 
@@ -86,37 +91,42 @@ class breakingNews extends HTMLElement {
           background: var(--surface);
         }
 
-        :host-context(html[theme-mode="light"]) {
+        :host([theme-mode="light"]) {
           --text: hsl(215 35% 22%);
           --text-dim: hsl(218 13% 42%);
           --screen-bg: hsl(215 22% 88%);
           --screen-bg-darker: hsl(215 18% 82%);
           --screen-text: hsl(215 40% 18%);
           --screen-text-dim: hsl(218 13% 42%);
-          --screen-scanline: rgba(0, 140, 200, 0.06);
+          --screen-scanline: hsla(195 70% 65% / 0.3);
           --screen-accent: hsl(195 85% 38%);
           --surface-2: #9aa3b8;
           --surface-hover: #c8cdd8;
           --accent-glow: #00d5ff33;
+
+          --surface-emboss-bottom: hsla(195 70% 65% / 0.3);
+          --surface-emboss-left: hsla(195 70% 45% / 0.25);
+          --surface-emboss-right: hsla(195 70% 55% / 0.3);
+          --surface-emboss-top: hsla(195 50% 35% / 0.2);
         }
 
-        :host-context(html[theme-mode="light"]) .panel {
+        :host([theme-mode="light"]) .panel {
           --surface: #c5c9d2;
         }
 
-        :host-context(html[theme-mode="light"]) .panel-header .brand {
+        :host([theme-mode="light"]) .panel-header .brand {
           color: hsl(195 90% 32%);
         }
 
-        :host-context(html[theme-mode="light"]) .topic-btn {
+        :host([theme-mode="light"]) .topic-btn {
           color: hsl(215 40% 18%);
         }
 
-        :host-context(html[theme-mode="light"]) .topic-btn.--active {
+        :host([theme-mode="light"]) .topic-btn.--active {
           color: var(--white);
         }
 
-        :host-context(html[theme-mode="light"]) .screen-title {
+        :host([theme-mode="light"]) .screen-title {
           color: hsl(355 78% 42%);
         }
 
@@ -128,7 +138,7 @@ class breakingNews extends HTMLElement {
         }
 
         .panel-header .brand {
-          font-family: 'Orbitron', sans-serif;
+          font-family: var(--nx-font-display, 'Orbitron', sans-serif);
           font-size: 0.7rem;
           letter-spacing: 0.2em;
           text-transform: uppercase;
@@ -152,7 +162,7 @@ class breakingNews extends HTMLElement {
         .topics::-webkit-scrollbar { display: none; }
 
         .topic-btn {
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
           font-size: 0.65rem;
           border: none;
           cursor: pointer;
@@ -190,10 +200,10 @@ class breakingNews extends HTMLElement {
           gap: 0;
           position: relative;
           overflow: hidden;
-          border-top: 4px solid var(--accent-darker);
-          border-left: 4px solid var(--accent-dark);
-          border-bottom: 3px solid var(--accent-dim);
-          border-right: 2px solid var(--accent-dim);
+          border-top: 4px solid var(--surface-emboss-top);
+          border-left: 4px solid var(--surface-emboss-left);
+          border-bottom: 4px solid var(--surface-emboss-bottom);
+          border-right: 4px solid var(--surface-emboss-right);
         }
 
         .screen::after {
@@ -217,7 +227,7 @@ class breakingNews extends HTMLElement {
         }
 
         .screen-title {
-          font-family: 'Orbitron', sans-serif;
+          font-family: var(--nx-font-display, 'Orbitron', sans-serif);
           font-size: 0.65rem;
           font-weight: 700;
           color: var(--danger-light);
@@ -270,7 +280,7 @@ class breakingNews extends HTMLElement {
         }
 
         .news-idx {
-          font-family: 'Orbitron', sans-serif;
+          font-family: var(--nx-font-display, 'Orbitron', sans-serif);
           font-size: 0.55rem;
           font-weight: 700;
           color: var(--screen-text-dim);
@@ -384,7 +394,7 @@ class breakingNews extends HTMLElement {
     state.$computed({
       topicLabel(s) {
         if (s.loading) return 'RECEIVING...'
-        if (s.error)   return 'ERROR'
+        if (s.error)   return s.errorMsg || 'ERROR'
         return s.activeTopic ? s.activeTopic.toUpperCase() : ''
       }
     })
@@ -393,6 +403,7 @@ class breakingNews extends HTMLElement {
     const newsCache  = {}
     const root       = this.shadowRoot
     const panel      = root.querySelector('.panel')
+    const newsList   = root.querySelector('.news-item-list')
 
     // ── Helpers ────────────────────────────────────────────────────────────
     function timeAgo(dateStr) {
@@ -409,25 +420,63 @@ class breakingNews extends HTMLElement {
       return { headline: raw.substring(0, lastDash), source: raw.substring(lastDash + 3) }
     }
 
-    async function fetchNews(topic) {
-      if (newsCache[topic]) return newsCache[topic]
-      const rssUrl   = `https://news.google.com/rss/search?q=${encodeURIComponent(topic)}+when:1d&hl=en-US&gl=US&ceid=US:en`
-      const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(rssUrl)}`
-      const res      = await fetch(proxyUrl)
-      if (!res.ok) throw new Error('Proxy error')
-      const text    = await res.text()
+    const FETCH_TIMEOUT_MS = 8000
+
+    async function fetchWithTimeout(url) {
+      const controller = new AbortController()
+      const timeoutId  = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
+      try {
+        return await fetch(url, { signal: controller.signal })
+      } finally {
+        clearTimeout(timeoutId)
+      }
+    }
+
+    function parseRssItems(text) {
       const xml     = new DOMParser().parseFromString(text, 'text/xml')
       const entries = [...xml.querySelectorAll('item')].slice(0, 16)
-      if (entries.length === 0) throw new Error('No results')
-      const items = entries.map(el => {
+      if (entries.length === 0) throw new Error('NO RESULTS')
+
+      return entries.map(el => {
         const raw     = el.querySelector('title')?.textContent   || ''
         const pubDate = el.querySelector('pubDate')?.textContent || ''
         const link    = el.querySelector('link')?.textContent    || ''
         const parsed  = parseTitle(raw)
         return { headline: parsed.headline.toUpperCase(), source: parsed.source, time: timeAgo(pubDate), link }
       })
-      newsCache[topic] = items
-      return items
+    }
+
+    async function fetchNews(topic) {
+      if (newsCache[topic]) return newsCache[topic]
+
+      const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(topic)}+when:1d&hl=en-US&gl=US&ceid=US:en`
+      const sources = [
+        `/api/rss?url=${encodeURIComponent(rssUrl)}`,
+        `https://corsproxy.io/?url=${encodeURIComponent(rssUrl)}`,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`,
+      ]
+
+      let lastError = 'FEED UNAVAILABLE'
+
+      for (const sourceUrl of sources) {
+        try {
+          const res = await fetchWithTimeout(sourceUrl)
+          if (!res.ok) {
+            if (res.status === 403) lastError = 'PROXY BLOCKED'
+            else if (res.status === 504) lastError = 'FEED TIMEOUT'
+            else lastError = 'PROXY ERROR'
+            continue
+          }
+
+          const items = parseRssItems(await res.text())
+          newsCache[topic] = items
+          return items
+        } catch (err) {
+          lastError = err?.name === 'AbortError' ? 'FEED TIMEOUT' : 'CONNECTION FAILED'
+        }
+      }
+
+      throw new Error(lastError)
     }
 
     function applyNews(items) {
@@ -453,12 +502,15 @@ class breakingNews extends HTMLElement {
 
       setTopic(topic) {
         if (state.activeTopic === topic && !state.error) return
+        newsList?.scrollTo({ top: 0, behavior: 'smooth' })
         state.$set(s => { s.activeTopic = topic; s.loading = true; s.error = false })
         fetchNews(topic)
           .then(items => applyNews(items))
-          .catch(() => {
+          .catch(err => {
             state.$set(s => {
-              s.loading = false; s.error = true; s.errorMsg = 'FEED UNAVAILABLE'
+              s.loading = false
+              s.error   = true
+              s.errorMsg = err?.message || 'FEED UNAVAILABLE'
               for (let i = 0; i < 16; i++) { s[`headline${i}`] = ''; s[`meta${i}`] = '' }
             })
           })

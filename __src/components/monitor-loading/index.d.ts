@@ -68,6 +68,18 @@ declare class MonitorLoading extends HTMLElement {
   'case-convention': string
 
   /**
+   * Space-separated tag names or `prefix*` patterns passed to `autoDefine` `include`.
+   * When set, only matching custom elements are imported, listed, and waited on.
+   */
+  include: string
+
+  /**
+   * Space-separated tag names or `prefix*` patterns passed to `autoDefine` `exclude`.
+   * Applied after `include`.
+   */
+  exclude: string
+
+  /**
    * Brand name displayed in the overlay header.
    * @default '@nativelayer.dev'
    */

@@ -171,6 +171,7 @@ class docQuick extends HTMLElement {
     const expanderColor = this.getAttribute('expander-color') || ''
     const src = this.getAttribute('src') || ''
     const hljsSrc = this.getAttribute('hljs-src') || ''
+    const themeHsl = this.getAttribute('theme-color-hsl') || ''
 
     this.innerHTML = `
       <style>
@@ -190,6 +191,7 @@ class docQuick extends HTMLElement {
       <doc-body>
         <re-md
           ${src ? `src="${src}"` : ''}
+          ${themeHsl ? `accent-color-hsl="${themeHsl}"` : ''}
           ${themeCss ? `syntax-css="${themeCss}"` : ''}
           ${hljsSrc ? `hljs-src="${hljsSrc}"` : ''}
           ${chapterMode}
@@ -231,6 +233,10 @@ class docQuick extends HTMLElement {
       this._htmlEl.classList.add('--accent-is-dark')
     } else {
       this._htmlEl.classList.remove('--accent-is-light', '--accent-is-dark')
+    }
+
+    if (this._remd) {
+      this._remd.setAttribute('accent-color-hsl', hsl)
     }
   }
 

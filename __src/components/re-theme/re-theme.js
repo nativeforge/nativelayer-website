@@ -63,11 +63,14 @@ function hexToHSL(hex) {
   return Math.round(h * 360) + ' ' + Math.round(s * 100) + '% ' + Math.round(l * 100) + '%'
 }
 
-function buildCSS(vars, rule = ':root') {
+function buildCSS(vars, rule = ':root', layer = null) {
   const lines = vars
     .filter(v => v.modified && !v.disabled)
     .map(v => `  ${v.name}: ${v.rawValue};`)
-  return lines.length ? `${rule} {\n${lines.join('\n')}\n}` : ''
+  if (!lines.length) return ''
+  const block = `${rule} {\n${lines.join('\n')}\n}`
+  if (!layer) return block
+  return `@layer ${layer} {\n${block}\n}`
 }
 
 function scanCSSColorVars() {
@@ -313,13 +316,36 @@ class reTheme extends HTMLElement {
         }
         .var-row.--disabled:hover { opacity: 0.5; }
 
-        /* ── Swatch ── */
+        /* ── Swatch (= color picker) ── */
         .swatch {
-          width: 24px;
-          height: 24px;
+          width: 32px;
+          height: 32px;
+          padding: 0;
           border: 1px solid var(--border);
-          flex-shrink: 0;
+          cursor: pointer;
+          transition: border-color 0.12s;
         }
+        .swatch:hover { border-color: var(--dim); }
+        .swatch::-webkit-color-swatch-wrapper { padding: 0; }
+        .swatch::-webkit-color-swatch         { border: none; }
+
+        /* ── Map-to button ── */
+        .btn-map {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 22px;
+          height: 22px;
+          font-size: 0.75rem;
+          background: transparent;
+          border: 1px solid transparent;
+          color: var(--muted);
+          cursor: pointer;
+          transition: all 0.12s;
+        }
+        .btn-map:hover  { color: var(--text); border-color: var(--dim); }
+        .btn-map:active { transform: translateY(1px); }
+        .var-row.--mapped .btn-map { color: var(--hi); border-color: var(--hi); }
 
         /* ── Var name ── */
         .var-name {
@@ -370,20 +396,6 @@ class reTheme extends HTMLElement {
           color: var(--text);
         }
 
-        /* ── Color picker ── */
-        .color-picker {
-          width: 38px;
-          height: 24px;
-          padding: 0;
-          border: 1px solid var(--border);
-          background: none;
-          cursor: pointer;
-          transition: border-color 0.12s;
-        }
-        .color-picker:hover { border-color: var(--dim); }
-        .color-picker::-webkit-color-swatch-wrapper { padding: 0; }
-        .color-picker::-webkit-color-swatch         { border: none; }
-
         /* ── Row buttons ── */
         .btn-row {
           font-family: var(--ff-2, sans-serif);
@@ -411,6 +423,175 @@ class reTheme extends HTMLElement {
 
         .var-row.--disabled .btn-disable       { color: var(--muted); border-color: var(--border); }
         .var-row.--disabled .btn-disable:hover { color: var(--hi);    border-color: var(--hi); }
+
+        /* ── Save / Load panels ── */
+        .btn-save, .btn-load { opacity: 0.7; }
+        .btn-save:hover, .btn-load:hover { opacity: 1; }
+        .btn-save.--active, .btn-load.--active { opacity: 1; color: var(--hi); border-color: var(--hi); }
+
+        .save-panel {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          padding: 0.55rem 1.1rem;
+          border-top: 1px solid var(--border);
+          background: var(--bg-2);
+          animation: map-modal-in 0.2s ease forwards;
+        }
+        .save-name-input {
+          flex: 1;
+          font-family: var(--ff-3, monospace);
+          font-size: 0.65rem;
+          background: var(--bg-3);
+          color: var(--text);
+          border: 1px solid var(--border);
+          padding: 0.2rem 0.5rem;
+          height: 26px;
+          outline: none;
+          min-width: 0;
+          transition: border-color 0.12s;
+        }
+        .save-name-input:focus { border-color: var(--hi); }
+        .save-name-input::placeholder { color: var(--muted); }
+        .btn-close-panel, .btn-delete-theme {
+          background: transparent;
+          border: none;
+          color: var(--muted);
+          cursor: pointer;
+          font-size: 0.8rem;
+          line-height: 1;
+          padding: 0 0.15rem;
+          flex-shrink: 0;
+          transition: color 0.12s;
+        }
+        .btn-close-panel:hover, .btn-delete-theme:hover { color: var(--text); }
+
+        .load-panel {
+          position: absolute;
+          inset: 0;
+          z-index: 20;
+          background: var(--bg);
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          animation: map-modal-in 0.32s ease forwards;
+        }
+        .load-empty {
+          padding: 0.8rem 1.1rem;
+          font-family: var(--ff-3, monospace);
+          font-size: 0.62rem;
+          color: var(--muted);
+        }
+        .load-item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.3rem 1.1rem;
+          border-bottom: 1px solid var(--border);
+          transition: background 0.1s;
+        }
+        .load-item:last-child { border-bottom: none; }
+        .load-item:hover { background: var(--bg-2); }
+        .load-item-name {
+          flex: 1;
+          font-family: var(--ff-3, monospace);
+          font-size: 0.65rem;
+          color: var(--text);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        /* ── Map modal ── */
+        .panel { position: relative; }
+        .map-modal {
+          position: absolute;
+          inset: 0;
+          z-index: 20;
+          background: var(--bg);
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          animation: map-modal-in 0.32s ease forwards;
+        }
+        @keyframes map-modal-in {
+          from { opacity: 0; transform: translateY(1rem); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .map-modal-hd {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.55rem 1rem;
+          border-bottom: 1px solid var(--border);
+          flex-shrink: 0;
+          background: var(--bg-2);
+        }
+        .map-modal-title {
+          font-family: var(--ff-3, monospace);
+          font-size: 0.62rem;
+          color: var(--dim);
+        }
+        .map-modal-title b { color: var(--text); font-weight: normal; }
+        .btn-close-map {
+          background: transparent;
+          border: none;
+          color: var(--muted);
+          cursor: pointer;
+          font-size: 0.9rem;
+          line-height: 1;
+          padding: 0;
+        }
+        .btn-close-map:hover { color: var(--text); }
+        .map-list {
+          overflow-y: auto;
+          flex: 1;
+          scrollbar-width: thin;
+          scrollbar-color: var(--border) transparent;
+        }
+        .map-item {
+          display: grid;
+          grid-template-columns: 16px 1fr 1fr;
+          gap: 0.5rem;
+          width: 100%;
+          padding: 0 1rem;
+          height: 36px;
+          align-items: center;
+          border: none;
+          border-left: 2px solid transparent;
+          border-bottom: 1px solid var(--border);
+          background: transparent;
+          cursor: pointer;
+          text-align: left;
+          transition: background 0.1s;
+        }
+        .map-item:hover { background: var(--bg-2); }
+        .map-item.--active {
+          background: var(--hi-bg);
+          border-left-color: var(--hi);
+        }
+        .map-swatch {
+          width: 16px;
+          height: 16px;
+          border: 1px solid var(--border);
+          display: block;
+        }
+        .map-item-name {
+          font-family: var(--ff-3, monospace);
+          font-size: 0.65rem;
+          color: var(--text);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .map-item-value {
+          font-family: var(--ff-3, monospace);
+          font-size: 0.6rem;
+          color: var(--dim);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
 
         /* ── Empty state ── */
         .empty {
@@ -491,14 +672,14 @@ class reTheme extends HTMLElement {
 
           <div class="vars-list" x-if="hasVars">
             <template x-for="(v, idx) of vars">
-              <div class="var-row" x-key="v.name" x-class="(--modified, v.modified) (--disabled, v.disabled)">
-                <div class="swatch"></div>
+              <div class="var-row" x-key="v.name" x-class="(--modified, v.modified) (--disabled, v.disabled) (--mapped, v.mappedTo)">
+                <input type="color" class="swatch">
                 <div class="var-name-cell">
                   <span class="var-name" x-text="v.name"></span>
                   <span class="var-source" x-text="vars[idx].source"></span>
                 </div>
                 <input type="text" class="var-raw">
-                <input type="color" class="color-picker">
+                <button class="btn-map" @click="openMap(idx)">→</button>
                 <button class="btn-row btn-reset" @click="resetVar(idx)">↺</button>
                 <button class="btn-row btn-disable" @click="toggleDisable(idx)" x-text="disableLabels[idx]"></button>
               </div>
@@ -514,6 +695,47 @@ class reTheme extends HTMLElement {
             <span class="status" x-text="statusMsg"></span>
             <button class="btn-action" @click="resetAll()" x-if="hasModified">RESET ALL</button>
             <button class="btn-action btn-copy" x-class="(--done, copied)" @click="copyStyle()" x-text="copyLabel"></button>
+            <button class="btn-action btn-save" x-class="(--active, savePanelOpen) (--done, themeSaved)" @click="openSave()" x-text="saveLabel"></button>
+            <button class="btn-action btn-load" x-class="(--active, loadPanelOpen)" @click="openLoad()">LOAD</button>
+          </div>
+
+          <div class="save-panel" x-if="savePanelOpen">
+            <input class="save-name-input" type="text" placeholder="Theme name…" autocomplete="off">
+            <button class="btn-action btn-save-confirm" @click="saveTheme()">SAVE</button>
+            <button class="btn-close-panel" @click="closeSave()">✕</button>
+          </div>
+
+          <div class="load-panel" x-if="loadPanelOpen">
+            <div class="map-modal-hd">
+              <span class="map-modal-title">Saved themes</span>
+              <button class="btn-close-map" @click="closeLoad()">✕</button>
+            </div>
+            <div class="map-list">
+              <div class="load-empty" x-if="!hasSavedThemes">No saved themes yet.</div>
+              <template x-for="name of savedThemeNames">
+                <div class="load-item" x-key="name">
+                  <span class="load-item-name" x-text="name"></span>
+                  <button class="btn-action btn-apply" @click="applyTheme(name)">APPLY</button>
+                  <button class="btn-delete-theme" @click="deleteTheme(name)">✕</button>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <div class="map-modal" x-if="mapModalOpen">
+            <div class="map-modal-hd">
+              <span class="map-modal-title">Map <b x-text="mapVarName"></b> to...</span>
+              <button class="btn-close-map" @click="closeMap()">✕</button>
+            </div>
+            <div class="map-list">
+              <template x-for="(v, i) of vars">
+                <button class="map-item" x-key="v.name" x-class="(--active, mapMappedIdx === i)" @click="selectMap(i)">
+                  <span class="map-swatch"></span>
+                  <span class="map-item-name" x-text="v.name"></span>
+                  <span class="map-item-value" x-text="v.rawValue"></span>
+                </button>
+              </template>
+            </div>
           </div>
         </div>
 
@@ -530,12 +752,17 @@ class reTheme extends HTMLElement {
         const v = state.vars[idx]
         if (!v) return
         const swatch = row.querySelector('.swatch')
-        const picker = row.querySelector('.color-picker')
         const rawInp = row.querySelector('.var-raw')
-        if (swatch) swatch.style.backgroundColor = v.hex
-        if (picker) picker.value = v.hex
+        if (swatch) swatch.value = v.hex
         if (rawInp && active !== rawInp) rawInp.value = v.rawValue
       })
+      // Sync map modal swatches when open
+      if (state.mapModalIdx !== null) {
+        panel.querySelectorAll('.map-swatch').forEach((el, i) => {
+          const v = state.vars[i]
+          if (v) el.style.background = v.hex
+        })
+      }
     }
 
     // ── State ─────────────────────────────────────────────────────────────────
@@ -576,9 +803,14 @@ class reTheme extends HTMLElement {
     }
 
     const state = restate({
-      vars:      this.hasAttribute('pick-root') ? scanCSSColorVars() : [],
-      copied:    false,
-      minimized: savedMin,
+      vars:          this.hasAttribute('pick-root') ? scanCSSColorVars() : [],
+      copied:        false,
+      minimized:     savedMin,
+      mapModalIdx:   null,
+      savedThemes:   JSON.parse(localStorage.getItem('re-theme-themes') || '{}'),
+      savePanelOpen: false,
+      loadPanelOpen: false,
+      themeSaved:    false,
     })
 
     state.$computed({
@@ -594,7 +826,22 @@ class reTheme extends HTMLElement {
       disableLabels(s) { return s.vars.map(v => v.disabled ? 'ENABLE' : 'DISABLE') },
 
       minLabel(s)    { return s.minimized ? 'MAX' : 'MIN' },
-      copyLabel(s)   { return s.copied ? 'COPIED ✓' : 'COPY' },
+      copyLabel(s)   { return s.copied    ? 'COPIED ✓' : 'COPY' },
+      saveLabel(s)   { return s.themeSaved ? 'SAVED ✓' : 'SAVE' },
+
+      hasSavedThemes(s)  { return Object.keys(s.savedThemes).length > 0 },
+      savedThemeNames(s) { return Object.keys(s.savedThemes) },
+
+      mapModalOpen(s) { return s.mapModalIdx !== null },
+      mapVarName(s)   { return s.mapModalIdx !== null ? (s.vars[s.mapModalIdx]?.name ?? '') : '' },
+      mapMappedIdx(s) {
+        if (s.mapModalIdx === null) return -1
+        const v = s.vars[s.mapModalIdx]
+        if (!v?.rawValue) return -1
+        const m = v.rawValue.match(/^var\((--[^)]+)\)$/)
+        if (!m) return -1
+        return s.vars.findIndex(x => x.name === m[1])
+      },
 
       statusMsg(s) {
         const m = s.vars.filter(v => v.modified && !v.disabled).length
@@ -604,19 +851,28 @@ class reTheme extends HTMLElement {
     })
 
     let copyTimer = null
+    let saveTimer = null
 
-    // Inject into the target element's shadow root if it has one,
-    // into the target element itself if it's a regular element,
-    // or fall back to document.head.
+    // pick-root only        → document.head,  :root { … }
+    // target + shadow root  → shadow root,    :host { … }
+    // target + no shadow    → document.head,  [target-element selector] { … }
     const getInjectContainer = () => {
-      if (targetEl) return targetEl.shadowRoot || targetEl
+      if (targetEl?.shadowRoot) return targetEl.shadowRoot
       return document.head
     }
-    const getInjectRule = () =>
-      (targetEl && targetEl.shadowRoot) ? ':host' : ':root'
+
+    const getInjectRule = () => {
+      if (!targetEl) return ':root'
+      if (targetEl.shadowRoot) return ':host'
+      return targetSelector || ':root'
+    }
+
+    const getLayerName = () => (this.getAttribute('layer') || '').trim() || null
+
+    const buildInjectCSS = () => buildCSS(state.vars, getInjectRule(), getLayerName())
 
     const doInject = () => {
-      const css = buildCSS(state.vars, getInjectRule())
+      const css = buildInjectCSS()
       const container = getInjectContainer()
       let el = container.querySelector('#re-theme-inject')
       if (!css) { if (el) el.remove(); return }
@@ -638,7 +894,7 @@ class reTheme extends HTMLElement {
         state.$set(s => {
           const v = s.vars[idx]
           if (!v) return
-          s.vars[idx] = { ...v, rawValue: v.original, hex: v.originalHex, modified: false, disabled: false }
+          s.vars[idx] = { ...v, rawValue: v.original, hex: v.originalHex, modified: false, disabled: false, mappedTo: null }
         })
         doInject()
       },
@@ -653,7 +909,7 @@ class reTheme extends HTMLElement {
       },
 
       copyStyle() {
-        const css = buildCSS(state.vars, getInjectRule())
+        const css = buildInjectCSS()
         if (!css) return
         navigator.clipboard.writeText(css).catch(() => {})
         state.copied = true
@@ -663,12 +919,103 @@ class reTheme extends HTMLElement {
 
       resetAll() {
         state.$set(s => {
-          s.vars = s.vars.map(v => ({ ...v, rawValue: v.original, hex: v.originalHex, modified: false, disabled: false }))
+          s.vars = s.vars.map(v => ({ ...v, rawValue: v.original, hex: v.originalHex, modified: false, disabled: false, mappedTo: null }))
         })
         const container = getInjectContainer()
         const el = container.querySelector('#re-theme-inject')
         if (el) el.remove()
       },
+
+      openMap(idx) {
+        state.mapModalIdx = idx
+      },
+
+      closeMap() {
+        state.mapModalIdx = null
+      },
+
+      selectMap(i) {
+        const idx = state.mapModalIdx
+        if (idx === null) return
+        const target = state.vars[i]
+        state.$set(s => {
+          s.vars[idx] = {
+            ...s.vars[idx],
+            rawValue: 'var(' + target.name + ')',
+            hex:      target.hex,
+            modified: true,
+            mappedTo: target.name,
+          }
+        })
+        state.mapModalIdx = null
+        doInject()
+      },
+
+      openSave() {
+        state.savePanelOpen = !state.savePanelOpen
+        state.loadPanelOpen = false
+      },
+
+      closeSave() { state.savePanelOpen = false },
+
+      saveTheme(name) {
+        const n = (name || '').trim()
+        if (!n) return
+        const snapshot = state.vars
+          .filter(v => v.modified)
+          .map(v => ({ name: v.name, rawValue: v.rawValue, hex: v.hex }))
+        const newThemes = { ...state.savedThemes, [n]: snapshot }
+        localStorage.setItem('re-theme-themes', JSON.stringify(newThemes))
+        state.$set(s => {
+          s.savedThemes    = newThemes
+          s.savePanelOpen  = false
+          s.themeSaved     = true
+        })
+        clearTimeout(saveTimer)
+        saveTimer = setTimeout(() => { state.themeSaved = false }, 1500)
+      },
+
+      openLoad() {
+        state.loadPanelOpen = !state.loadPanelOpen
+        state.savePanelOpen = false
+      },
+
+      closeLoad() { state.loadPanelOpen = false },
+
+      applyTheme(name) {
+        const snapshot = state.savedThemes[name]
+        if (!snapshot) return
+        state.$set(s => {
+          snapshot.forEach(saved => {
+            const idx = s.vars.findIndex(v => v.name === saved.name)
+            if (idx >= 0) {
+              s.vars[idx] = { ...s.vars[idx], rawValue: saved.rawValue, hex: saved.hex, modified: true, mappedTo: null }
+            }
+          })
+        })
+        doInject()
+      },
+
+      deleteTheme(name) {
+        const newThemes = { ...state.savedThemes }
+        delete newThemes[name]
+        localStorage.setItem('re-theme-themes', JSON.stringify(newThemes))
+        state.$set(s => { s.savedThemes = newThemes })
+      },
+    })
+
+    // ── Save panel: submit on Enter in name field or click confirm button ────────
+    panel.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.classList.contains('save-name-input')) {
+        state.saveTheme(e.target.value)
+      }
+    })
+
+    panel.addEventListener('click', (e) => {
+      if (e.target.classList.contains('btn-save-confirm')) {
+        const inp = panel.querySelector('.save-name-input')
+        state.saveTheme(inp ? inp.value : '')
+      }
     })
 
     // ── Input delegation ──────────────────────────────────────────────────────
@@ -679,20 +1026,15 @@ class reTheme extends HTMLElement {
       const idx  = rows.indexOf(row)
       if (idx < 0 || idx >= state.vars.length) return
 
-      if (e.target.classList.contains('color-picker')) {
+      if (e.target.classList.contains('swatch')) {
         const hex = e.target.value
         const v   = state.vars[idx]
-        // HSL-component vars must stay as "H S% L%" so they keep working in hsl(var(--name))
         const newRaw = v.isHSLParts ? hexToHSL(hex) : hex
         state.$set(s => {
-          s.vars[idx] = { ...s.vars[idx], hex, rawValue: newRaw, modified: true }
+          s.vars[idx] = { ...s.vars[idx], hex, rawValue: newRaw, modified: true, mappedTo: null }
         })
-        // Directly update the sibling text input for immediate visual feedback
-        // (don't wait for the reflectx render cycle)
         const rawInp = row.querySelector('.var-raw')
-        const swatch = row.querySelector('.swatch')
         if (rawInp) rawInp.value = newRaw
-        if (swatch) swatch.style.backgroundColor = hex
         doInject()
       } else if (e.target.classList.contains('var-raw')) {
         const raw = e.target.value
@@ -700,14 +1042,21 @@ class reTheme extends HTMLElement {
         if (looksLikeColor(raw))              hex = colorToHex(raw)                 || hex
         else if (looksLikeHSLComponents(raw)) hex = colorToHex('hsl(' + raw + ')') || hex
         state.$set(s => {
-          s.vars[idx] = { ...s.vars[idx], rawValue: raw, hex, modified: true }
+          s.vars[idx] = { ...s.vars[idx], rawValue: raw, hex, modified: true, mappedTo: null }
         })
         doInject()
       }
     })
 
     // ── Render ────────────────────────────────────────────────────────────────
-    const render = () => { reflectx(state, this.shadowRoot); syncInputs() }
+    const render = () => {
+      reflectx(state, this.shadowRoot)
+      syncInputs()
+      if (state.savePanelOpen) {
+        const inp = panel.querySelector('.save-name-input')
+        if (inp && this.shadowRoot.activeElement !== inp) inp.focus()
+      }
+    }
     state.$onChange(render)
     render()
 

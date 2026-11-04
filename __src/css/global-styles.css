@@ -14,20 +14,52 @@
   --page-padding-x: calc(var(--space-unit) * 3);
 
 
-  --lightness: 90%;
-  --darkness: 12%;
+  --lightness: 92%;
+  --darkness: 10%;
 
   --accent-lightness: 50%;
 
   /* --lightest: 250 5% 100%; */
   --lightest: 250 5% var(--lightness);
-  --darkest: 250 12% var(--darkness);
+  --lightest-comma: 250, 5%, var(--lightness);
+  --darkest: 230 20% var(--darkness);
+
+  --darkester: 250 12% calc(var(--darkness) - 4%);
+  --darkester-comma: 250, 12%, calc(var(--darkness) - 4%);
+
+  --darkest-comma: 250, 12%, var(--darkness);
 
   --over-accent-color-hsl: var(--lightest);
 
   --accent-color-hsl: var(--lightest);
   --accent-color-hsl-adjusted: ;
   --accent-color: hsl(var(--accent-color-hsl));
+
+  /* Brand colors — defaults from /__src/img/*-logo.svg */
+  --brand-color-reflectx: 130 100% 50%;
+  --brand-hsl-reflectx: 130, 100%, 50%;
+  --brand-color-routerx: 348 100% 50%;
+  --brand-hsl-routerx: 348, 100%, 50%;
+  --brand-color-restate: 220 100% 50%;
+  --brand-hsl-restate: 220, 100%, 50%;
+  --brand-color-re-md: 260 100% 50%;
+  --brand-hsl-re-md: 260, 100%, 50%;
+  --brand-color-doc-quick: 25 100% 50%;
+  --brand-hsl-doc-quick: 25, 100%, 50%;
+  --brand-color-native: 0 0% 100%;
+  --brand-hsl-native: 0, 0%, 100%;
+  --brand-color-auto-define: var(--fcolor-hsl);
+  --brand-hsl-auto-define: var(--fcolor-hsl-comma);
+  --brand-color-make-ready: var(--fcolor-hsl);
+  --brand-hsl-make-ready: var(--fcolor-hsl-comma);
+  --brand-color-monitor-loading: var(--fcolor-hsl);
+  --brand-hsl-monitor-loading: var(--fcolor-hsl-comma);
+  --brand-color-ready-element: var(--fcolor-hsl);
+  --brand-hsl-ready-element: var(--fcolor-hsl-comma);
+  --brand-color-wait-for-elements-ready: var(--fcolor-hsl);
+  --brand-hsl-wait-for-elements-ready: var(--fcolor-hsl-comma);
+  --brand-color-svg-insert: var(--fcolor-hsl);
+  --brand-hsl-svg-insert: var(--fcolor-hsl-comma);
 
   --code-block-font-size: var(--f-size-p);
 
@@ -63,13 +95,16 @@
 :root {
 
   --fcolor-hsl: var(--lightest);
+  --fcolor-hsl-comma: var(--lightest-comma);
   --bcolor-hsl: var(--darkest);
+
 }
 
 /* System dark mode preference */
 @media (prefers-color-scheme: dark) {
   :root:not([theme-mode="light"]) {
     --fcolor-hsl: var(--darkest);
+    --fcolor-hsl-comma: var(--darkest-comma);
     --bcolor-hsl: var(--lightest);
   }
 }
@@ -77,6 +112,7 @@
 @media (prefers-color-scheme: light) {
   :root:not([theme-mode="dark"]) {
     --fcolor-hsl: var(--lightest);
+    --fcolor-hsl-comma: var(--lightest-comma);
     --bcolor-hsl: var(--darkest);
   }
 }
@@ -84,12 +120,14 @@
 /* User override - dark */
 :root[theme-mode="dark"] {
   --fcolor-hsl: var(--lightest);
+  --fcolor-hsl-comma: var(--lightest-comma);
   --bcolor-hsl: var(--darkest);
 }
 
 /* User override - light */
 :root[theme-mode="light"] {
   --fcolor-hsl: var(--darkest);
+  --fcolor-hsl-comma: var(--darkest-comma);
   --bcolor-hsl: var(--lightest);
   --accent-color-hsl: var(--darkest);
 }
@@ -175,5 +213,11 @@ from their `show-duration` attribute. Defaults to 0ms (no delay) when no loader 
   :is(top-bar, base-hero, base-quote, base-back-to, base-button, base-profile-card, base-card, page-container, flex-container, base-footer, doc-quick, doc-body, doc-aside)[reveal][ready] {
     opacity: 0;
     transform: translateY(16px);
+  }
+}
+
+@media screen and (max-width: 30rem) {
+  :root {
+    --page-padding-x: calc(var(--space-unit) * 2);
   }
 }

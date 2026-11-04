@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /test/
+Disallow: /demos/blog/
+
+Sitemap: https://nativelayer.dev/sitemap.xml

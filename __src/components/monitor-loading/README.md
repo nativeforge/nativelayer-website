@@ -69,6 +69,8 @@ Verbose overlay showing each discovered component as a list row. Each row displa
 | `target` | string | `'body'` | CSS selector for the element to reveal |
 | `path` | string | `'/__src/components/'` | Components directory passed to `autoDefine` |
 | `case-convention` | string | `'kebab'` | Case convention passed to `autoDefine` (`'pascal'`, `'camel'`, `'kebab'`, `'snake'`) |
+| `include` | string | — | Space-separated tag names or `prefix*` patterns passed to `autoDefine` `include`. Only matching elements are imported, listed, and waited on. |
+| `exclude` | string | — | Space-separated tag names or `prefix*` patterns passed to `autoDefine` `exclude`. Applied after `include`. |
 | `brand` | string | `'@nativelayer.dev'` | Brand name shown in the overlay |
 | `svg-icon-url` | string | `'/__src/img/native-lines-logo.svg'` | URL of the brand icon SVG |
 | `reveal-attribute` | string | `'ready'` | Attribute set on the target element when done |
@@ -76,6 +78,16 @@ Verbose overlay showing each discovered component as a list row. Each row displa
 | `step-duration` | number | `800` | Progress bar CSS transition duration per step. Progress-bar mode only. |
 | `overlay-fade` | number | `640` | Fade-out transition duration in ms |
 | `monitor` | boolean | false | Enables verbose component-list mode |
+
+Patterns follow `autoDefine`: an exact tag name (`base-card`) or a prefix ending in `*` (`base-*`). Omit the attribute to keep every tag. A present but empty `include` selects nothing.
+
+```html
+<monitor-loading
+  target="body"
+  include="base-* top-bar"
+  exclude="base-icon"
+></monitor-loading>
+```
 
 ---
 
@@ -153,11 +165,11 @@ The global CSS rule in `global-styles.css` drives the animation:
 
 1. On `connectedCallback`, reads all attributes and sets `--show-duration-delay` on `:root`.
 2. Waits one microtask (`await Promise.resolve()`) so the full document has parsed.
-3. Snapshots all custom element tags inside `target` (excludes itself to prevent deadlock).
+3. Snapshots custom element tags inside `target` that match `include` / `exclude` (excludes itself to prevent deadlock).
 4. Temporarily replaces `customElements.define` with a wrapper that calls `makeReady(Ctor)` on every class before registering it.
-5. Calls `autoDefine({ root, path, naming })` to dynamically import and define all components.
+5. Calls `autoDefine({ root, path, caseConvention, include, exclude })` to dynamically import and define the selected components.
 6. Restores the native `customElements.define`.
-7. Calls `waitForElementsReady(target)` and awaits all components resolving their `ready` promise.
+7. Moves custom elements that miss the filter out of `target`, calls `waitForElementsReady(target)`, then puts those elements back. `waitForElementsReady` itself is unchanged.
 8. Sets `reveal-attribute` on `target`, removes any inline `style`, dispatches the done event.
 9. Waits `show-duration` ms, then adds the `.done` class which triggers the CSS fade-out.
 10. Removes itself from the DOM on `transitionend`.

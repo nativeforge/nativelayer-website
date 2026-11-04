@@ -1,6 +1,4 @@
-:: { style="width: 96px; height: auto;" }
-![autoDefine logo](../__src/img/autoDefine-logo.svg)
-::
+<img src="./auto-define-logo.jpg" alt="autoDefine logo" style="max-width: 360px">
 
 # autoDefine
 
@@ -16,9 +14,10 @@ As a project grows, maintaining a registry of `import` / `customElements.define`
 
 - **Zero configuration.** One call with no arguments works for most projects.
 - **Three candidate paths.** Flat files, folder-per-component, and `index.js` conventions all work without extra options.
-- **Four naming conventions.** `kebab`, `pascal`, `camel`, and `snake`. Adaptable whatever filename style your project uses.
+- **Four naming conventions.** `kebab`, `camel`, `pascal`, and `snake`. `caseConvention` accepts one name, a list, or `true` for all four.
 - **Self-registering modules.** If a file calls `customElements.define` itself, that is respected; `autoDefine` does not double-register.
 - **Dynamic observation.** Pass `observe: true` to watch for elements injected after the initial scan (SPA navigation, lazy-rendered sections).
+- **Include and exclude.** Limit registration to your own tags, or skip third-party elements, with an exact name or a `prefix*`.
 - **No build step.** Pure ES module. Drop it in and run.
 
 ---
@@ -100,6 +99,8 @@ For each discovered tag name, `autoDefine` tries **three candidate paths** in or
 
 This means a flat file structure and a folder-per-component structure both work without any configuration change.
 
+When `caseConvention` is `true` or an array, those three paths are repeated for each convention before the next one starts. The first module that self-registers or exports a constructor wins.
+
 ---
 
 ## Naming conventions
@@ -124,6 +125,29 @@ await autoDefine({ caseConvention: 'pascal' })
 // snake — looks for /components/my_element.js
 await autoDefine({ caseConvention: 'snake' })
 ```
+
+### Try several conventions
+
+`caseConvention` accepts one name, `true`, or an array. Omitting it tries kebab only.
+
+```js
+// kebab, then camel, then pascal, then snake
+await autoDefine({ caseConvention: true })
+
+// only these, in this order — kebab is not added automatically
+await autoDefine({ caseConvention: ['camel', 'pascal'] })
+```
+
+For `<my-element>` with `['kebab', 'camel']`, the attempts are:
+
+1. `/components/my-element.js`
+2. `/components/my-element/my-element.js`
+3. `/components/my-element/index.js` (named export `my-element`)
+4. `/components/myElement.js`
+5. `/components/my-element/myElement.js`
+6. `/components/my-element/index.js` (named export `myElement`)
+
+`index.js` is the same URL each time. It is checked again because the expected named export changes. A default export resolves on the first successful load, and later conventions are not tried. Put the convention you use most first.
 
 ---
 
@@ -184,6 +208,36 @@ await autoDefine({ root: '#app' })
 const shell = document.querySelector('app-shell')
 await autoDefine({ root: shell, path: '/app/components/' })
 ```
+
+### Include and exclude tags
+
+Limit which undefined custom elements are imported. Each entry is an exact tag name, or a prefix ending in `*`.
+
+```js
+await autoDefine({
+  include: ['native-*'],
+  exclude: ['native-icon'],
+})
+// <native-topbar> is imported
+// <native-icon> is skipped
+// <vercel-analytics> is skipped
+```
+
+```js
+await autoDefine({
+  include: ['native-topbar', 'native-menu', 'native-sidebar'],
+})
+```
+
+A tag is registered only when it matches `include` (if set) and does not match `exclude` (if set). Patterns are case-insensitive. An empty `include` array registers nothing.
+
+Skipped tags are not imported, do not warn, and do not appear in `failed`. With `debug: true` they are logged:
+
+```
+[autoDefine] skipped by include/exclude: ['native-icon', 'vercel-analytics']
+```
+
+`observe: true` uses the same filter for elements added later.
 
 ### Watch for dynamically added elements
 
@@ -418,7 +472,7 @@ try {
 
 ---
 
-### No undefined custom elements — resolves immediately
+### No undefined custom elements -> resolves immediately
 
 If every hyphenated element in the target is already defined (or there are none), `autoDefine` resolves immediately with no network activity:
 
@@ -431,9 +485,9 @@ await autoDefine() // no imports, resolves instantly
 
 ---
 
-### All candidates fail — always warns
+### All candidates fail -> always warns
 
-When a tag's file cannot be found at any of the three candidate paths, `autoDefine` emits a `console.warn` unconditionally and adds the tag to the `failed` array:
+When a tag's file cannot be found at any candidate path, `autoDefine` emits a `console.warn` unconditionally and adds the tag to the `failed` array:
 
 ```
 [autoDefine] <broken-widget> could not be resolved under /components/
@@ -464,6 +518,12 @@ export const config = { version: '1.0' }
 
 This message is distinct from the "could not be resolved" warning, making it clear the file was found but the export was wrong.
 
+When `caseConvention` lists more than one convention, the warning lists every name that was expected:
+
+```bash
+[autoDefine] <my-element> file(s) found under /components/ but no usable export (expected default export or named exports "my-element", "myElement")
+```
+
 ---
 
 ### Path with or without trailing slash
@@ -486,7 +546,49 @@ await autoDefine({ caseConvention: 'upper' })
 // throws: "[autoDefine] unknown case-convention: "upper""
 ```
 
+The same error is thrown for an unknown name inside an array. These also throw before any scanning:
+
+```js
+await autoDefine({ caseConvention: [] })
+// throws: "[autoDefine] caseConvention must list at least one naming convention, or be true"
+
+await autoDefine({ caseConvention: ['kebab', 'kebab'] })
+// throws: "[autoDefine] caseConvention lists "kebab" more than once"
+
+await autoDefine({ caseConvention: false })
+// throws: "[autoDefine] caseConvention must be a naming convention, true, or an array of naming conventions"
+```
+
+`caseConvention: ['camel']` tries camel only. It does not also try the default kebab.
+
 ---
+
+### Invalid `include` / `exclude` pattern — throws immediately
+
+Each entry must be an exact custom-element tag name, or a prefix that ends with a single `*`. These throw before any scanning:
+
+```js
+await autoDefine({ include: 'native-*' })
+// throws: "[autoDefine] include must be an array of strings"
+
+await autoDefine({ include: ['native'] })
+// throws: "[autoDefine] include pattern "native" must be a custom element tag name"
+
+await autoDefine({ exclude: ['*'] })
+// throws: "[autoDefine] exclude pattern "*" is too broad — use a prefix such as "native-*""
+
+await autoDefine({ include: ['*button'] })
+// throws: "[autoDefine] include pattern "*button" must be an exact tag name or end with a single *"
+```
+
+### Tags outside `include` / `exclude` are ignored
+
+A tag that fails the filter is left untouched. It is not imported, it does not produce a `console.warn`, and it is absent from both `resolved` and `failed`.
+
+```js
+await autoDefine({ include: ['native-*'] })
+// <vercel-analytics> is ignored, even if no file exists for it
+```
 
 ### Already-defined elements are skipped
 
@@ -531,10 +633,12 @@ If `observe: true` is set and no `signal` is provided, the `MutationObserver` ru
 |--------|------|---------|-------------|
 | `root` | `HTMLElement \| string` | `document.body` | DOM scope to scan for undefined custom elements |
 | `path` | `string` | `'/components/'` | Base path for component files. Root-relative or absolute URL. Trailing slash is added automatically if missing. |
-| `caseConvention` | `'kebab' \| 'pascal' \| 'camel' \| 'snake'` | `'kebab'` | How tag names are transformed into file names |
+| `caseConvention` | `convention \| true \| convention[]` | `'kebab'` | One filename convention, a list tried in order, or `true` for kebab, camel, pascal, then snake. A convention is `'kebab'`, `'camel'`, `'pascal'`, or `'snake'`. |
 | `observe` | `boolean` | `false` | Watch for dynamically added custom elements after the initial scan |
 | `signal` | `AbortSignal` | — | Disconnect the MutationObserver (requires `observe: true`). Strongly recommended — omitting it logs a warning and leaks the observer. |
 | `debug` | `boolean` | `false` | Log resolution attempts and outcomes to the console |
+| `include` | `string[]` | — | Only register tags matching one of these exact names or `prefix*` patterns. An empty array registers nothing. |
+| `exclude` | `string[]` | — | Skip tags matching one of these exact names or `prefix*` patterns. Applied after `include`. |
 
 ---
 

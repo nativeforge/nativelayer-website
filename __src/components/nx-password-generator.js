@@ -9,8 +9,8 @@ class nxPasswordGenerator extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.innerHTML = `
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap">
       <style>
+        @import url('/__src/css/nx-widget-fonts.css');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :host {
@@ -61,7 +61,7 @@ class nxPasswordGenerator extends HTMLElement {
           min-height: 100vh;
           background: inherit;
           color: var(--text);
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
         }
 
         /* ── Panel ── */
@@ -81,7 +81,7 @@ class nxPasswordGenerator extends HTMLElement {
           background: var(--surface);
         }
 
-        :host-context(html[theme-mode="light"]) {
+        :host([theme-mode="light"]) {
           --text: hsl(200 28% 22%);
           --text-dim: hsl(218 13% 42%);
           --screen-bg: hsl(200 22% 86%);
@@ -92,28 +92,28 @@ class nxPasswordGenerator extends HTMLElement {
           --danger: hsl(355, 42%, 40%);
           --alter-darker: hsl(24, 80%, 60%);
         }
-        :host-context(html[theme-mode="light"]) .length-value {
+        :host([theme-mode="light"]) .length-value {
           color: var(--accent-dark);
         }
 
-        :host-context(html[theme-mode="light"]) .panel {
+        :host([theme-mode="light"]) .panel {
           --surface: #c3c7cf;
         }
 
-        :host-context(html[theme-mode="light"]) .panel-header .brand {
+        :host([theme-mode="light"]) .panel-header .brand {
           color: hsl(173 85% 28%);
         }
 
-        :host-context(html[theme-mode="light"]) .toggle.--active {
+        :host([theme-mode="light"]) .toggle.--active {
           color: var(--white);
         }
 
-        :host-context(html[theme-mode="light"]) .btn.--generate {
+        :host([theme-mode="light"]) .btn.--generate {
           color: var(--white);
         }
 
         .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0 0.25rem; }
-        .panel-header .brand { font-family: 'Orbitron', sans-serif; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); opacity: 0.8; }
+        .panel-header .brand { font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); opacity: 0.8; }
         .panel-header .model { font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.15em; }
 
         /* ── Display ── */
@@ -143,7 +143,7 @@ class nxPasswordGenerator extends HTMLElement {
         }
 
         .display-password {
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
           font-size: 1.35rem;
           color: var(--accent);
           text-shadow: 0 0 20px var(--accent-glow);
@@ -161,7 +161,7 @@ class nxPasswordGenerator extends HTMLElement {
         .length-control { display: flex; flex-direction: column; gap: 1rem; }
         .length-header  { display: flex; justify-content: space-between; align-items: center; }
         .length-header label { font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
-        .length-header .length-value { font-family: 'Orbitron', sans-serif; font-size: 1rem; font-weight: 700; color: var(--accent); }
+        .length-header .length-value { font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-size: 1rem; font-weight: 700; color: var(--accent); }
 
         input[type="range"] {
           -webkit-appearance: none;
@@ -188,7 +188,7 @@ class nxPasswordGenerator extends HTMLElement {
         .toggles { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap); }
 
         .toggle {
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
           font-size: 0.75rem;
           border: none;
           cursor: pointer;
@@ -209,7 +209,7 @@ class nxPasswordGenerator extends HTMLElement {
         .actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
 
         .btn {
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
           font-size: 1rem;
           border: none;
           cursor: pointer;
@@ -223,7 +223,7 @@ class nxPasswordGenerator extends HTMLElement {
         }
         .btn:active { transform: translateY(1px) scale(0.97); }
 
-        .btn.--generate { grid-column: span 2; background: var(--accent-dark); color: var(--screen-bg); font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 700; padding: 1rem 0; letter-spacing: 0.1em; }
+        .btn.--generate { grid-column: span 2; background: var(--accent-dark); color: var(--screen-bg); font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-size: 1.1rem; font-weight: 700; padding: 1rem 0; letter-spacing: 0.1em; }
         .btn.--generate:hover { background: var(--accent-darker); }
         .btn.--generate:active { background: var(--accent-darker); }
 
@@ -238,7 +238,7 @@ class nxPasswordGenerator extends HTMLElement {
         .strength { display: flex; flex-direction: column; gap: 0.8rem; }
         .strength-header { display: flex; justify-content: space-between; align-items: center; }
         .strength-header label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
-        .strength-header .strength-label { font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; }
+        .strength-header .strength-label { font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; }
         .strength-label.--weak   { color: var(--danger); }
         .strength-label.--fair   { color: var(--alter); }
         .strength-label.--good   { color: var(--accent); }

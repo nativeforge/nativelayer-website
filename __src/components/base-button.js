@@ -64,6 +64,7 @@ class BaseButton extends HTMLElement {
       :host {
         display: inline-flex;
         font-family: var(--ff-2, sans-serif);
+        line-height: 1;
       }
 
       .btn {

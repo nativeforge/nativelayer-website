@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
+  <meta name="color-scheme" content="dark light">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nativelayer.dev: licenses</title>
+
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+
+  <link rel="stylesheet" href="/__src/css/reset.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/fonts.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/global-styles.css" blocking="render">
+
+  <style>
+    /* Badge sizing — in head so it applies to slotted base-card content */
+    .license-pricing-badge {
+      display: inline-block;
+      font-family: var(--ff-3, monospace);
+      font-size: 0.75em;
+      line-height: 1.2;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.375rem;
+      border-radius: calc(var(--size-unit) * 1/2);
+      border: 1px solid hsla(var(--fcolor-hsl) / 0.2);
+      background: hsla(var(--fcolor-hsl) / 0.06);
+      color: hsla(var(--fcolor-hsl) / 0.85);
+    }
+  </style>
+
+  <script type="module">
+    import { router } from "/__src/js/router.js";
+    router.start();
+  </script>
+
+  <script type="module">
+    import monitorLoading from "/__src/components/monitor-loading/index.js"
+    customElements.define('monitor-loading', monitorLoading)
+  </script>
+
+</head>
+
+<body style="opacity: 0; transform: translateY(16px);">
+
+  <monitor-loading 
+  target="body" 
+  path="/__src/components/" 
+  brand="nativelayer.dev" 
+  show-duration="400"
+  overlay-fade="400"
+  include="base-* re-md top-bar svg-insert flex-container doc-* grid-container page-container nx-*"
+  ></monitor-loading>
+  
+  <top-bar reveal></top-bar>
+
+  <page-container style="gap: calc(var(--space-unit) * 16); padding-block-start: 0; padding-block-end: calc(var(--space-unit) * 24);" reveal>
+
+    <base-hero style="align-items: flex-start; border-bottom: 1px dotted hsla(var(--fcolor-hsl) / 0.6); padding-block: calc(var(--space-unit) * 8);" reveal>
+      <h1 slot="title" style="font-size: var(--f-size-2xl)">Licenses</h1>
+      <p slot="description" style="font-size: var(--f-size-p); max-width: 36rem;">
+        How nativelayer packages, tools, and products may be used.
+        Commercial licenses are offered at <strong>early access pricing</strong> while the stack is in active development.
+      </p>
+        <p slot="description" style="font-size: var(--f-size-p); max-width: 36rem;">
+        - Non-commercial use<br>
+        - Commercial use
+      </p>
+    </base-hero>
+
+    <style>
+      .licenses-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: calc(var(--space-unit) * 8);
+        width: 100%;
+        align-items: start;
+      }
+      [id] {
+        scroll-margin-top: calc(var(--top-bar-height) + var(--space-unit) * 4);
+      }
+      .licenses-block {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--space-unit) * 3);
+      }
+      .licenses-block h2 {
+        font-family: var(--ff-1);
+        font-size: var(--f-size-xl, 1.5rem);
+        color: hsl(var(--fcolor-hsl));
+      }
+      .licenses-block p,
+      .licenses-block li {
+        font-family: var(--ff-2);
+        font-weight: 400;
+        line-height: 1.55;
+        color: hsla(var(--fcolor-hsl) / 0.85);
+      }
+      .licenses-block li {
+        list-style-type: square;
+      }
+      .licenses-block ul {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--space-unit) * 1.5);
+        padding-left: calc(var(--space-unit) * 3);
+      }
+      .licenses-block a {
+        color: hsl(var(--fcolor-hsl));
+        text-decoration: underline;
+        text-decoration-color: hsla(var(--fcolor-hsl) / 0.35);
+        text-underline-offset: 0.15em;
+        transition: text-decoration-color 0.15s;
+      }
+      .licenses-block a:hover {
+        text-decoration-color: hsl(var(--fcolor-hsl));
+      }
+      .license-table-wrap {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        border: 1px solid hsla(var(--fcolor-hsl) / 0.15);
+        border-radius: calc(var(--size-unit) * 1/2);
+      }
+      .license-table {
+        width: 100%;
+        min-width: 40rem;
+        border-collapse: collapse;
+        font-family: var(--ff-2);
+        font-size: var(--f-size-s);
+      }
+      .license-table th {
+        font-family: var(--ff-1);
+        font-size: var(--f-size-xs);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-align: left;
+        padding: calc(var(--space-unit) * 2) calc(var(--space-unit) * 2.5);
+        background: hsla(var(--fcolor-hsl) / 0.06);
+        color: hsla(var(--fcolor-hsl) / 0.7);
+        border-bottom: 1px solid hsla(var(--fcolor-hsl) / 0.12);
+        vertical-align: middle;
+      }
+      .license-table td {
+        padding: calc(var(--space-unit) * 1.75) calc(var(--space-unit) * 2.5);
+        border-bottom: 1px solid hsla(var(--fcolor-hsl) / 0.08);
+        vertical-align: middle;
+      }
+      .license-table tr:last-child td {
+        border-bottom: none;
+      }
+      .license-table td:first-child {
+        font-family: var(--ff-3, monospace);
+        font-size: var(--f-size-s);
+        color: hsl(var(--fcolor-hsl));
+      }
+      .license-badge {
+        display: inline-block;
+        font-family: var(--ff-3, monospace);
+        font-size: var(--f-size-s);
+        letter-spacing: 0.04em;
+        padding: 0.15rem 0.45rem;
+        border: 1px solid hsla(var(--fcolor-hsl) / 0.2);
+        border-radius: calc(var(--size-unit) * 1/2);
+        white-space: nowrap;
+        color: hsla(var(--fcolor-hsl) / 1);
+      }
+      .license-badge.--polyform { border-color: hsl(210, 100%, 86%); background-color: hsl(210, 100%, 86%); color: hsl(var(--darkest)); }
+      .license-badge.--mit { border-color: hsl(130, 50%, 75%); background-color: hsl(130, 50%, 75%); color: hsl(var(--darkest)); }
+      .license-badge.--product { border-color: hsl(350, 100%, 86%); background-color: hsl(350, 100%, 86%); color: hsl(var(--darkest)); }
+      .license-price {
+        font-family: var(--ff-1);
+        font-size: var(--f-size-p);
+        color: hsl(var(--fcolor-hsl));
+        white-space: nowrap;
+      }
+      .license-table th:last-child,
+      .license-table td:last-child {
+        width: 1%;
+        white-space: nowrap;
+        text-align: right;
+      }
+      .license-table th.--use-col,
+      .license-table td.--use-col,
+      .license-table th.--commercial-col,
+      .license-table td.--commercial-col {
+        width: 1%;
+        white-space: nowrap;
+        text-align: center;
+      }
+      .license-yes {
+        display: inline-block;
+        font-family: var(--ff-1);
+        font-size: var(--f-size-p);
+        line-height: 1;
+        color: hsl(130 55% 55%);
+      }
+      .license-table base-button {
+        font-size: var(--f-size-xs);
+        vertical-align: middle;
+      }
+      .license-contact {
+        padding: calc(var(--space-unit) * 4);
+        border: 1px dotted hsla(var(--fcolor-hsl) / 0.35);
+        border-radius: calc(var(--size-unit) * 1/2);
+        background: hsla(var(--fcolor-hsl) / 0.03);
+      }
+      .license-contact p {
+        margin: 0;
+      }
+      @media (max-width: 48rem) {
+        .licenses-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .license-pricing-grids {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--space-unit) * 6);
+        width: 100%;
+      }
+      .license-pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+        gap: calc(var(--space-unit) * 3);
+        width: 100%;
+      }
+      .license-pricing-grid .grid-item {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        color: hsl(var(--fcolor-hsl));
+      }
+      .license-pricing-grid .grid-item-logo {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        width: 50%;
+        max-width: 8rem;
+        height: auto;
+      }
+      .license-pricing-logos {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: calc(var(--space-unit) * 4);
+        max-width: 14rem;
+        margin: auto;
+        height: auto;
+      }
+      .license-pricing-logos svg-insert {
+        flex: 1 1 0;
+        min-width: 0;
+        display: block;
+      }
+      .license-pricing-desc {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--space-unit) * 4);
+        /* align-items: flex-end; */
+      }
+      .license-pricing-price {
+        font-family: var(--ff-3, monospace);
+        font-size: var(--f-size-p);
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: hsl(var(--fcolor-hsl));
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: calc(var(--space-unit) * 1);
+      }
+      .license-pricing-was {
+        font-weight: 400;
+        font-size: var(--f-size-s);
+        color: hsla(var(--fcolor-hsl) / 0.45);
+        text-decoration: line-through;
+      }
+      .license-early-access {
+        padding: calc(var(--space-unit) * 3) calc(var(--space-unit) * 4);
+        border: 1px dotted hsla(var(--fcolor-hsl) / 0.35);
+        border-radius: calc(var(--size-unit) * 1/2);
+        background: hsla(var(--fcolor-hsl) / 0.03);
+      }
+      .license-early-access p {
+        margin: 0;
+        font-family: var(--ff-2);
+        font-size: var(--f-size-p);
+        line-height: 1.55;
+        color: hsla(var(--fcolor-hsl) / 0.85);
+      }
+      .license-early-access strong {
+        font-family: var(--ff-1);
+        color: hsl(var(--fcolor-hsl));
+      }
+      .license-pricing-grid.--stretch-buttons .grid-item {
+        height: 100%;
+      }
+      .license-pricing-grid.--stretch-buttons .license-pricing-desc {
+        flex: 1;
+        width: 100%;
+      }
+      .license-pricing-grid.--stretch-buttons .license-pricing-footer {
+        margin-top: auto;
+      }
+      .license-pricing-footer {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--space-unit) * 2);
+        align-items: flex-end;
+      }
+      .license-pricing-grid base-button {
+        font-size: var(--f-size-xs);
+      }
+      .license-pricing-grid.--2-col {
+        grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+        max-width: calc((100% / 3 * 2) - var(--space-unit) * 1.5);
+      }
+      @media (max-width: 64rem) {
+        .license-pricing-grid.--2-col {
+          max-width: 100%;
+        }
+      }
+    </style>
+
+    <div class="licenses-grid">
+
+      <div class="licenses-block">
+        <h2>Non-commercial use</h2>
+        <p>Free under PolyForm Noncommercial for:</p>
+        <ul>
+          <li>Open-source projects (OSI-approved licenses)</li>
+          <li>Personal projects and non-revenue applications</li>
+          <li>Education and academic research</li>
+          <li>Non-profit organizations</li>
+          <li>Internal tools that do not generate revenue</li>
+          <li>Prototypes and MVPs (non-revenue)</li>
+        </ul>
+      </div>
+
+      <div class="licenses-block">
+        <h2>Commercial use</h2>
+        <p>A commercial license is required for:</p>
+        <ul>
+          <li>Proprietary and closed-source commercial software</li>
+          <li>SaaS and revenue-generating applications</li>
+          <li>Client work delivered to paying customers</li>
+          <li>Enterprise deployments at scale</li>
+          <li>White-label products licensed to third parties</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="licenses-block" style="width: 100%;">
+      <h2>Core packages</h2>
+      <p>Free for non-commercial use under PolyForm Noncommercial. Commercial use requires a license.</p>
+      <div class="license-table-wrap">
+        <table class="license-table">
+          <thead>
+            <tr>
+              <th>Package</th>
+              <th>License</th>
+              <th class="--use-col">Non commercial use</th>
+              <th class="--commercial-col">Commercial use</th>
+              <th>Documentation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>reflectx</td>
+              <td><span class="license-badge --polyform">PolyForm Noncommercial 1.0.0</span></td>
+              <td class="--use-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td class="--commercial-col">
+                <base-button class="--light" disabled>Coming soon</base-button>
+              </td>
+              <td><a href="/docs/reflectx">Docs</a> · <a href="https://www.npmx.dev/package/@nativelayer.dev/reflectx" target="_blank" rel="noopener">npm</a></td>
+            </tr>
+            <tr>
+              <td>restate</td>
+              <td><span class="license-badge --polyform">PolyForm Noncommercial 1.0.0</span></td>
+              <td class="--use-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td class="--commercial-col">
+                <base-button class="--light" disabled>Coming soon</base-button>
+              </td>
+              <td><a href="/docs/restate">Docs</a> · <a href="https://www.npmx.dev/package/@nativelayer.dev/restate" target="_blank" rel="noopener">npm</a></td>
+            </tr>
+            <tr>
+              <td>routerx</td>
+              <td><span class="license-badge --polyform">PolyForm Noncommercial 1.0.0</span></td>
+              <td class="--use-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td class="--commercial-col">
+                <base-button class="--light" disabled>Coming soon</base-button>
+              </td>
+              <td><a href="/docs/routerx">Docs</a> · <a href="https://www.npmx.dev/package/@nativelayer.dev/routerx" target="_blank" rel="noopener">npm</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="licenses-block" style="width: 100%;">
+
+      <div class="license-early-access">
+        <p>
+          <strong>Early access pricing</strong> — reduced commercial rates while nativelayer packages mature.
+          Prices shown below reflect a launch discount from standard list pricing.
+          Early supporters <strong>keep their rate on renewal</strong> as a thank-you for backing the project early.
+        </p>
+      </div>
+
+      <div class="license-pricing-grids">
+        <div class="license-pricing-grid">
+
+          <base-card class="grid-item --sans-serif-title --top-center" img-src="" accent-color-hsl="130 100% 50%">
+            <span slot="title">reflectx</span>
+            <span slot="description" class="license-pricing-desc">
+              <span>1 developer · unlimited applications</span>
+              <span class="license-pricing-footer">
+                <span class="license-pricing-price">
+                  <span class="license-pricing-was">$79</span>
+                  <span>$39 / year</span>
+                </span>
+                <span class="license-pricing-badge">Early access</span>
+                <base-button class="--dense" disabled>Coming soon</base-button>
+              </span>
+            </span>
+            <svg-insert svg-slot="logo" svg-class="grid-item-logo" src="/__src/img/reflectx-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+          </base-card>
+
+          <base-card class="grid-item --sans-serif-title --top-center" img-src="" accent-color-hsl="220 100% 50%">
+            <span slot="title">restate</span>
+            <span slot="description" class="license-pricing-desc">
+              <span>1 developer · unlimited applications</span>
+              <span class="license-pricing-footer">
+                <span class="license-pricing-price">
+                  <span class="license-pricing-was">$79</span>
+                  <span>$39 / year</span>
+                </span>
+                <span class="license-pricing-badge">Early access</span>
+                <base-button class="--dense" disabled>Coming soon</base-button>
+              </span>
+            </span>
+            <svg-insert svg-slot="logo" svg-class="grid-item-logo" src="/__src/img/restate-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+          </base-card>
+
+          <base-card id="routerx" class="grid-item --sans-serif-title --top-center" img-src="" accent-color-hsl="348 100% 50%">
+            <span slot="title">routerx</span>
+            <span slot="description" class="license-pricing-desc">
+              <span>1 developer · unlimited applications</span>
+              <span class="license-pricing-footer">
+                <span class="license-pricing-price">
+                  <span class="license-pricing-was">$79</span>
+                  <span>$39 / year</span>
+                </span>
+                <span class="license-pricing-badge">Early access</span>
+                <base-button class="--dense" disabled>Coming soon</base-button>
+              </span>
+            </span>
+            <svg-insert svg-slot="logo" svg-class="grid-item-logo" src="/__src/img/routerx-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+          </base-card>
+
+        </div>
+
+        <div class="license-pricing-grid --stretch-buttons">
+          <base-card class="grid-item --sans-serif-title --top-center --stretch-info" img-src="" accent-color-hsl="15 50% 80%, 15 40% 75%">
+            <span slot="title">Individual Core Bundle</span>
+            <span slot="description" class="license-pricing-desc">
+              <span>reflectx + restate + routerx · 1 developer</span>
+              <span class="license-pricing-footer">
+                <span class="license-pricing-price">
+                  <span class="license-pricing-was">$149</span>
+                  <span>$89 / year</span>
+                </span>
+                <span class="license-pricing-badge">Best value</span>
+                <base-button class="--dense" disabled>Coming soon</base-button>
+              </span>
+            </span>
+            <div slot="logo" class="license-pricing-logos">
+              <svg-insert src="/__src/img/reflectx-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+              <svg-insert src="/__src/img/restate-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl); transform: scale(1.5);"></svg-insert>
+              <svg-insert src="/__src/img/routerx-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+            </div>
+          </base-card>
+          <base-card class="grid-item --sans-serif-title --top-center --stretch-info" img-src="" accent-color-hsl="200 10% 85%, 200 10% 75%">
+            <span slot="title">Team Core Bundle</span>
+            <span slot="description" class="license-pricing-desc">
+              <span>All core packages · up to 5 developers</span>
+              <span class="license-pricing-footer">
+                <span class="license-pricing-price">
+                  <span class="license-pricing-was">$399</span>
+                  <span>$249 / year</span>
+                </span>
+                <span class="license-pricing-badge">Early access</span>
+                <base-button class="--dense" disabled>Coming soon</base-button>
+              </span>
+            </span>
+            <div slot="logo" class="license-pricing-logos">
+              <svg-insert src="/__src/img/reflectx-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+              <svg-insert src="/__src/img/restate-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl); transform: scale(1.5);"></svg-insert>
+              <svg-insert src="/__src/img/routerx-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+            </div>
+          </base-card>
+          <base-card class="grid-item --sans-serif-title --top-center --stretch-info" img-src="" accent-color-hsl="50 50% 75%, 50 40% 72%">
+            <span slot="title">Enterprise Core Bundle</span>
+            <span slot="description" class="license-pricing-desc">
+              <span>Custom terms · indemnification · priority support</span>
+              <span class="license-pricing-footer">
+                <span class="license-pricing-price">Custom</span>
+                <base-button class="--dense" disabled>Coming soon</base-button>
+              </span>
+            </span>
+            <div slot="logo" class="license-pricing-logos">
+              <svg-insert src="/__src/img/reflectx-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+              <svg-insert src="/__src/img/restate-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl); transform: scale(1.5);"></svg-insert>
+              <svg-insert src="/__src/img/routerx-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+            </div>
+          </base-card>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="licenses-block" style="width: 100%;">
+      <h2>Utility libraries</h2>
+      <div class="license-table-wrap">
+        <table class="license-table">
+          <thead>
+            <tr>
+              <th>Package</th>
+              <th>License</th>
+              <th class="--use-col">Non commercial use</th>
+              <th class="--commercial-col">Commercial use</th>
+              <th>Documentation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>auto-define</td>
+              <td><span class="license-badge --mit">MIT</span></td>
+              <td class="--use-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td class="--commercial-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td><a href="/docs/auto-define">Docs</a></td>
+            </tr>
+            <tr>
+              <td>make-ready</td>
+              <td><span class="license-badge --mit">MIT</span></td>
+              <td class="--use-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td class="--commercial-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td><a href="/docs/make-ready">Docs</a></td>
+            </tr>
+            <tr>
+              <td>ready-element</td>
+              <td><span class="license-badge --mit">MIT</span></td>
+              <td class="--use-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td class="--commercial-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td><a href="/docs/ready-element">Docs</a></td>
+            </tr>
+            <tr>
+              <td>wait-for-elements-ready</td>
+              <td><span class="license-badge --mit">MIT</span></td>
+              <td class="--use-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td class="--commercial-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td><a href="/docs/wait-for-elements-ready">Docs</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="licenses-block" style="width: 100%;">
+      <h2>Web Components</h2>
+      <div class="license-table-wrap">
+        <table class="license-table">
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>License</th>
+              <th class="--use-col">Non commercial use</th>
+              <th class="--commercial-col">Commercial use</th>
+              <th>Documentation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>svg-insert</td>
+              <td><span class="license-badge --mit">MIT</span></td>
+              <td class="--use-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td class="--commercial-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td><a href="/docs/svg-insert">Docs</a></td>
+            </tr>
+            <tr>
+              <td>monitor-loading</td>
+              <td><span class="license-badge --mit">MIT</span></td>
+              <td class="--use-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td class="--commercial-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td><a href="/docs/monitor-loading">Docs</a></td>
+            </tr>
+            <tr>
+              <td>re-md</td>
+              <td><span class="license-badge --polyform">PolyForm Noncommercial 1.0.0</span></td>
+              <td class="--use-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td class="--commercial-col">
+                <base-button class="--light" disabled>Coming soon</base-button>
+              </td>
+              <td><a href="/docs/re-md">Docs</a></td>
+            </tr>
+            <tr>
+              <td>doc-quick</td>
+              <td><span class="license-badge --polyform">PolyForm Noncommercial 1.0.0</span></td>
+              <td class="--use-col"><span class="license-yes" aria-label="Allowed">✓</span></td>
+              <td class="--commercial-col">
+                <base-button class="--light" disabled>Coming soon</base-button>
+              </td>
+              <td><a href="/docs/doc-quick">Docs</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="licenses-block" style="width: 100%;">
+
+      <div class="license-early-access">
+        <p>
+          Web component licenses follow the same early access model.
+          <strong>&lt; doc-quick &gt;</strong> includes <strong>&lt; re-md &gt;</strong> — start there if you need both.
+        </p>
+      </div>
+
+      <div class="license-pricing-grids">
+        <div class="license-pricing-grid --2-col --stretch-buttons">
+
+          <base-card class="grid-item --sans-serif-title --top-center --stretch-info" img-src="" accent-color-hsl="260 100% 50%">
+            <span slot="title">&lt; re-md &gt;</span>
+            <span slot="description" class="license-pricing-desc">
+              <span>1 developer · unlimited applications</span>
+              <span class="license-pricing-footer">
+                <span class="license-pricing-price">
+                  <span class="license-pricing-was">$79</span>
+                  <span>$39 / year</span>
+                </span>
+                <span class="license-pricing-badge">Early access</span>
+                <base-button class="--dense" disabled>Coming soon</base-button>
+              </span>
+            </span>
+            <svg-insert svg-slot="logo" svg-class="grid-item-logo" src="/__src/img/remd-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+          </base-card>
+
+          <base-card class="grid-item --sans-serif-title --top-center --stretch-info" img-src="" accent-color-hsl="25 100% 50%">
+            <span slot="title">&lt; doc-quick &gt;</span>
+            <span slot="description" class="license-pricing-desc">
+              <span>Includes re-md · 1 developer · unlimited applications</span>
+              <span class="license-pricing-footer">
+                <span class="license-pricing-price">
+                  <span class="license-pricing-was">$99</span>
+                  <span>$59 / year</span>
+                </span>
+                <span class="license-pricing-badge">Best value</span>
+                <base-button class="--dense" disabled>Coming soon</base-button>
+              </span>
+            </span>
+            <svg-insert svg-slot="logo" svg-class="grid-item-logo" src="/__src/img/doc-quick-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+          </base-card>
+
+        </div>
+
+        <div class="license-pricing-grid --2-col --stretch-buttons">
+          <base-card class="grid-item --sans-serif-title --top-center --stretch-info" img-src="" accent-color-hsl="200 10% 85%, 200 10% 75%">
+            <span slot="title">Team < re-md > </span>
+            <span slot="description" class="license-pricing-desc">
+              <span>re-md · up to 5 developers</span>
+              <span class="license-pricing-footer">
+                <span class="license-pricing-price">
+                  <span class="license-pricing-was">$149</span>
+                  <span>$99 / year</span>
+                </span>
+                <span class="license-pricing-badge">Early access</span>
+                <base-button class="--dense" disabled>Coming soon</base-button>
+              </span>
+            </span>
+            <svg-insert svg-slot="logo" svg-class="grid-item-logo" src="/__src/img/remd-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+          </base-card>
+          <base-card class="grid-item --sans-serif-title --top-center --stretch-info" img-src="" accent-color-hsl="50 50% 75%, 50 40% 72%">
+            <span slot="title">Enterprise < re-md > </span>
+            <span slot="description" class="license-pricing-desc">
+              <span>Custom terms · indemnification · priority support</span>
+              <span class="license-pricing-footer">
+                <span class="license-pricing-price">Custom</span>
+                <base-button class="--dense" disabled>Coming soon</base-button>
+              </span>
+            </span>
+            <svg-insert svg-slot="logo" svg-class="grid-item-logo" src="/__src/img/remd-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+          </base-card>
+        </div>
+
+        <div class="license-pricing-grid --2-col --stretch-buttons">
+          <base-card class="grid-item --sans-serif-title --top-center --stretch-info" img-src="" accent-color-hsl="200 10% 85%, 200 10% 75%">
+            <span slot="title">Team < doc-quick > </span>
+            <span slot="description" class="license-pricing-desc">
+              <span>re-md + doc-quick · up to 5 developers</span>
+              <span class="license-pricing-footer">
+                <span class="license-pricing-price">
+                  <span class="license-pricing-was">$179</span>
+                  <span>$129 / year</span>
+                </span>
+                <span class="license-pricing-badge">Early access</span>
+                <base-button class="--dense" disabled>Coming soon</base-button>
+              </span>
+            </span>
+            <svg-insert svg-slot="logo" svg-class="grid-item-logo" src="/__src/img/doc-quick-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+          </base-card>
+          <base-card class="grid-item --sans-serif-title --top-center --stretch-info" img-src="" accent-color-hsl="50 50% 75%, 50 40% 72%">
+            <span slot="title">Enterprise < doc-quick > </span>
+            <span slot="description" class="license-pricing-desc">
+              <span>Custom terms · indemnification · priority support</span>
+              <span class="license-pricing-footer">
+                <span class="license-pricing-price">Custom</span>
+                <base-button class="--dense" disabled>Coming soon</base-button>
+              </span>
+            </span>
+            <svg-insert svg-slot="logo" svg-class="grid-item-logo" src="/__src/img/doc-quick-logo.svg" svg-style="--accent-color-hsl: var(--card-accent-color-hsl);"></svg-insert>
+          </base-card>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="licenses-block" style="width: 100%;">
+      <h2>Demos</h2>
+      <p>
+        Live demos on <a href="/demos">/demos</a> are provided for evaluation and learning.
+        Source for demo widgets (e.g. nx-stock-market, nx-radio-tuner) and other tools such as <code>re-theme</code> are distributed under separate product licenses.
+      </p>
+    </div>
+
+    <div class="licenses-block" style="width: 100%;">
+      <h2>Website</h2>
+      <p>
+        The nativelayer.dev site, branding, and documentation are copyright nativelayer.dev<br>
+        You may link to demos and docs. Do not redistribute site assets or documentation as your own product without permission.
+      </p>
+    </div>
+
+  </page-container>
+
+    <base-footer reveal></base-footer>
+
+</body>
+</html>

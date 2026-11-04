@@ -2,7 +2,7 @@
   <defs>
     <style>
       .doc-quick-logo {
-        fill: hsl(var(--accent-color-hsl, 25 100% 50%));
+        fill: hsl(var(--accent-color-hsl, var(--brand-color-doc-quick)));
       }
     </style>
   </defs>

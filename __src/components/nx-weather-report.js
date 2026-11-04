@@ -9,8 +9,8 @@ class nxWeatherReport extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.innerHTML = `
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap">
       <style>
+        @import url('/__src/css/nx-widget-fonts.css');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :host {
@@ -23,7 +23,7 @@ class nxWeatherReport extends HTMLElement {
           --over-surface-button: hsla(226 19% 55% / 0.7);
           --screen-bg: hsl(225 20% 11%);
 
-          --accent: #00e5cc;
+          --accent: hsl(57, 98%, 82%);
           --accent-light: #33ffdd;
           --accent-dim: #11b3a077;
           --accent-dim-dark: #0f786c77;
@@ -50,7 +50,7 @@ class nxWeatherReport extends HTMLElement {
           min-height: 100vh;
           background: inherit;
           color: var(--text);
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
         }
 
         /* ── Panel ── */
@@ -70,7 +70,7 @@ class nxWeatherReport extends HTMLElement {
           background: var(--surface);
         }
 
-        :host-context(html[theme-mode="light"]) {
+        :host([theme-mode="light"]) {
           --text: hsl(195 45% 28%);
           --text-dim: hsl(218 13% 42%);
           --screen-bg: hsl(225 18% 86%);
@@ -84,28 +84,28 @@ class nxWeatherReport extends HTMLElement {
           --accent-light: hsl(52, 92%, 80%);
         }
 
-        :host-context(html[theme-mode="light"]) .panel {
+        :host([theme-mode="light"]) .panel {
           --surface: #c8cdd5;
         }
 
-        :host-context(html[theme-mode="light"]) .panel-header .brand {
+        :host([theme-mode="light"]) .panel-header .brand {
           color: var(--accent-light);
         }
 
-        :host-context(html[theme-mode="light"]) .btn-scan {
+        :host([theme-mode="light"]) .btn-scan {
           color: var(--white);
         }
 
-        :host-context(html[theme-mode="light"]) .display-prompt.--danger {
+        :host([theme-mode="light"]) .display-prompt.--danger {
           color: hsl(355 78% 42%);
         }
         
-        :host-context(html[theme-mode="light"]) :where(.weather-time, .weather-details .detail-value)  {
+        :host([theme-mode="light"]) :where(.weather-time, .weather-details .detail-value)  {
           color: hsl(41, 7%, 50%);
         }
 
         .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0 0.25rem; }
-        .panel-header .brand { font-family: 'Orbitron', sans-serif; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); opacity: 0.8; }
+        .panel-header .brand { font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); opacity: 0.8; }
         .panel-header .model { font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.15em; }
 
         /* ── Search ── */
@@ -113,7 +113,7 @@ class nxWeatherReport extends HTMLElement {
         .search-label   { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
 
         .search-input {
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
           font-size: 0.9rem;
           background: var(--surface-button);
           color: var(--text);
@@ -126,7 +126,7 @@ class nxWeatherReport extends HTMLElement {
         .search-input::placeholder { color: var(--text-dim); opacity: 0.5; }
         .search-input:focus { border-color: var(--accent); }
 
-        :host-context(html[theme-mode="light"]) .search-input {
+        :host([theme-mode="light"]) .search-input {
           background: var(--screen-bg);
         }
         
@@ -155,7 +155,7 @@ class nxWeatherReport extends HTMLElement {
 
         /* ── Scan button ── */
         .btn-scan {
-          font-family: 'Orbitron', sans-serif;
+          font-family: var(--nx-font-display, 'Orbitron', sans-serif);
           font-size: 1.1rem;
           font-weight: 700;
           letter-spacing: 0.15em;
@@ -188,7 +188,7 @@ class nxWeatherReport extends HTMLElement {
           border-bottom: 3px solid var(--accent-dim-darker);
           border-right:  3px solid var(--accent-dim);
         }
-        :host-context(html[theme-mode="light"]) .display {
+        :host([theme-mode="light"]) .display {
           background: hsl(198, 100%, 89%);
         }
 
@@ -203,7 +203,7 @@ class nxWeatherReport extends HTMLElement {
         .display-state { display: none; flex-direction: column; align-items: center; gap: 0.5rem; width: 100%; }
         .display-state.--visible { display: flex; }
 
-        .display-prompt { font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--text-dim); letter-spacing: 0.2em; text-transform: uppercase; }
+        .display-prompt { font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-size: 0.9rem; font-weight: 700; color: var(--text-dim); letter-spacing: 0.2em; text-transform: uppercase; }
         .display-prompt.--danger { color: #bd1733; }
         .display-sub { font-size: 0.75rem; color: var(--text-dim); letter-spacing: 0.1em; }
 
@@ -214,26 +214,26 @@ class nxWeatherReport extends HTMLElement {
         .weather-location { font-size: 0.75rem; color: var(--text-dim); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.25rem; }
         .weather-main     { display: flex; align-items: center; gap: 0.75rem; }
         .weather-icon     { font-size: 2rem; line-height: 1; }
-        .weather-desc     { font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--text); letter-spacing: 0.15em; }
+        .weather-desc     { font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-size: 0.75rem; font-weight: 700; color: var(--text); letter-spacing: 0.15em; }
 
-        .weather-temp { font-family: 'Orbitron', sans-serif; font-size: 2.8rem; font-weight: 700; text-shadow: 0 0 20px var(--accent-glow); line-height: 1.1; margin: 0.25rem 0; }
+        .weather-temp { font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-size: 2.8rem; font-weight: 700; text-shadow: 0 0 20px var(--accent-glow); line-height: 1.1; margin: 0.25rem 0; }
 
         .weather-temp.--cold { color: var(--temp-cold); }
         .weather-temp.--cool { color: var(--temp-cool); }
         .weather-temp.--warm { color: var(--temp-warm); }
         .weather-temp.--hot  { color: var(--temp-hot); }
 
-        :host-context(html[theme-mode="light"]) .weather-temp.--cold { color: hsl(200, 10%, 50%); }
-        :host-context(html[theme-mode="light"]) .weather-temp.--cool { color: hsl(179, 10%, 50%); }
-        :host-context(html[theme-mode="light"]) .weather-temp.--warm { color: hsl(41, 7%, 50%); }
-        :host-context(html[theme-mode="light"]) .weather-temp.--hot  { color: hsl(340, 10%, 50%); }
+        :host([theme-mode="light"]) .weather-temp.--cold { color: hsl(200, 10%, 50%); }
+        :host([theme-mode="light"]) .weather-temp.--cool { color: hsl(179, 10%, 50%); }
+        :host([theme-mode="light"]) .weather-temp.--warm { color: hsl(41, 7%, 50%); }
+        :host([theme-mode="light"]) .weather-temp.--hot  { color: hsl(340, 10%, 50%); }
 
         .weather-details { display: flex; gap: 2rem; margin: 0.25rem 0; }
         .weather-detail  { display: flex; flex-direction: column; align-items: center; gap: 0.15rem; }
         .detail-label    { font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; }
-        .detail-value    { font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--accent); }
+        .detail-value    { font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-size: 0.85rem; font-weight: 700; color: var(--accent); }
 
-        .weather-time       { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 400; color: var(--accent); letter-spacing: 0.1em; margin-top: 0.5rem; text-shadow: 0 0 15px var(--accent-glow); }
+        .weather-time       { font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-size: 1.1rem; font-weight: 400; color: var(--accent); letter-spacing: 0.1em; margin-top: 0.5rem; text-shadow: 0 0 15px var(--accent-glow); }
         .weather-time-label { font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.15em; margin-top: 0.15rem; }
 
         /* ── History ── */
@@ -241,10 +241,10 @@ class nxWeatherReport extends HTMLElement {
         .history-strip::-webkit-scrollbar { display: none; }
         .history-item { font-size: 0.6rem; color: var(--text-dim); white-space: nowrap; padding: 0.2rem 0.5rem; background: var(--surface-button); border-radius: 4px; flex-shrink: 0; cursor: pointer; transition: color 0.15s ease; }
         .history-item:hover { color: var(--accent); }
-        :host-context(html[theme-mode="light"]) .history-item {
+        :host([theme-mode="light"]) .history-item {
           background: var(--accent-light);
         }
-        :host-context(html[theme-mode="light"]) .history-item:hover {
+        :host([theme-mode="light"]) .history-item:hover {
           color: var(--text);
         }
 

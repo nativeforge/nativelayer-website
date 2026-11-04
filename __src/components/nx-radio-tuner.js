@@ -9,8 +9,8 @@ class nxRadioTuner extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.innerHTML = html`
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap">
       <style>
+        @import url('/__src/css/nx-widget-fonts.css');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :host {
@@ -53,7 +53,7 @@ class nxRadioTuner extends HTMLElement {
           min-height: 100vh;
           background: inherit;
           color: var(--text);
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
         }
 
         /* ── Panel ── */
@@ -72,19 +72,19 @@ class nxRadioTuner extends HTMLElement {
           gap: 0.75rem;
           background: var(--surface);
         }
-        :host-context(html[theme-mode="light"]) .panel {
+        :host([theme-mode="light"]) .panel {
           --surface: #dccec9;
         }
 
         .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0 0.25rem; }
-        .panel-header .brand { font-family: 'Orbitron', sans-serif; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); opacity: 0.8; }
+        .panel-header .brand { font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); opacity: 0.8; }
         .panel-header .model { font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.15em; }
 
         /* ── Search ── */
         .search-section { display: flex; flex-direction: column; gap: 0.35rem; }
 
         .search-input {
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
           font-size: 0.85rem;
           background: var(--surface-button);
           color: var(--text);
@@ -108,7 +108,7 @@ class nxRadioTuner extends HTMLElement {
         .genres::-webkit-scrollbar { display: none; }
 
         .genre-btn {
-          font-family: 'Share Tech Mono', monospace;
+          font-family: var(--nx-font-body, 'Share Tech Mono', monospace);
           font-size: 0.65rem;
           border: none;
           cursor: pointer;
@@ -132,7 +132,7 @@ class nxRadioTuner extends HTMLElement {
           background: var(--accent);
           color: var(--white);
         }
-        :host-context(html[theme-mode="light"]) .genre-btn:not(.--active) {
+        :host([theme-mode="light"]) .genre-btn:not(.--active) {
           background: hsla(22, 8%, 59%,  0.6);
           color: var(--surface);
         }
@@ -154,7 +154,7 @@ class nxRadioTuner extends HTMLElement {
           border-right:  3px solid var(--accent-dim-darker);
         }
 
-        :host-context(html[theme-mode="light"]) .display {
+        :host([theme-mode="light"]) .display {
           background: hsl(190 80% 88%);
           border-top-color: hsla(355 80% 50% / 0.12);
           border-bottom-color: hsla(355 80% 50% / 0.28);
@@ -163,7 +163,7 @@ class nxRadioTuner extends HTMLElement {
           --accent-scanline: rgba(255, 68, 102, 0.05);
         }
 
-        :host-context(html[theme-mode="light"]) .station-name {
+        :host([theme-mode="light"]) .station-name {
           color: hsl(225 15% 22%);
           text-shadow: none;
         }
@@ -179,7 +179,7 @@ class nxRadioTuner extends HTMLElement {
         .display-state { display: none; flex-direction: column; align-items: center; gap: 0.4rem; width: 100%; }
         .display-state.--visible { display: flex; }
 
-        .display-prompt { font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--text-dim); letter-spacing: 0.2em; text-transform: uppercase; }
+        .display-prompt { font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-size: 0.85rem; font-weight: 700; color: var(--text-dim); letter-spacing: 0.2em; text-transform: uppercase; }
         .display-prompt.--danger { color: var(--danger); }
         .display-sub { font-size: 0.75rem; color: var(--text-dim); letter-spacing: 0.1em; }
 
@@ -187,9 +187,9 @@ class nxRadioTuner extends HTMLElement {
         .display-prompt.--blink { animation: blink 1.2s ease-in-out infinite; }
 
         .now-playing-label { font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.15rem; }
-        .station-name      { font-family: 'Orbitron', sans-serif; font-size: 1rem; font-weight: 700; color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); text-align: center; line-height: 1.2; word-break: break-word; }
+        .station-name      { font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-size: 1rem; font-weight: 700; color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); text-align: center; line-height: 1.2; word-break: break-word; }
         .station-info      { font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.08em; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .station-bitrate   { font-family: 'Orbitron', sans-serif; font-size: 0.6rem; color: var(--secondary); letter-spacing: 0.12em; }
+        .station-bitrate   { font-family: var(--nx-font-display, 'Orbitron', sans-serif); font-size: 0.6rem; color: var(--secondary); letter-spacing: 0.12em; }
 
         /* ── EQ bars ── */
         .eq-bars { display: flex; gap: 3px; align-items: flex-end; height: 18px; margin-top: 0.3rem; }
@@ -206,7 +206,7 @@ class nxRadioTuner extends HTMLElement {
         .controls { display: flex; align-items: center; gap: var(--gap); }
 
         .btn-ctrl {
-          font-family: 'Orbitron', sans-serif;
+          font-family: var(--nx-font-display, 'Orbitron', sans-serif);
           font-size: 0.75rem;
           font-weight: 700;
           letter-spacing: 0.1em;
@@ -285,7 +285,7 @@ class nxRadioTuner extends HTMLElement {
         .station-item.--playing  { background: var(--accent); color: var(--white); }
         .station-item.--playing:hover { color: var(--white); }
 
-        :host-context(html[theme-mode="light"]) .station-item {
+        :host([theme-mode="light"]) .station-item {
           background: var(--accent-dim-darker);
 
         /* ── Favorites ── */

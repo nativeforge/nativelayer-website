@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="b" data-name="v" xmlns="http://www.w3.org/2000/svg" width="80" height="12.7" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 80 12.7">
+  <defs>
+    <radialGradient id="c" cx="40" cy="-2513.41" fx="40" fy="-2513.41" r="29.3" gradientTransform="translate(0 511.31) scale(1 .2)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset=".02" stop-color="#fff" stop-opacity=".97"/>
+      <stop offset=".13" stop-color="#fff" stop-opacity=".74"/>
+      <stop offset=".25" stop-color="#fff" stop-opacity=".54"/>
+      <stop offset=".37" stop-color="#fff" stop-opacity=".38"/>
+      <stop offset=".49" stop-color="#fff" stop-opacity=".24"/>
+      <stop offset=".62" stop-color="#fff" stop-opacity=".14"/>
+      <stop offset=".74" stop-color="#fff" stop-opacity=".06"/>
+      <stop offset=".87" stop-color="#fff" stop-opacity=".01"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <path d="M40,0C22.86,0,13.33,6.35,0,6.35c13.33,0,22.22,6.35,40,6.35s26.67-6.35,40-6.35c-13.33,0-22.86-6.35-40-6.35Z" fill="url(#c)"/>
+</svg>

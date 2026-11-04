@@ -71,11 +71,14 @@ class docAside extends HTMLElement {
         display: flex;
         flex-direction: column;
         width: var(--doc-aside-width, 16rem);
-        background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / .06);
+        background-color: hsla(from hsla(var(--accent-color-hsl) / .06) h calc(s * 0.2) calc(l * 0.5) / 0.1);
         --doc-aisde-list-item-bg-color: hsla(var(--bcolor-hsl, 0 0% 100%) / 0.4);
 
         color: hsl(var(--fcolor-hsl, 0 0% 0%));
         font-weight: var(--fw-2, 300);
+      }
+      [theme-mode="light"] doc-aside {
+        background-color: hsla(var(--accent-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / .06);
       }
 
       @media (width < 60rem) {

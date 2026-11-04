@@ -1,11 +1,14 @@
+import { adjustedHSL } from '/__src/js/luminance.js';
+import { observeThemeModeRoot } from '/__src/js/theme-mode-host.js';
+
 class baseCard extends HTMLElement {
   constructor() {
     super();
 
-    this.href = this.getAttribute('link') || '#';
-    this.linkExternal = this.hasAttribute('link-external') || false;
+    this.linkExternal = false;
+    this.isLinked = false;
+    this.href = '';
     this.imgSrc = this.getAttribute('img-src') || '';
-    this.accentColorHsl = this.getAttribute('accent-color-hsl') || 'var(--accent-color-hsl)';
     this.flexDirection = this.getAttribute('flex-direction') || 'column';
     this.alignItems = this.getAttribute('align-items') || 'flex-start';
     this.bgColorHsl = this.getAttribute('bg-color-hsl') || 'var(--bcolor-hsl)';
@@ -13,11 +16,73 @@ class baseCard extends HTMLElement {
     this.attachShadow({ mode: 'open' });
   }
 
+  syncLinkAttrs() {
+    const raw = (this.getAttribute('link') ?? '').trim();
+    this.isLinked = raw !== '' && raw !== '#';
+    this.href = this.isLinked ? raw : '';
+    this.linkExternal = this.hasAttribute('link-external');
+  }
+
   static get observedAttributes() {
-    return ['link'];
+    return ['link', 'accent-color-hsl'];
+  }
+
+  syncAccentAttrs() {
+    const raw = this.getAttribute('accent-color-hsl') || '';
+    const parts = raw.split(',').map(s => s.trim()).filter(Boolean);
+
+    if (parts.length >= 2) {
+      this.accentColorHsl      = parts[0];
+      this.accentColorHslLight = parts[1];
+    } else if (parts.length === 1) {
+      this.accentColorHsl      = parts[0];
+      this.accentColorHslLight = parts[0].startsWith('var(')
+        ? parts[0]
+        : adjustedHSL(parts[0], {
+          min: 20, max: 45, strength: 1.2, maxShift: 40,
+        });
+    } else {
+      this.accentColorHsl      = 'var(--accent-color-hsl)';
+      this.accentColorHslLight = 'var(--accent-color-hsl)';
+    }
+  }
+
+  get cardInnerHTML() {
+    return `
+      <figure class="card-image-block">
+        <div class="card-image">
+        </div>
+        <figcaption class="card-image-caption">
+          <slot name="caption"></slot>
+        </figcaption>
+        <div class="card-flag">
+          <slot name="flag"></slot>
+        </div>
+        <slot name="logo">
+        </slot>
+      </figure>
+      <div class="card-info-block">
+        <h3 class="card-title fs-3">
+          <slot name="title">
+            Default card title
+          </slot>
+        </h3>
+        <p class="card-desc">
+          <slot name="description">
+            Default card description. Attribute is 'data-desc'.<br>
+            This paragraph is the default card description paragraph.<br>
+            Default card description paragraph. This paragraph is here by default.
+          </slot>
+        </p>
+      </div>`;
   }
 
   get HTML() {
+    const wrapperOpen = this.isLinked
+      ? `<a class="card card-container" href="${this.href}"${this.linkExternal ? ' target="_blank" rel="noopener noreferrer"' : ''}>`
+      : `<div class="card card-container">`;
+    const wrapperClose = this.isLinked ? '</a>' : '</div>';
+
     return`
     <style>
       :host {
@@ -26,7 +91,9 @@ class baseCard extends HTMLElement {
         --card-img-width: 100%;
         --card-desc-lines: 2;
         --card-info-padding: calc(var(--space-unit) * 2);
-        --card-accent-color-hsl: var(--accent-color-hsl, ${this.accentColorHsl});
+        --card-accent-dark: ${this.accentColorHsl};
+        --card-accent-light: ${this.accentColorHslLight};
+        --card-accent-color-hsl: var(--card-accent-dark);
         --card-bg-color-hsl: ${this.bgColorHsl};
         --card-border-radius: calc(var(--space-unit) * 1);
         --card-border-width: 3px;
@@ -53,6 +120,31 @@ class baseCard extends HTMLElement {
         --card-image-transition: background-size 0.4s ease;
         --card-image-hover-size: 110%;
       }
+      :host(.--stretch-info) {
+        display: flex;
+        height: 100%;
+      }
+      :host(.--stretch-info) .card-container {
+        flex: 1;
+      }
+      :host(.--stretch-info) .card-info-block {
+        flex: 1;
+      }
+      :host(.--stretch-info) .card-desc {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      :host([theme-mode="light"]) {
+        --card-accent-color-hsl: var(--card-accent-light);
+      }
+
+      @media (prefers-color-scheme: light) {
+        :host(:not([theme-mode="dark"])) {
+          --card-accent-color-hsl: var(--card-accent-light);
+        }
+      }
 
       * {
         box-sizing: border-box;
@@ -78,7 +170,7 @@ class baseCard extends HTMLElement {
         transition: box-shadow 0.32s ease, transform 0.32s ease;
 
       }
-      :host-context(html[theme-mode="dark"]) .card {
+      :host([theme-mode="dark"]) .card {
         box-shadow: 0 0 0 0 hsla(230 100% 0% / 0) inset, 
         0 0 0px 1px hsla(230 100% 0% / 0.6);
       }
@@ -87,7 +179,7 @@ class baseCard extends HTMLElement {
         box-shadow: 0 0 0 0px hsla(var(--fcolor-hsl) / 0.4) inset, 0 8px 16px 0px hsla(var(--fcolor-hsl) / 0.4);
         transform: translateY(-2px);
       }
-      :host-context(html[theme-mode="dark"]) .card:hover {
+      :host([theme-mode="dark"]) .card:hover {
         box-shadow: 0 0 0 1px hsla(230 100% 0% / 0.6) inset, 0 4px 12px 0px hsla(230 100% 0% / 0.8);
         transform: translateY(-4px);
       }
@@ -105,6 +197,10 @@ class baseCard extends HTMLElement {
         overflow: hidden;
         text-decoration: none;
         cursor: pointer;
+      }
+
+      div.card-container {
+        cursor: default;
       }
 
       .card-image-block {
@@ -142,12 +238,17 @@ class baseCard extends HTMLElement {
         pointer-events: none;
       }
 
+      :host(.--big)  {
+        --card-img-height: calc(var(--space-unit) * 32);
+      }
+
       .card-image-caption {
+        display: flex;
         position: absolute;
         z-index: 2;
         right: calc(var(--space-unit) * 1);
         top: calc(var(--space-unit) * 1);
-        padding: var(--card-caption-padding);
+        /* padding: var(--card-caption-padding); */
         font-size: 0.8rem;
         font-style: italic;
         text-align: left;
@@ -155,9 +256,14 @@ class baseCard extends HTMLElement {
         border-radius: calc(var(--space-unit) * 1/2);
       }
 
+      :host(:not(:has([slot="caption"]))) .card-image-caption {
+        display: none;
+      }
+
       .card-info-block {
         position: relative;
         display: flex;
+        width: 100%;
         flex-direction: column;
         align-items: start;
         row-gap: 16px;
@@ -178,11 +284,12 @@ class baseCard extends HTMLElement {
 
       .card-desc {
         height: max-content;
+        width: 100%;
         overflow: hidden;
         display: -webkit-box;
         /* -webkit-line-clamp: var(--card-desc-lines); */
         -webkit-box-orient: vertical;
-        line-height: 1.618;
+        line-height: 1.4;
         color: hsla(var(--fcolor-hsl) / 0.7);
       }
 
@@ -198,35 +305,18 @@ class baseCard extends HTMLElement {
       }
     </style>
 
-    <a class="card card-container" href="${this.href}" ${this.linkExternal ? 'target="_blank"' : ''}>
-      <figure class="card-image-block">
-        <div class="card-image">
-        </div>
-        <figcaption class="card-image-caption">
-          <slot name="caption">Default text enabled</slot>
-        </figcaption>
-        <slot name="logo">
-        </slot>
-      </figure>
-      <div class="card-info-block">
-        <h3 class="card-title fs-3">
-          <slot name="title">
-            Default card title
-          </slot>
-        </h3>
-        <p class="card-desc">
-          <slot name="description">
-            Default card description. Attribute is 'data-desc'.<br>
-            This paragraph is the default card description paragraph.<br>
-            Default card description paragraph. This paragraph is here by default.
-          </slot>
-        </p>
-      </div>
-    </a>`;
+    ${wrapperOpen}
+    ${this.cardInnerHTML}
+    ${wrapperClose}`;
   }
 
   connectedCallback() {
     this.render();
+    this._themeObserver = observeThemeModeRoot(this);
+  }
+
+  disconnectedCallback() {
+    this._themeObserver?.disconnect();
   }
 
   attributeChangedCallback() {
@@ -236,6 +326,8 @@ class baseCard extends HTMLElement {
   }
 
   render() {
+    this.syncLinkAttrs();
+    this.syncAccentAttrs();
     this.shadowRoot.innerHTML = this.HTML;
   }
 }

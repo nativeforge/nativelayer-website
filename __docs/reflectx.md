@@ -1122,5 +1122,9 @@ A **commercial license** is required for:
 
 ### Licensing Inquiries
 
+::base-button {class="--light" target="_blank" href="/licenses#reflectx" style="padding: calc(var(--space-unit)* 3) 0"}
+View reflectx licensing & pricing
+::
+
 **For commercial licensing, pricing, or questions:**
 - **Email:** info@nativelayer.dev

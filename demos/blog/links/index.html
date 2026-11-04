@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>const s=localStorage.getItem("theme-mode"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("theme-mode",s||(d?"dark":"light"))</script>
+  <meta name="color-scheme" content="dark light">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Links — nullsignal</title>
+
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#0d0f14">
+
+  <link rel="stylesheet" href="/__src/css/reset.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/fonts.css" blocking="render">
+  <link rel="stylesheet" href="/__src/css/global-styles.css" blocking="render">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inconsolata:wght@300;400;600&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" blocking="render">
+  <link rel="stylesheet" href="/demos/blog/blog.css" blocking="render">
+
+  <style>
+    .links-section {
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--space-unit) * 6);
+    }
+
+    .links-group {
+      --link-accent: var(--blog-accent);
+      --link-accent-glow: hsl(from var(--link-accent) h s l / 0.4);
+    }
+
+    .links-group--specifications {
+      --link-accent: var(--blog-accent);
+    }
+
+    .links-group--proposals {
+      --link-accent: var(--blog-signal-meta);
+    }
+
+    .links-group--browsers {
+      --link-accent: var(--blog-signal-pipeline);
+    }
+
+    .links-group--tools {
+      --link-accent: var(--blog-signal-landscape);
+    }
+
+    [theme-mode="light"] .links-group--specifications {
+      --link-accent: var(--blog-signal-field);
+      --link-accent-glow: transparent;
+    }
+
+    [theme-mode="light"] .links-group--proposals {
+      --link-accent: var(--blog-signal-pipeline);
+      --link-accent-glow: transparent;
+    }
+
+    [theme-mode="light"] .links-group--browsers {
+      --link-accent: var(--blog-signal-landscape);
+      --link-accent-glow: transparent;
+    }
+
+    [theme-mode="light"] .links-group--tools {
+      --link-accent: var(--blog-signal-meta);
+      --link-accent-glow: transparent;
+    }
+
+    .links-group-title {
+      font-family: var(--ff-1, 'Syncopate', sans-serif);
+      font-size: var(--f-size-3);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--link-accent);
+      text-shadow: 0 0 calc(var(--space-unit) * 2) var(--link-accent-glow);
+      margin-bottom: calc(var(--space-unit) * 4);
+    }
+
+    .link-list {
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--space-unit) * 1);
+    }
+
+    .link-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: calc(var(--space-unit) * 4);
+      padding: calc(var(--space-unit) * 3) calc(var(--space-unit) * 4);
+      text-decoration: none;
+      border: 1px solid var(--blog-fg-hairline);
+      border-left: 2px solid hsl(from var(--link-accent) h s l / 0.4);
+      border-radius: 0 calc(var(--size-unit) * 0.25) calc(var(--size-unit) * 0.25) 0;
+      background: var(--blog-fg-surface);
+      transition: background 0.2s, border-left-color 0.2s;
+    }
+
+    .link-item:hover {
+      background: hsl(from var(--link-accent) h s l / 0.1);
+      border-left-color: var(--link-accent);
+    }
+
+    .link-name {
+      font-family: var(--ff-2, 'Inconsolata', monospace);
+      font-size: var(--f-size-p);
+      font-weight: 600;
+      color: var(--blog-color-fg);
+    }
+
+    .link-desc {
+      font-family: var(--ff-2, 'Inconsolata', monospace);
+      font-size: var(--f-size-s);
+      color: var(--blog-fg-muted);
+      margin-top: calc(var(--space-unit) * 0.5);
+    }
+
+    .link-domain {
+      font-family: var(--ff-3, 'JetBrains Mono', monospace);
+      font-size: var(--f-size-t);
+      letter-spacing: 0.08em;
+      color: hsl(from var(--link-accent) h s l / 0.6);
+      white-space: nowrap;
+    }
+
+    .link-item:hover .link-domain {
+      color: var(--link-accent);
+    }
+  </style>
+
+  <script type="module">
+    import { makeReady }    from '/__src/libs/makeReady/index.js';
+    import monitorLoading   from '/__src/components/monitor-loading/index.js';
+    import blogTopBar       from '/__src/components/blog-top-bar.js';
+    import pageContainer    from '/__src/components/page-container.js';
+
+    [blogTopBar, pageContainer].forEach(Cls => makeReady(Cls));
+
+    customElements.define('monitor-loading', monitorLoading);
+    customElements.define('blog-top-bar',   blogTopBar);
+    customElements.define('page-container', pageContainer);
+  </script>
+
+</head>
+
+<body style="opacity: 0; transform: translateY(16px);">
+  
+  <monitor-loading target="body" path="/__src/components/" brand="nullsignal" show-duration="300"></monitor-loading>
+  
+  <blog-top-bar reveal></blog-top-bar>
+
+  <page-container style="gap: calc(var(--space-unit) * 12); padding-block-end: calc(var(--space-unit) * 20);" reveal>
+
+    <header style="padding-block-start: calc(var(--space-unit) * 8); padding-block-end: calc(var(--space-unit) * 8); border-bottom: 1px solid hsl(var(--blog-accent) / 0.15);">
+      <span style="font-family: var(--ff-3, monospace); font-size: var(--f-size-s); letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--blog-accent)); text-shadow: 0 0 calc(var(--space-unit)*2) hsl(var(--blog-accent)/0.6);">–– LINKS</span>
+      <h1 class="blog-section-title" style="font-size: var(--f-size-2xl); margin-top: calc(var(--space-unit) * 2);">Signal <span class="accent">Sources</span></h1>
+    </header>
+
+    <div class="links-section">
+
+      <div class="links-group links-group--specifications">
+        <h2 class="links-group-title">Specifications &amp; Standards</h2>
+        <div class="link-list">
+          <a class="link-item" href="https://tc39.es/ecma262/" target="_blank" rel="noopener">
+            <div>
+              <div class="link-name">ECMA-262 (ECMAScript Spec)</div>
+              <div class="link-desc">The living JavaScript specification. Authoritative source for language semantics.</div>
+            </div>
+            <span class="link-domain">tc39.es</span>
+          </a>
+          <a class="link-item" href="https://www.w3.org/TR/css-grid-2/" target="_blank" rel="noopener">
+            <div>
+              <div class="link-name">CSS Grid Layout Level 2</div>
+              <div class="link-desc">Subgrid, masonry, and the full grid spec. Reference for complex layout questions.</div>
+            </div>
+            <span class="link-domain">w3.org</span>
+          </a>
+          <a class="link-item" href="https://html.spec.whatwg.org/" target="_blank" rel="noopener">
+            <div>
+              <div class="link-name">HTML Living Standard</div>
+              <div class="link-desc">WHATWG's continuously updated HTML specification. More current than W3C snapshots.</div>
+            </div>
+            <span class="link-domain">whatwg.org</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="links-group links-group--proposals">
+        <h2 class="links-group-title">TC39 Proposals</h2>
+        <div class="link-list">
+          <a class="link-item" href="https://github.com/tc39/proposals" target="_blank" rel="noopener">
+            <div>
+              <div class="link-name">TC39 Proposals Tracker</div>
+              <div class="link-desc">All active and historical JavaScript proposals, organized by stage.</div>
+            </div>
+            <span class="link-domain">github.com/tc39</span>
+          </a>
+          <a class="link-item" href="https://github.com/tc39/proposal-temporal" target="_blank" rel="noopener">
+            <div>
+              <div class="link-name">Temporal Proposal</div>
+              <div class="link-desc">Stage 3. The complete rewrite of JavaScript's Date handling.</div>
+            </div>
+            <span class="link-domain">github.com/tc39</span>
+          </a>
+          <a class="link-item" href="https://github.com/tc39/proposal-decorators" target="_blank" rel="noopener">
+            <div>
+              <div class="link-name">Decorators Proposal</div>
+              <div class="link-desc">Stage 3. The canonical proposal repo, with semantics docs and motivation.</div>
+            </div>
+            <span class="link-domain">github.com/tc39</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="links-group links-group--browsers">
+        <h2 class="links-group-title">Browser Resources</h2>
+        <div class="link-list">
+          <a class="link-item" href="https://caniuse.com" target="_blank" rel="noopener">
+            <div>
+              <div class="link-name">Can I Use</div>
+              <div class="link-desc">Browser compatibility tables for HTML, CSS, and JavaScript features.</div>
+            </div>
+            <span class="link-domain">caniuse.com</span>
+          </a>
+          <a class="link-item" href="https://developer.chrome.com/blog" target="_blank" rel="noopener">
+            <div>
+              <div class="link-name">Chrome Developers Blog</div>
+              <div class="link-desc">First-party announcements of new Chrome and web platform features.</div>
+            </div>
+            <span class="link-domain">developer.chrome.com</span>
+          </a>
+          <a class="link-item" href="https://hacks.mozilla.org" target="_blank" rel="noopener">
+            <div>
+              <div class="link-name">Mozilla Hacks</div>
+              <div class="link-desc">In-depth Firefox and web platform articles from Mozilla engineers.</div>
+            </div>
+            <span class="link-domain">hacks.mozilla.org</span>
+          </a>
+          <a class="link-item" href="https://webkit.org/blog" target="_blank" rel="noopener">
+            <div>
+              <div class="link-name">WebKit Blog</div>
+              <div class="link-desc">Safari and WebKit engineering updates. Often the first signal of Safari support timelines.</div>
+            </div>
+            <span class="link-domain">webkit.org</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="links-group links-group--tools">
+        <h2 class="links-group-title">Tools</h2>
+        <div class="link-list">
+          <a class="link-item" href="https://nativelayer.dev" target="_blank" rel="noopener">
+            <div>
+              <div class="link-name">nativelayer.dev</div>
+              <div class="link-desc">The Web Components platform this blog is built on. No framework, no bundler.</div>
+            </div>
+            <span class="link-domain">nativelayer.dev</span>
+          </a>
+          <a class="link-item" href="https://web.dev/measure" target="_blank" rel="noopener">
+            <div>
+              <div class="link-name">PageSpeed Insights</div>
+              <div class="link-desc">Real-world Core Web Vitals data plus Lighthouse lab measurements.</div>
+            </div>
+            <span class="link-domain">web.dev</span>
+          </a>
+          <a class="link-item" href="https://bundlephobia.com" target="_blank" rel="noopener">
+            <div>
+              <div class="link-name">Bundlephobia</div>
+              <div class="link-desc">Cost of adding an npm package. Size, gzipped size, and load time estimates.</div>
+            </div>
+            <span class="link-domain">bundlephobia.com</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </page-container>
+
+  <script type="module">
+    import { startBlogRouter } from '/demos/blog/router.js';
+    startBlogRouter('links', { preventSameLinkNavigation: true });
+  </script>
+
+</body>
+</html>

@@ -32,39 +32,44 @@ const adjustedHSL = (hslString, { min = 25, max = 70, strength = 1.7, maxShift =
   return `${h} ${s}% ${adjustedL}%`;
 }
 
+const applyAccentColorHsl = (el, accentColorHsl) => {
+  if (!el || !accentColorHsl) return;
+
+  const luminance = luminanceHSL(...accentColorHsl.replaceAll('%', '').split(' ').map(Number));
+
+  const isLight     = luminance > 0.6
+  const adjustedSoft = adjustedHSL(accentColorHsl, {
+    min: 30, max: 60, strength: 1, maxShift: 25,
+  });
+  const adjustedHard = isLight
+    ? adjustedHSL(accentColorHsl, { min: 20, max: 40, strength: 0.2, maxShift: 65 })
+    : adjustedSoft;
+
+  el.style.setProperty('--accent-color-hsl',          accentColorHsl);
+  el.style.setProperty('--accent-color-hsl-adjusted-soft',  adjustedSoft);
+  el.style.setProperty('--accent-color-hsl-adjusted-hard',  adjustedHard);
+  el.style.setProperty('--accent-color-hsl-adjusted', adjustedSoft);
+
+  if (isLight) {
+    el.classList.add('--accent-is-light');
+    el.classList.remove('--accent-is-dark');
+  }
+  else if (luminance < 0.1) {
+    el.classList.add('--accent-is-dark');
+    el.classList.remove('--accent-is-light');
+  }
+  else {
+    el.classList.remove('--accent-is-light');
+    el.classList.remove('--accent-is-dark');
+  }
+}
+
 const processAccentColors = () => {
   document.addEventListener('DOMContentLoaded', ()=> {
     document.querySelectorAll('[accent-color-hsl]').forEach(el => {
-      const accentColorHsl = el.getAttribute('accent-color-hsl');
-      const luminance = luminanceHSL(...accentColorHsl.replaceAll('%', '').split(' ').map(Number));
-
-      const isLight     = luminance > 0.6
-      const adjustedSoft = adjustedHSL(accentColorHsl, {
-        min: 30, max: 60, strength: 1, maxShift: 25,
-      });
-      const adjustedHard = isLight
-        ? adjustedHSL(accentColorHsl, { min: 20, max: 40, strength: 0.2, maxShift: 65 })
-        : adjustedSoft;
-
-      el.style.setProperty('--accent-color-hsl',          accentColorHsl);
-      el.style.setProperty('--accent-color-hsl-adjusted-soft',  adjustedSoft);
-      el.style.setProperty('--accent-color-hsl-adjusted-hard',  adjustedHard);
-      el.style.setProperty('--accent-color-hsl-adjusted', adjustedSoft);
-
-      if(luminance > 0.7){
-        el.classList.add('--accent-is-light');
-      }
-      else if(luminance < 0.1){
-        el.classList.add('--accent-is-dark');
-      }
-      else {
-        el.classList.remove('--accent-is-light');
-        el.classList.remove('--accent-is-dark');
-      }
-
+      applyAccentColorHsl(el, el.getAttribute('accent-color-hsl'));
     });
-    
   })
 };
 
-export { processAccentColors, adjustedHSL, luminanceHSL }
+export { processAccentColors, applyAccentColorHsl, adjustedHSL, luminanceHSL }

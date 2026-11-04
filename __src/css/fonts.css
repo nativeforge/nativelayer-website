@@ -1,10 +1,15 @@
+/* ------------- font imports ------------- */
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
 /* ------------- core definitions --------- */
 :root {
 
   /* HEADINGS & TITLE */
-  --font-1: 'Arimo';
+  --font-1: 'Manrope';
   /* PARAGRAPHS & TEXTS */
-  --font-2: 'Inter';
+  --font-2: 'DM Sans';
   /* PARAGRAPHS & TEXTS */
   --font-3: 'JetBrains Mono';
   /* ADDITIONAL FONTS */
@@ -32,18 +37,23 @@
   --space-unit: calc(var(--core-unit) * var(--ratio-space));
   
   --ratio-font-size: 1;
+  --ratio-font-grow-base: 1.2;
   --ratio-font-grow: 1.2;
   /* base on 16px standard body text size */
-
-  --f-size-t: calc(var(--f-size-s)* calc(1/var(--ratio-font-grow)));
-  --f-size-s: calc(var(--f-size-p)* calc(1/var(--ratio-font-grow)));
 
   /* fonts sizes built from paragraph font size */
   --f-size-p: calc(var(--core-unit) * var(--ratio-font-size));
 
+  /* one step below paragraph — scales down when --ratio-font-grow decreases */
+  --ratio-font-shrink: calc(
+    var(--ratio-font-grow) / calc(var(--ratio-font-grow-base) * var(--ratio-font-grow-base))
+  );
+  --f-size-s: calc(var(--f-size-p) * var(--ratio-font-shrink));
+  --f-size-t: calc(var(--f-size-s) * var(--ratio-font-shrink));
+
   /* h5 & h6 left on side if needed
   --f-size-6: calc(var(--f-size-5)* var(--ratio-font-grow));
-  --f-size-5: calc(var(--f-size-p)* calc( 1 / var(--ratio-font-grow)) );
+  --f-size-5: calc(var(--f-size-p) * var(--ratio-font-shrink));
   */
 
   --f-size-4: calc(var(--f-size-p)* var(--ratio-font-grow));
@@ -58,4 +68,10 @@
   --f-size-5xl: calc(var(--f-size-4xl)* var(--ratio-font-grow));
   --f-size-6xl: calc(var(--f-size-5xl)* var(--ratio-font-grow));
   --f-size-7xl: calc(var(--f-size-6xl)* var(--ratio-font-grow));
+}
+
+@media (width <= 768px) {
+  :root{
+    --ratio-font-grow: 1.1;
+  }
 }

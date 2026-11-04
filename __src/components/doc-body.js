@@ -22,6 +22,7 @@ class docBody extends HTMLElement {
   
 
   connectedCallback() {
+    this._setupLinkTargets()
     requestAnimationFrame(() => {
       this.dispatchEvent(new CustomEvent('doc-body-ready', {
         bubbles:  true,
@@ -30,6 +31,33 @@ class docBody extends HTMLElement {
       }))
     })
     // this._resolveReady()
+  }
+
+  disconnectedCallback() {
+    this._linkObserver?.disconnect()
+    this._linkObserver = null
+  }
+
+  _applyLinkTargets() {
+    this.querySelectorAll('a[href]').forEach((anchor) => {
+      const href = anchor.getAttribute('href') || ''
+      if (href.startsWith('#')) return
+
+      anchor.target = '_blank'
+      anchor.rel = 'noopener noreferrer'
+    })
+  }
+
+  _setupLinkTargets() {
+    this._applyLinkTargets()
+
+    if (this._linkObserver) return
+
+    this._linkObserver = new MutationObserver(() => {
+      this._applyLinkTargets()
+    })
+
+    this._linkObserver.observe(this, { childList: true, subtree: true })
   }
 
   // Inject all styles into document head
@@ -134,7 +162,7 @@ class docBody extends HTMLElement {
         text-decoration-color: hsla(var(--link-color-hsl, var(--fcolor-hsl, 0 0% 0%)) / var(--link-underline-opacity, 0.8));
         color: hsla(var(--fcolor-hsl, 0 0% 0%) / var(--link-color-opacity, 0.8));
         &::after {
-          content: "🔗";
+          content: "↗";
           display: inline-block;
           margin-left: calc(var(--space-unit) * 0.5);
           cursor: pointer;

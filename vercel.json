@@ -1,13 +1,17 @@
 {
   "rewrites": [
-    { "source": "/__src/(.*)", "destination": "/__src/$1" },
     { "source": "/", "destination": "/index.html" },
-    { "source": "/about", "destination": "/about/index.html" },
-    { "source": "/demos", "destination": "/demos/index.html" },
     { "source": "/packages", "destination": "/packages/index.html" },
     { "source": "/docs", "destination": "/docs/index.html" },
     { "source": "/docs/:product", "destination": "/docs/product/index.html" },
-    { "source": "/test", "destination": "/test/index.html" },
-    { "source": "/(.*)", "destination": "/404.html" }
+    { "source": "/demos", "destination": "/demos/index.html" },
+    { "source": "/licenses", "destination": "/licenses/index.html" },
+    { "source": "/licenses/commercial", "destination": "/licenses/commercial/index.html" },
+    { "source": "/about", "destination": "/about/index.html" },
+    { "source": "/demos/blog", "destination": "/demos/blog/index.html" },
+    { "source": "/demos/blog/posts", "destination": "/demos/blog/posts/index.html" },
+    { "source": "/demos/blog/post", "destination": "/demos/blog/post/index.html" },
+    { "source": "/demos/blog/about", "destination": "/demos/blog/about/index.html" },
+    { "source": "/demos/blog/links", "destination": "/demos/blog/links/index.html" }
   ]
 }
