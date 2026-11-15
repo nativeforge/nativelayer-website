@@ -23,6 +23,8 @@ Each generation of tooling adds a layer of indirection to solve a problem introd
 
 The answer is a small set of libraries and components, each solving one specific problem, each written directly against browser APIs, none requiring a build step to run.
 
+Frameworks can accelerate delivery, but they also obscure platform fundamentals, add indirection, create dependency gravity, and encourage patterns that fight the browser instead of leveraging it. `nativelayer` promotes **intentional simplicity**: fewer layers, fewer transformations, more clarity. Simple code is not naïve code — it is **durable, debuggable, and efficient**.
+
 ## Native capabilities
 
 The web platform has quietly accumulated a set of powerful, low-level primitives that most developers never reach for, partly because frameworks abstract them away before they are ever encountered, and partly because their full capabilities are rarely documented together.
@@ -50,6 +52,37 @@ These are not obscure experiments. They are stable, broadly supported, and alrea
 
 None of these require a framework, a compiler, or a build step. They are the surface that `nativelayer` builds on.
 
+## HTML, CSS, and JavaScript in balance
+
+`nativelayer` treats the three web languages as **peers**, not as layers waiting to be compiled into one runtime.
+
+### HTML as source of truth
+
+HTML is semantic and declarative: accessibility, forms, and interaction semantics are built in. Configuration lives in attributes (especially on custom elements), not only in JavaScript objects. Progressive enhancement is the default — pages should remain meaningful before modules load.
+
+```html
+<details>
+  <summary>Expand section</summary>
+  <p>No script required. Native accessibility. Enhanced behavior when JS connects.</p>
+</details>
+```
+
+### CSS as layout and design logic
+
+Modern CSS handles layout, responsive behaviour, animation, and theming that used to require JavaScript. `nativelayer` leans on Grid, Flexbox, `@container`, `@layer`, `@starting-style`, `:has()`, and custom properties (see [The CSS architecture](#the-css-architecture)) so components stay thin.
+
+### JavaScript used deliberately
+
+JavaScript should **enhance** native behaviour, not reimplement the platform. Prefer scoped modules, direct DOM APIs, and small libraries over virtual trees, schedulers, and opaque runtimes.
+
+| API | Typical use | Often replaces |
+|-----|-------------|----------------|
+| `IntersectionObserver` | Reveal, lazy load | Scroll listeners |
+| `ResizeObserver` | Layout-driven updates | `resize` polling |
+| `MutationObserver` | Dynamic custom elements | Manual DOM polling |
+| `fetch()` + `AbortController` | Data loading | HTTP wrapper libs |
+| `customElements` + ES modules | UI composition | Framework components |
+
 ## The design principles
 
 ### The platform is the runtime
@@ -76,6 +109,25 @@ This is not minimalism as aesthetic. It is minimalism as correctness. A library 
 Every `nativelayer` library and component runs directly in the browser as written. No compiler. No bundler. No transpilation step. Native ES modules handle imports. The browser handles the rest.
 
 A build step is a legitimate choice for production optimization — minification, tree-shaking, caching. It is not a prerequisite for authoring or running code. `nativelayer` treats tooling as optional, not foundational.
+
+| Scenario | Build required? | Why |
+|----------|-----------------|-----|
+| ES modules in the browser | No | Native `import` / `export` |
+| CSS custom properties, Grid, `@layer` | No | Native CSS |
+| TypeScript or JSX | Yes | Not valid in the browser as-is |
+| Minification / tree-shaking | Optional | Production optimization only |
+
+Import maps can pin CDN dependencies without a bundler:
+
+```html
+<script type="importmap">
+{
+  "imports": {
+    "@nativelayer.dev/restate": "https://cdn.jsdelivr.net/npm/@nativelayer.dev/restate/index.js"
+  }
+}
+</script>
+```
 
 ### Attributes are the API
 
@@ -357,6 +409,29 @@ border: 1px solid hsla(var(--fcolor-hsl) / 0.12);
 
 This means theming a page, including all components, requires changing a handful of variables on `:root`. No component needs to be touched.
 
+## Performance through alignment
+
+The fastest path is usually the one the browser already understands: native parsing, native layout, native paint. `nativelayer` avoids unnecessary layers, keeps runtime JS small (core libraries are a few kilobytes each), and lets the platform do rendering and animation work.
+
+Performance here is **subtraction**: less framework, less hydration, less reconciliation — not more optimization passes.
+
+### Progressive enhancement
+
+Ship HTML that works, then wire behaviour when APIs exist:
+
+```js
+const shareBtn = document.getElementById('share-btn')
+if (!shareBtn) return
+
+shareBtn.addEventListener('click', async () => {
+  if (navigator.share) {
+    await navigator.share({ title: document.title, url: location.href })
+  } else {
+    await navigator.clipboard.writeText(location.href)
+  }
+})
+```
+
 ## Where *nativelayer* fits
 
 `nativelayer` is well-suited for:
@@ -372,9 +447,31 @@ It is not optimized for:
 - **Applications that require full server-side rendering with client-side hydration**: `reflectx` can run in Node.js via jsdom or happy-dom to generate HTML server-side, but whether it attaches cleanly to already-rendered DOM without re-rendering is not guaranteed. True streaming SSR with state handoff is outside the current scope.
 - **Teams fully committed to a specific framework ecosystem**: `nativelayer` does not provide framework integrations, adapters, a CLI, or scaffolding tools. There is no established large-team convention system out of the box.
 
+### When to choose what
+
+| Project type | Typical fit | Why |
+|--------------|-------------|-----|
+| Marketing site, docs | `nativelayer` | Static hosting, SEO, long-lived HTML |
+| MPA or SPA on static hosting | `nativelayer` | `routerx` + web components, no mandatory bundler |
+| Embeddable widget | `nativelayer` | Small footprint, framework-agnostic custom elements |
+| Large product team on one framework | Framework stack | Shared hiring, ecosystem, tooling conventions |
+| Full SSR + streaming hydration | Dedicated SSR stack | Outside `nativelayer`'s current sweet spot |
+
+### How the stack maps
+
+| Concern | Heavy traditional stack | `nativelayer` approach |
+|---------|-------------------------|------------------------|
+| UI | React / Vue / Angular | Custom elements + slots |
+| Styling | CSS-in-JS, utility-only CSS | CSS custom properties + encapsulated component CSS |
+| Client state | Redux, Zustand, … | `restate` (~2.8 Kb) or DOM + events |
+| Binding | Framework templates | `reflectx` directives |
+| Routing | Framework router | `routerx` (~3.4 Kb) |
+| HTTP | axios, wrappers | `fetch()` |
+| Page loading | Ad hoc spinners | `autoDefine` + `waitForElementsReady` or `<monitor-loading>` |
+
 ## The deeper position
 
-The argument for `nativelayer` is not that frameworks are wrong. It is that **the decision to use a framework is often made reflexively**, before the actual requirements of the project are known, and that developers who do not have a fluent relationship with the platform have no basis for making that decision consciously.
+The argument for `nativelayer` is not that frameworks are wrong. It is **anti-forgetfulness of the platform**: the decision to use a framework is often made reflexively, before the actual requirements of the project are known, and developers who do not have a fluent relationship with the platform have no basis for making that choice consciously.
 
 A developer who deeply understands custom elements, the Shadow DOM, CSS custom properties, ES modules, the History API, and `fetch` can look at a project and make an informed choice: this problem warrants a framework; this one does not. A developer who has only worked inside framework abstractions cannot make that choice. They have only one tool.
 
@@ -383,6 +480,17 @@ A developer who deeply understands custom elements, the Shadow DOM, CSS custom p
 > "Any fool can write code that a computer can understand. Good programmers write code that humans can understand." — Martin Fowler
 
 The web platform is the most widely deployed, most durably specified software runtime in history. Code written against it directly tends to outlast the framework it could have been written in. That is not a coincidence.
+
+## Principles
+
+| Principle | Meaning |
+|-----------|---------|
+| **Platform-first** | Reach for browser APIs before new abstractions |
+| **Zero-build default** | Run in the browser; add tooling only for concrete wins |
+| **Progressive enhancement** | Baseline HTML/CSS that works; JS enhances |
+| **Performance by subtraction** | Less runtime, not more tuning |
+| **Long-term thinking** | Standards-aligned code that ages with the web |
+| **Explicit over implicit** | Attributes, modules, and DevTools-visible behaviour |
 
 ## Summary
 
