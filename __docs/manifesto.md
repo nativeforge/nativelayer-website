@@ -6,7 +6,7 @@
 
 `nativelayer` is not a framework. It is not a meta-framework. It is not an opinion about how you should write your entire application.
 
-It is a **layer**. A thin set of librairies and packages based on web primitives that sit directly on top of the web platform without hiding it. Each piece is small, independent, and highly extensible. Together they form a coherent system for building modular web interfaces that behave like the platform.
+It is a **layer**. A thin set of libraries and packages based on web primitives that sit directly on top of the web platform without hiding it. Each piece is small, independent, and highly extensible. Together they form a coherent system for building modular web interfaces that behave like the platform.
 
 The name is literal.
 
@@ -29,7 +29,7 @@ The web platform has quietly accumulated a set of powerful, low-level primitives
 
 These are not obscure experiments. They are stable, broadly supported, and already shipping in every modern browser:
 
-- **Custome Element** — define your own `HTML` tags with full lifecycle hooks (`connectedCallback`, `disconnectedCallback`, `attributeChangedCallback`). The browser treats them as first-class elements: they participate in the DOM, receive events, and work with any existing `HTML` tooling.
+- **Custom Elements** — define your own `HTML` tags with full lifecycle hooks (`connectedCallback`, `disconnectedCallback`, `attributeChangedCallback`). The browser treats them as first-class elements: they participate in the DOM, receive events, and work with any existing `HTML` tooling.
 
 - **Shadow DOM** — attach an encapsulated subtree to any element. Styles defined inside a shadow root do not leak out; external styles do not leak in. Layout, theming, and behaviour can be fully self-contained without naming conventions or CSS-in-JS.
 
@@ -65,7 +65,9 @@ Every piece of `nativelayer` does exactly one thing.
 - `restate` manages reactive state.
 - `reflectx` binds state to the DOM.
 - `routerx` handles navigation.
-- `re-md` renders markdown. None of them depend on each other. You can use any one of them independently, in any project, without the others.
+- `re-md` renders markdown.
+
+None of them depend on each other. You can use any one of them independently, in any project, without the others. Published on npm under `@nativelayer.dev/*` and usable from CDN or vendored ESM.
 
 This is not minimalism as aesthetic. It is minimalism as correctness. A library that does one thing can be understood in full, tested in isolation, replaced without cascading changes, and evolved without breaking contracts.
 
@@ -77,15 +79,17 @@ A build step is a legitimate choice for production optimization — minification
 
 ### Attributes are the API
 
-`Custome Element` receive configuration through `HTML` attributes, not JavaScript constructor arguments or prop objects. This means your component API is readable in the `HTML` source, inspectable in DevTools, accessible to CSS via attribute selectors, and overridable without touching JavaScript.
+Custom elements receive configuration through `HTML` attributes, not JavaScript constructor arguments or prop objects. This means your component API is readable in the `HTML` source, inspectable in DevTools, accessible to CSS via attribute selectors, and overridable without touching JavaScript.
 
 ```html
-<monitor-element
-  app="main"
+<monitor-loading
+  target="body"
   path="/__src/components/"
   brand="nativelayer.dev"
-  show-duration="400">
-</monitor-element>
+  show-duration="400"
+  overlay-fade="400"
+  include="base-* top-bar svg-insert re-md">
+</monitor-loading>
 ```
 
 Every attribute in `nativelayer` has a sensible default. You opt into complexity; you do not opt out of it.
@@ -175,19 +179,68 @@ Because it is a `custom element`, it integrates into any `HTML` page without any
 
 **~5.4 Kb minified. Zero dependencies.**
 
-### `readyElement`
+### `readyElement` for component readiness
 
-### `autoDefine`
+`readyElement` is a base class (npm: `@nativelayer.dev/ready-element`) that exposes a `ready` Promise, a `ready` attribute, and a bubbling `ready` event when async work inside a component is finished — not merely when the class is registered.
 
-### `waitForReadyElements`
+```js
+import { readyElement } from '@nativelayer.dev/ready-element'
+
+class SiteHeader extends readyElement {
+  async connectedCallback() {
+    super.connectedCallback?.()
+    await this.loadNav()
+    this._resolveReady()
+  }
+}
+```
+
+### `makeReady` for existing components
+
+`makeReady` injects the same readiness contract onto any `HTMLElement` subclass without changing its inheritance — useful for vendored or third-party tags that cannot extend `readyElement` directly.
+
+### `autoDefine` for discovery and import
+
+`autoDefine` scans a container for undefined hyphenated tags, resolves module paths from naming conventions, and imports them. Options include `root`, `path`, `caseConvention` (one convention, a list, or `true` for all four), `observe` for SPA injection, and **`include` / `exclude`** filters (exact tag names or `prefix*` patterns) so third-party widgets stay out of the loader.
+
+```js
+import { autoDefine } from '@nativelayer.dev/auto-define'
+
+await autoDefine({
+  path: '/__src/components/',
+  include: ['base-*', 'top-bar', 'doc-*'],
+  exclude: ['vercel-*'],
+})
+```
+
+### `waitForElementsReady` for page reveal
+
+`waitForElementsReady` waits until every selected custom element is defined and — when applicable — until `ready` resolves, then applies a reveal class or attribute on the target. It pairs with `autoDefine` in sequence: define first, reveal when truly ready.
+
+```js
+import { waitForElementsReady } from '@nativelayer.dev/wait-for-elements-ready'
+
+await waitForElementsReady(document.body, {
+  revealClass: 'app-ready',
+  timeout: 8000,
+})
+```
+
+### `<doc-quick>` for documentation pages
+
+`<doc-quick>` orchestrates multi-chapter docs from a single markdown source: sidebar, search, chapter routing, and prev/next cards — built from `re-md` and small doc-* components. The public docs on nativelayer.dev use this pattern.
+
+### `svg-insert` for themeable inline SVG
+
+`<svg-insert>` fetches an SVG and replaces itself with the inlined markup so logos and icons participate in `currentColor` and CSS custom properties — used heavily on the marketing site and hero.
 
 ## The component system
 
 ### Web Components as the unit of composition
 
-Every UI primitive in `nativelayer` is a `Custom Element`. `<top-bar>`, `<page-container>`, `<flex-container>`, `<base-hero>`, `<base-card>`, `<base-quote>`, `<base-footer>` — each is a self-contained, reusable element that exposes its API through attributes, slots, and CSS custom properties.
+Every UI primitive in `nativelayer` is a custom element. `<top-bar>`, `<page-container>`, `<flex-container>`, `<base-hero>`, `<base-card>`, `<base-quote>`, `<base-footer>`, `<doc-quick>` — each is a self-contained, reusable element that exposes its API through attributes, slots, and CSS custom properties.
 
-This is not a stylistic choice. `Custome Element` are a browser standard. They are parsed by the `HTML` parser. They upgrade gracefully. They work with any toolchain or none. They will still work in ten years.
+This is not a stylistic choice. Custom elements are a browser standard. They are parsed by the `HTML` parser. They upgrade gracefully. They work with any toolchain or none. They will still work in ten years.
 
 ### `Shadow DOM` for encapsulation
 
@@ -222,69 +275,61 @@ The component controls layout and presentation. The page controls content. These
 
 ## The loading system
 
-One of the practical challenges of building with **Custome Element**, particularly on pages that use many of them, is the flash of unstyled content (FOUC) that occurs between the moment the `HTML` is parsed and the moment JavaScript finishes defining and upgrading each element.
+One of the practical challenges of building with **custom elements**, particularly on pages that use many of them, is the flash of unready content that occurs between the moment the `HTML` is parsed and the moment JavaScript finishes defining, upgrading, and initializing each tag.
 
-`nativelayer` includes a coherent, layered system for managing this.
+`nativelayer` includes a coherent, layered system for managing this — usable as separate npm packages or as a single on-page orchestrator.
 
-### `readyElement` — the async-ready base class
+### The pipeline
 
-`readyElement` is a base class that **Custome Elements** can extend to signal when their async initialization is complete. It exposes a `ready` Promise and a `_resolveReady()` method.
+1. **`autoDefine`** — discover tags in the target, apply `include` / `exclude` filters, import matching modules.
+2. **`makeReady`** — when needed, patch classes so every participating tag exposes `ready`.
+3. **`waitForElementsReady`** — wait for definition and readiness, then set a reveal attribute on the target.
+4. **Overlay removal** — hide loading chrome and let CSS transitions run.
 
-```js
-class MyHeader extends readyElement {
-  async connectedCallback() {
-    super.connectedCallback?.()
-    await this.fetchData()
-    this._resolveReady() // signals: I am ready
-  }
-}
-```
+Pages can wire these four steps manually, or delegate them to **`<monitor-loading>`**.
 
-This creates a standard contract: any element extending `readyElement` can be waited on externally.
+### `<monitor-loading>` — unified orchestration
 
-### `autoDefine` — automatic element discovery and import
+`<monitor-loading>` is the recommended integration: one custom element in `<head>` runs `autoDefine` (honouring `include` and `exclude` attributes), patches components with `makeReady`, waits with `waitForElementsReady`, fades out, and removes itself.
 
-`autoDefine` scans a container for all `custom element` tags, resolves their source file paths from a base path and naming convention, and dynamically imports them.
-
-```js
-await autoDefine({ root: document.querySelector('main'), path: '/__src/components/' })
-```
-
-This means pages do not need a long list of manual imports. Add a component to the `HTML`; `autoDefine` finds it and loads it.
-
-### `waitForElementsReady` — coordinated readiness
-
-`waitForElementsReady` scans a container, waits for every `custom element` to be defined via `customElements.whenDefined`, and — for elements that extend `readyElement` — waits for their `ready` Promise to resolve.
-
-```js
-await waitForElementsReady(document.querySelector('main'), {
-  revealClass: 'app-ready',
-})
-```
-
-When all elements are ready, it adds a class (or attribute) to a reveal element. The page CSS can then animate the content in.
-
-### `monitor-element` — the verbose overlay
-
-`<monitor-element>` combines `autoDefine` and `waitForElementsReady` into a self-contained loading overlay that shows each component by name as it becomes ready. It is useful during development and on pages where you want to communicate loading progress in detail.
+**Progress-bar mode (default)** — brand mark plus a step animation driven by each component’s `ready` event:
 
 ```html
-<monitor-element app="main" path="/__src/components/" brand="nativelayer.dev"></monitor-element>
+<monitor-loading
+  target="body"
+  path="/__src/components/"
+  brand="nativelayer.dev"
+  step-duration="600"
+  overlay-fade="400">
+</monitor-loading>
 ```
 
-### `monitor-loading` — the minimal overlay
-
-`<monitor-loading>` provides the same loading orchestration as `<monitor-element>` but replaces the component list with a single progress bar. Each component that becomes ready advances the bar by one step, animated by a configurable CSS transition.
+**Monitor mode** — add the `monitor` attribute for a per-tag status list (ideal during development):
 
 ```html
-<monitor-loading target="main" path="/__src/components/" step-duration="600"></monitor-loading>
+<monitor-loading
+  monitor
+  target="body"
+  path="/__src/components/"
+  brand="nativelayer.dev">
+</monitor-loading>
 ```
 
-Both overlays fade out and remove themselves from the DOM when loading is complete. The page CSS controls the reveal animation using attribute selectors:
+Limit which tags participate in loading (same rules as `autoDefine`):
+
+```html
+<monitor-loading
+  target="body"
+  include="base-* top-bar svg-insert doc-* nx-*"
+  exclude="native-icon">
+</monitor-loading>
+```
+
+When loading completes, the target receives a reveal attribute (default `ready`). Page CSS controls the transition:
 
 ```css
-main:not([ready]) { opacity: 0; }
-main[ready]       { opacity: 1; transition: opacity 0.4s ease; }
+body:not([ready]) { opacity: 0; }
+body[ready]        { opacity: 1; transition: opacity 0.4s ease; }
 ```
 
 ## The CSS architecture
@@ -331,7 +376,7 @@ It is not optimized for:
 
 The argument for `nativelayer` is not that frameworks are wrong. It is that **the decision to use a framework is often made reflexively**, before the actual requirements of the project are known, and that developers who do not have a fluent relationship with the platform have no basis for making that decision consciously.
 
-A developer who deeply understands `Custome Element`, the `Shadow DOM`, `CSS custom properties`, `ES modules`, the `History API`, and `fetch` can look at a project and make an informed choice: this problem warrants a framework; this one does not. A developer who has only worked inside framework abstractions cannot make that choice. They have only one tool.
+A developer who deeply understands custom elements, the Shadow DOM, CSS custom properties, ES modules, the History API, and `fetch` can look at a project and make an informed choice: this problem warrants a framework; this one does not. A developer who has only worked inside framework abstractions cannot make that choice. They have only one tool.
 
 `nativelayer` is, among other things, an argument for learning the platform before reaching for the abstraction.
 
@@ -347,10 +392,13 @@ The web platform is the most widely deployed, most durably specified software ru
 | DOM binding | `reflectx` — directive-based, ~5.4 Kb |
 | Routing | `routerx` — MPA/SPA, ~3.4 Kb |
 | Markdown | `<re-md>` — web component, ~5.4 Kb |
-| UI primitives | `Custome Element` with `Shadow DOM` and slots |
+| Readiness | `readyElement` + `makeReady` |
+| UI primitives | Custom elements with Shadow DOM and slots |
 | Theming | CSS custom properties on `:root` |
-| Loading orchestration | `readyElement` + `autoDefine` + `waitForElementsReady`  |
-| Loading overlays | `<monitor-loading>` (minimal) or `<monitor-loading monitor>` (verbose) |
+| Auto-import | `autoDefine` — conventions, `observe`, `include` / `exclude` |
+| Loading orchestration | `waitForElementsReady` or `<monitor-loading>` (bar or `monitor`) |
+| Docs in the browser | `<doc-quick>` + `re-md` |
+| SVG theming | `<svg-insert>` — inline fetch, CSS-aware |
 | Build step | Optional — everything runs natively |
 | Total framework overhead | 0 Kb |
 
