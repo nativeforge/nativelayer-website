@@ -3,3 +3,5 @@ __src/components/blog-top-bar.js
 __src/components/blog-hero.js
 __src/components/post-card.js
 demos/blog
+__docs/claude-point-of-view.md
+__docs/decorators.md

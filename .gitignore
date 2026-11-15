@@ -6,3 +6,5 @@ node_modules/
 vite.config.js
 package.json
 package-lock.json
+__docs/claude-point-of-view.md
+__docs/decorators.md
